@@ -183,7 +183,8 @@ tu tutoies l'utilisateur, avec un ton chaleureux et précis, sans flatterie.
 On te donne : la situation de l'utilisateur, son profil philosophique calculé à partir d'un questionnaire, \
 ses réponses, et des passages de livres de philosophie (avec leur identifiant).
 
-Réponds UNIQUEMENT avec un objet JSON valide, sans texte autour, de cette forme exacte :
+Rends ton résultat en appelant OBLIGATOIREMENT l'outil rediger_resultat, sans écrire de texte autour. \
+Ses champs ont cette forme :
 {
   "metier_principal": {"titre": "...", "pourquoi": "..."},
   "metiers_alternatifs": [{"titre": "...", "pourquoi": "..."}, {"titre": "...", "pourquoi": "..."}],
@@ -256,20 +257,60 @@ def _extraire_json(texte: str) -> dict:
     texte = texte.strip()
     texte = re.sub(r"^```(?:json)?\s*|\s*```$", "", texte)
     debut, fin = texte.find("{"), texte.rfind("}")
-    return json.loads(texte[debut:fin + 1])
+    return json.loads(texte[debut:fin + 1], strict=False)  # strict=False : tolère un retour à la ligne dans une chaîne
+
+
+def _sans_references(schema: dict) -> dict:
+    """Remplace les « $ref » du schéma Pydantic par leur définition (schéma autonome)."""
+    definitions = schema.get("$defs", {})
+
+    def remplacer(noeud):
+        if isinstance(noeud, dict):
+            if "$ref" in noeud:
+                return remplacer(definitions[noeud["$ref"].split("/")[-1]])
+            return {cle: remplacer(valeur) for cle, valeur in noeud.items() if cle != "$defs"}
+        if isinstance(noeud, list):
+            return [remplacer(element) for element in noeud]
+        return noeud
+
+    return remplacer(schema)
+
+
+# Claude remplit un « outil » dont le format est le schéma de SortieLLM : l'API garantit
+# un objet JSON bien formé (plus de guillemets mal échappés dans une citation recopiée).
+OUTIL_RESULTAT = {
+    "name": "rediger_resultat",
+    "description": "Enregistre le résultat rédigé pour l'utilisateur.",
+    "input_schema": _sans_references(SortieLLM.model_json_schema()),
+}
+
+
+def _lire_reponse(reponse) -> dict:
+    for bloc in reponse.content:
+        if getattr(bloc, "type", "") == "tool_use":
+            return bloc.input
+    texte = "".join(b.text for b in reponse.content if getattr(b, "type", "") == "text")
+    if getattr(reponse, "stop_reason", "") == "max_tokens":
+        raise ValueError("réponse coupée (max_tokens atteint)")
+    return _extraire_json(texte)  # au cas où le modèle répondrait quand même en texte
 
 
 def sortie_llm(grille, entree, analyse, reponses, passages) -> SortieLLM:
     import anthropic  # importé seulement si une clé est configurée
 
     client = anthropic.Anthropic()
-    messages = [{"role": "user", "content": message_utilisateur(grille, entree, analyse, reponses, passages)}]
+    contenu = message_utilisateur(grille, entree, analyse, reponses, passages)
     derniere_erreur = None
-    for _ in range(2):  # une seconde chance si le JSON est invalide
-        reponse = client.messages.create(model=MODELE_CLAUDE, max_tokens=1500, system=CONSIGNES, messages=messages)
-        texte = "".join(b.text for b in reponse.content if getattr(b, "type", "") == "text")
+    for _ in range(2):  # une seconde chance si le résultat est invalide
+        reponse = client.messages.create(
+            model=MODELE_CLAUDE, max_tokens=2500, system=CONSIGNES,
+            messages=[{"role": "user", "content": contenu}],
+            # « auto » et non « tool » : certains modèles (dont Haiku) refusent qu'on force un outil.
+            # La consigne demande de l'utiliser ; s'il répond quand même en texte, on lit le JSON du texte.
+            tools=[OUTIL_RESULTAT], tool_choice={"type": "auto"},
+        )
         try:
-            sortie = SortieLLM.model_validate(_extraire_json(texte))
+            sortie = SortieLLM.model_validate(_lire_reponse(reponse))
             if entree.job_voulu is None:
                 sortie.ecart_job_voulu = None
             elif not sortie.ecart_job_voulu:
@@ -277,9 +318,12 @@ def sortie_llm(grille, entree, analyse, reponses, passages) -> SortieLLM:
             return sortie
         except (ValueError, ValidationError) as e:
             derniere_erreur = e
-            messages += [{"role": "assistant", "content": texte},
-                         {"role": "user", "content": f"Ton JSON est invalide ({e}). Renvoie uniquement le JSON corrigé."}]
     raise RuntimeError(f"Réponse du LLM inexploitable : {derniere_erreur}")
+
+
+def _masquer_cle(texte: str) -> str:
+    cle = os.environ.get("ANTHROPIC_API_KEY")
+    return texte.replace(cle, "[clé masquée]") if cle else texte
 
 
 def llm_disponible() -> bool:
@@ -294,6 +338,7 @@ def generer(grille, entree, analyse, reponses, passages, llm_autorise: bool = Tr
             sortie = sortie_llm(grille, entree, analyse, reponses, passages)
             return securiser_citation(sortie, passages), "llm"
         except Exception as e:  # réseau, quota, JSON… : le site doit quand même répondre
-            # Seulement le type d'erreur : jamais le contenu de la requête ni des réponses.
-            print(f"[generation] LLM indisponible, mode démo : {type(e).__name__}")
+            # En ligne : seulement le type d'erreur, jamais de contenu. En local : le détail, pour déboguer.
+            detail = "" if os.environ.get("PRODUCTION") == "1" else f" ({_masquer_cle(str(e)[:300])})"
+            print(f"[generation] LLM indisponible, mode démo : {type(e).__name__}{detail}")
     return sortie_demo(grille, entree, analyse, passages), "demo"

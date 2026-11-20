@@ -1,5 +1,7 @@
 """Tests de l'API et de la génération (sans modèle d'embeddings ni appel à Claude)."""
 
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -159,3 +161,76 @@ def test_tirage_varie_les_livres():
         choisis = tirer_passages(candidats, 4, random.Random(g))
         assert sum(p["livre"] == "A" for p in choisis) <= 2
         assert len({p["id"] for p in choisis}) == 4
+
+
+# --- Appel à Claude en « outil » (JSON garanti) --------------------------------------
+
+class _Bloc:
+    def __init__(self, **champs):
+        self.__dict__.update(champs)
+
+
+def _faux_client(blocs, stop_reason="tool_use", appels=None):
+    class Messages:
+        def create(self, **kwargs):
+            if appels is not None:
+                appels.append(kwargs)
+            return _Bloc(content=blocs, stop_reason=stop_reason)
+
+    class Client:
+        messages = Messages()
+
+    return lambda *a, **k: Client()
+
+
+def _sortie_json(job=True):
+    return {
+        "metier_principal": {"titre": "Psychologue", "pourquoi": "Tu cherches le sens."},
+        "metiers_alternatifs": [{"titre": "Écrivain", "pourquoi": "…"}, {"titre": "Chercheur", "pourquoi": "…"}],
+        "citation": {"texte": "Ce qui dépend de nous", "auteur": "Épictète", "livre": "Manuel",
+                     "passage_id": "stoique-000-000"},
+        "livre_a_lire": {"titre": "Manuel", "auteur": "Épictète", "pourquoi": "…"},
+        "ecart_job_voulu": "Proche par l'écoute." if job else None,
+    }
+
+
+def _contexte():
+    from app.scoring import calculer_profil, charger_grille
+    from app.schemas import Entree, Reponse
+    grille = charger_grille()
+    reponses = [Reponse(**r) for r in reponses_toutes()]
+    entree = Entree(poste_actuel="Dev", statut="alternant", job_voulu="Médecin")
+    return grille, entree, calculer_profil(grille, reponses), reponses
+
+
+def test_claude_repond_par_l_outil(monkeypatch):
+    import anthropic
+    appels = []
+    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="tool_use", input=_sortie_json())], appels=appels))
+    grille, entree, analyse, reponses = _contexte()
+    sortie = generation.sortie_llm(grille, entree, analyse, reponses, [{"id": "x", "auteur": "a", "livre": "l", "texte": "t"}])
+    assert sortie.metier_principal.titre == "Psychologue"
+    assert appels[0]["tools"][0]["name"] == "rediger_resultat"
+    assert "$ref" not in json.dumps(appels[0]["tools"][0]["input_schema"])
+
+
+def test_citation_avec_retour_a_la_ligne_dans_du_texte_brut():
+    texte = '{"a": "ligne 1\nligne 2 avec des « guillemets »"}'
+    assert generation._extraire_json(texte)["a"].startswith("ligne 1")
+
+
+def test_reponse_coupee_signalee(monkeypatch):
+    import anthropic
+    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="text", text='{"metier')], stop_reason="max_tokens"))
+    grille, entree, analyse, reponses = _contexte()
+    with pytest.raises(RuntimeError, match="max_tokens"):
+        generation.sortie_llm(grille, entree, analyse, reponses, [{"id": "x", "auteur": "a", "livre": "l", "texte": "t"}])
+
+
+def test_reponse_en_texte_acceptee_si_le_modele_n_utilise_pas_l_outil(monkeypatch):
+    import anthropic
+    texte = "Voici :\n```json\n" + json.dumps(_sortie_json(), ensure_ascii=False) + "\n```"
+    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="text", text=texte)], stop_reason="end_turn"))
+    grille, entree, analyse, reponses = _contexte()
+    sortie = generation.sortie_llm(grille, entree, analyse, reponses, [{"id": "x", "auteur": "a", "livre": "l", "texte": "t"}])
+    assert sortie.metier_principal.titre == "Psychologue"

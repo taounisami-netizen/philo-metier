@@ -125,7 +125,8 @@
       "traducteur": "André Lefèvre (1834-1904)",
       "source": {
         "type": "wikisource",
-        "prefixe": "De la nature des choses (traduction Lefèvre)/"
+        "prefixe": "De la nature des choses (traduction Lefèvre)/",
+        "inclure": "/Livre [IVX]+$"
       }
     },
     {
@@ -179,7 +180,8 @@
       "traducteur": "éd. Léon Brunschvicg (1869-1944)",
       "source": {
         "type": "wikisource",
-        "prefixe": "Pensées (Pascal, éd. Brunschvicg)/"
+        "prefixe": "Pensées (Pascal, éd. Brunschvicg)/",
+        "inclure": "/Pensées/Section ([IVX]+-\\d+|I|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV)$"
       }
     }
   ]

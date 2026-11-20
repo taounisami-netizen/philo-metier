@@ -13,7 +13,7 @@
 | Contemplatif | Platon | La République | Victor Cousin (1792-1867) | Wikisource |
 | Contemplatif | Schopenhauer | Aphorismes sur la sagesse dans la vie | J.-A. Cantacuzène (1829-1897) | Gutenberg |
 
-Ajoutés ensuite pour équilibrer les profils (à télécharger) :
+Ajoutés ensuite pour équilibrer les profils :
 
 | Profil | Auteur | Livre | Traduction |
 |---|---|---|---|
@@ -24,6 +24,11 @@ Ajoutés ensuite pour équilibrer les profils (à télécharger) :
 | Créateur | Nietzsche | Le Gai Savoir · Par-delà le bien et le mal | Henri Albert (1869-1921) |
 | Moraliste | Rousseau | Émile, ou De l'éducation | original |
 | Contemplatif | Pascal | Pensées | éd. Léon Brunschvicg (1869-1944) |
+
+Résultat : **3 922 passages**. Par profil : stoïque 240, épicurien 149, sceptique 1 055,
+bâtisseur 331, créateur 751, moraliste 755, contemplatif 641. Le déséquilibre ne
+fausse pas le profil (calculé sans le corpus), et la recherche filtre par profil :
+chaque profil ne cherche que chez ses propres auteurs.
 
 Wikisource (fr) n'accepte que des textes du domaine public en France. Gutenberg
 garantit seulement le domaine public aux États-Unis : vérifier le traducteur.

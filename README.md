@@ -26,7 +26,7 @@ flowchart LR
     N -->|/api| F[API FastAPI]
     F --> S[Calcul du profil<br/>déterministe]
     F --> R[Recherche sémantique<br/>embeddings + NumPy]
-    R --> C[(Corpus<br/>~2 000 passages)]
+    R --> C[(Corpus<br/>~4 000 passages)]
     F --> L[Claude<br/>rédaction du résultat]
     L --> G{Garde-fou :<br/>citation exacte ?}
 ```
@@ -48,7 +48,7 @@ flowchart LR
 
 **Le site marche même sans IA.** Sans clé API, ou si Claude ne répond pas, l'API passe en « mode démo » et construit un résultat à partir de la grille et du corpus.
 
-**Recherche sémantique sans base vectorielle.** Pour ~2 000 passages, un simple produit matrice-vecteur NumPy (similarité cosinus) répond en quelques millisecondes. Une base comme pgvector n'apporterait rien à cette taille. Les détails sont dans [docs/RAG.md](docs/RAG.md).
+**Recherche sémantique sans base vectorielle.** Pour ~4 000 passages, un simple produit matrice-vecteur NumPy (similarité cosinus) répond en quelques millisecondes. Une base comme pgvector n'apporterait rien à cette taille. Les détails sont dans [docs/RAG.md](docs/RAG.md).
 
 **Des résultats variés.** La recherche part des mots de l'utilisateur, puis tire au sort parmi les passages les plus proches. Deux personnes du même profil ne reçoivent donc pas la même citation.
 

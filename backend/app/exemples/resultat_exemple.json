@@ -1,0 +1,87 @@
+{
+  "entree": {
+    "poste_actuel": "Développeur web en alternance",
+    "statut": "alternant",
+    "job_voulu": "Chef de projet"
+  },
+  "profil": {
+    "scores": [
+      {
+        "profil_id": "stoique",
+        "points": 12.0,
+        "points_max": 16,
+        "score": 0.75
+      },
+      {
+        "profil_id": "sceptique",
+        "points": 9.0,
+        "points_max": 18,
+        "score": 0.5
+      },
+      {
+        "profil_id": "batisseur",
+        "points": 3.0,
+        "points_max": 20,
+        "score": 0.15
+      },
+      {
+        "profil_id": "epicurien",
+        "points": 0.0,
+        "points_max": 20,
+        "score": 0.0
+      },
+      {
+        "profil_id": "createur",
+        "points": 0.0,
+        "points_max": 20,
+        "score": 0.0
+      },
+      {
+        "profil_id": "moraliste",
+        "points": 0.0,
+        "points_max": 18,
+        "score": 0.0
+      },
+      {
+        "profil_id": "contemplatif",
+        "points": 0.0,
+        "points_max": 18,
+        "score": 0.0
+      }
+    ],
+    "dominant": "stoique",
+    "secondaire": "sceptique",
+    "ecart": 0.25,
+    "mixte": false
+  },
+  "nom_profil": "Le stoïque",
+  "trait_dominant": "Sang-froid et maîtrise de soi",
+  "sortie": {
+    "metier_principal": {
+      "titre": "Contrôleur aérien",
+      "pourquoi": "Tu gardes ton calme quand tout s'accélère et tu vérifies avant d'agir : deux qualités au cœur de ce métier."
+    },
+    "metiers_alternatifs": [
+      {
+        "titre": "Gestionnaire de crise",
+        "pourquoi": "Ton sang-froid sert quand les autres paniquent."
+      },
+      {
+        "titre": "Auditeur",
+        "pourquoi": "Ton côté sceptique t'aide à repérer ce qui ne tient pas."
+      }
+    ],
+    "citation": {
+      "texte": "EXEMPLE — sera remplacé par un vrai passage tiré du corpus à l'étape 3.",
+      "auteur": "Épictète",
+      "livre": "Manuel",
+      "passage_id": "exemple-non-verifie"
+    },
+    "livre_a_lire": {
+      "titre": "Manuel",
+      "auteur": "Épictète",
+      "pourquoi": "Très court, et il met des mots sur ta façon de faire face aux imprévus."
+    },
+    "ecart_job_voulu": "Chef de projet te va aussi : ton calme rassure une équipe. Mais ton profil montre que tu es encore plus à l'aise quand la pression est forte et immédiate."
+  }
+}

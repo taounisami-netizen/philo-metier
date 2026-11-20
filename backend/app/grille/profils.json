@@ -1,0 +1,274 @@
+{
+  "version": 1,
+  "profils": [
+    {
+      "id": "stoique",
+      "nom": "Le stoïque",
+      "trait_dominant": "Sang-froid et maîtrise de soi",
+      "description": "Distingue ce qui dépend de lui de ce qui n'en dépend pas, garde son calme sous pression et agit avec constance.",
+      "philosophes": [
+        "Épictète",
+        "Marc Aurèle",
+        "Sénèque"
+      ],
+      "livres": [
+        {
+          "titre": "Manuel",
+          "auteur": "Épictète",
+          "traduction_suggeree": "Jean-Marie Guyau"
+        },
+        {
+          "titre": "Pensées",
+          "auteur": "Marc Aurèle",
+          "traduction_suggeree": "Alexis Pierron"
+        },
+        {
+          "titre": "Lettres à Lucilius",
+          "auteur": "Sénèque",
+          "traduction_suggeree": "Joseph Baillard"
+        }
+      ],
+      "metiers": [
+        "Médecin urgentiste",
+        "Pilote de ligne",
+        "Contrôleur aérien",
+        "Sapeur-pompier",
+        "Gestionnaire de crise",
+        "Négociateur"
+      ],
+      "mots_cles_rag": [
+        "ce qui dépend de nous",
+        "maîtrise des passions",
+        "constance face à l'adversité",
+        "accepter ce qui arrive"
+      ]
+    },
+    {
+      "id": "epicurien",
+      "nom": "L'épicurien",
+      "trait_dominant": "Goût des plaisirs simples et des liens",
+      "description": "Cherche une vie paisible, sans trouble inutile, nourrie par l'amitié et les plaisirs simples plutôt que par l'ambition.",
+      "philosophes": [
+        "Épicure",
+        "Lucrèce"
+      ],
+      "livres": [
+        {
+          "titre": "Lettre à Ménécée",
+          "auteur": "Épicure",
+          "traduction_suggeree": "Octave Hamelin"
+        },
+        {
+          "titre": "De la nature",
+          "auteur": "Lucrèce",
+          "traduction_suggeree": null
+        }
+      ],
+      "metiers": [
+        "Chef cuisinier",
+        "Artisan ébéniste",
+        "Paysagiste",
+        "Œnologue",
+        "Organisateur d'événements",
+        "Guide touristique"
+      ],
+      "mots_cles_rag": [
+        "plaisir et absence de trouble",
+        "amitié",
+        "désirs naturels et nécessaires",
+        "tranquillité de l'âme"
+      ]
+    },
+    {
+      "id": "sceptique",
+      "nom": "Le sceptique",
+      "trait_dominant": "Doute méthodique et esprit critique",
+      "description": "Ne croit rien sur parole, vérifie, compare les points de vue et accepte de suspendre son jugement.",
+      "philosophes": [
+        "Montaigne",
+        "Hume",
+        "Pyrrhon"
+      ],
+      "livres": [
+        {
+          "titre": "Essais",
+          "auteur": "Montaigne",
+          "traduction_suggeree": "original en français"
+        },
+        {
+          "titre": "Enquête sur l'entendement humain",
+          "auteur": "Hume",
+          "traduction_suggeree": null
+        }
+      ],
+      "metiers": [
+        "Journaliste d'investigation",
+        "Chercheur scientifique",
+        "Auditeur",
+        "Analyste en cybersécurité",
+        "Fact-checker",
+        "Data analyst"
+      ],
+      "mots_cles_rag": [
+        "suspendre son jugement",
+        "que sais-je",
+        "le doute",
+        "la coutume et l'habitude",
+        "les limites de la raison"
+      ]
+    },
+    {
+      "id": "batisseur",
+      "nom": "Le bâtisseur rationnel",
+      "trait_dominant": "Méthode, logique et organisation",
+      "description": "Avance par ordre, découpe les problèmes, construit des systèmes solides et aime que tout s'enchaîne logiquement.",
+      "philosophes": [
+        "Descartes",
+        "Spinoza",
+        "Leibniz"
+      ],
+      "livres": [
+        {
+          "titre": "Discours de la méthode",
+          "auteur": "Descartes",
+          "traduction_suggeree": "original en français"
+        },
+        {
+          "titre": "Éthique",
+          "auteur": "Spinoza",
+          "traduction_suggeree": "Émile Saisset"
+        }
+      ],
+      "metiers": [
+        "Ingénieur",
+        "Développeur logiciel",
+        "Architecte",
+        "Actuaire",
+        "Chef de projet",
+        "Data scientist"
+      ],
+      "mots_cles_rag": [
+        "la méthode",
+        "l'ordre des raisons",
+        "l'évidence",
+        "démonstration",
+        "l'enchaînement des causes"
+      ]
+    },
+    {
+      "id": "createur",
+      "nom": "Le créateur",
+      "trait_dominant": "Dépassement et affirmation de soi",
+      "description": "Veut créer ses propres règles, se dépasser et laisser une trace, quitte à bousculer l'ordre établi.",
+      "philosophes": [
+        "Nietzsche"
+      ],
+      "livres": [
+        {
+          "titre": "Ainsi parlait Zarathoustra",
+          "auteur": "Nietzsche",
+          "traduction_suggeree": "Henri Albert"
+        },
+        {
+          "titre": "Le Gai Savoir",
+          "auteur": "Nietzsche",
+          "traduction_suggeree": "Henri Albert"
+        }
+      ],
+      "metiers": [
+        "Entrepreneur",
+        "Réalisateur",
+        "Artiste",
+        "Designer",
+        "Directeur artistique",
+        "Athlète de haut niveau"
+      ],
+      "mots_cles_rag": [
+        "deviens ce que tu es",
+        "créer ses propres valeurs",
+        "dépassement de soi",
+        "volonté de puissance"
+      ]
+    },
+    {
+      "id": "moraliste",
+      "nom": "Le moraliste",
+      "trait_dominant": "Sens du devoir et de la justice",
+      "description": "Agit selon des principes, refuse l'injustice même quand elle l'arrange, et se sent responsable des autres.",
+      "philosophes": [
+        "Kant",
+        "Rousseau"
+      ],
+      "livres": [
+        {
+          "titre": "Fondements de la métaphysique des mœurs",
+          "auteur": "Kant",
+          "traduction_suggeree": "Henri Lachelier (1904, Wikisource)"
+        },
+        {
+          "titre": "Émile, ou De l'éducation",
+          "auteur": "Rousseau",
+          "traduction_suggeree": "original en français"
+        }
+      ],
+      "metiers": [
+        "Magistrat",
+        "Enseignant",
+        "Médecin",
+        "Avocat",
+        "Travailleur social",
+        "Responsable d'ONG"
+      ],
+      "mots_cles_rag": [
+        "le devoir",
+        "agir par principe",
+        "la dignité humaine",
+        "la justice",
+        "le bien commun"
+      ]
+    },
+    {
+      "id": "contemplatif",
+      "nom": "Le contemplatif",
+      "trait_dominant": "Quête de sens et vie intérieure",
+      "description": "A besoin de comprendre le pourquoi des choses, réfléchit beaucoup et cherche une vérité au-delà des apparences.",
+      "philosophes": [
+        "Platon",
+        "Pascal",
+        "Schopenhauer"
+      ],
+      "livres": [
+        {
+          "titre": "La République",
+          "auteur": "Platon",
+          "traduction_suggeree": "Victor Cousin"
+        },
+        {
+          "titre": "Pensées",
+          "auteur": "Pascal",
+          "traduction_suggeree": "original en français"
+        },
+        {
+          "titre": "Aphorismes sur la sagesse dans la vie",
+          "auteur": "Schopenhauer",
+          "traduction_suggeree": "Jean-Alexandre Cantacuzène"
+        }
+      ],
+      "metiers": [
+        "Psychologue",
+        "Écrivain",
+        "Chercheur en sciences humaines",
+        "Professeur de philosophie",
+        "Bibliothécaire",
+        "Musicien"
+      ],
+      "mots_cles_rag": [
+        "la quête de la vérité",
+        "la condition humaine",
+        "misère et grandeur de l'homme",
+        "les apparences",
+        "le sens de l'existence"
+      ]
+    }
+  ]
+}

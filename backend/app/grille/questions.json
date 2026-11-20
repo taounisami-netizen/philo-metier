@@ -1,0 +1,817 @@
+{
+  "version": 4,
+  "regles": "5 options par question. Chaque option donne 1 ou 2 points à un ou deux profils. Un profil n'apparaît jamais dans deux options d'une même question. L'utilisateur choisit 1 ou 2 options ; les points sont alors partagés entre ses choix.",
+  "questions": [
+    {
+      "id": "q01",
+      "theme": "Le dilemme du tramway",
+      "texte": "Un tramway sans frein fonce vers cinq personnes attachées sur la voie. Tu es à côté d'un aiguillage : si tu le tires, le tramway part sur l'autre voie, où une seule personne est attachée. Que fais-tu ?",
+      "illustration": "tramway",
+      "relance": "Et si, pour arrêter le tramway, il fallait pousser toi-même un inconnu sur la voie depuis une passerelle ? Ta réponse change-t-elle ? Pourquoi ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "Je tire, calmement. Sauver ces vies dépend de moi ; le reste ne dépend pas de moi.",
+          "poids": {
+            "stoique": 2
+          },
+          "echo": {
+            "philosophe": "Épictète",
+            "idee": "Ne t'occupe que de ce qui dépend de toi : ta propre conduite, ici et maintenant."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "Je ne touche à rien : je ne sais pas assez de choses pour décider qui doit mourir.",
+          "poids": {
+            "sceptique": 2
+          },
+          "echo": {
+            "philosophe": "Montaigne",
+            "idee": "Notre jugement est trop incertain pour trancher de ce qui nous dépasse."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "Je ne tire pas : je n'ai pas le droit de tuer quelqu'un, même pour en sauver cinq.",
+          "poids": {
+            "moraliste": 2
+          },
+          "echo": {
+            "philosophe": "Kant",
+            "idee": "Un être humain ne doit jamais être traité seulement comme un moyen."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "Je tire : cinq morts, c'est plus de souffrance qu'une seule. Le calcul est vite fait.",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "Peser les plaisirs et les peines pour choisir ce qui cause le moins de souffrance."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "Je tire, mais je me demanderai toute ma vie ce qui m'a donné le droit de choisir.",
+          "poids": {
+            "contemplatif": 2
+          },
+          "echo": {
+            "philosophe": "Pascal",
+            "idee": "Le cœur a ses raisons que la raison ne connaît point."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q02",
+      "theme": "La vérité",
+      "texte": "Un ami se cache chez toi. Un homme frappe à ta porte et te demande s'il est là. Si tu dis la vérité, il s'en prendra à ton ami. Si tu mens et qu'il le découvre, il s'en prendra à toi. Que fais-tu ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« Je ne mens pas, même là. Si on s'autorise à mentir quand ça arrange, plus aucune parole n'a de valeur. »",
+          "poids": {
+            "moraliste": 2
+          },
+          "echo": {
+            "philosophe": "Kant",
+            "idee": "Il n'existe pas de droit de mentir, même par humanité."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« Je dis la vérité. C'est dur, mais je ne vais pas risquer ma vie, même pour un ami. »",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "Le plus grand des biens est la prudence : peser les plaisirs et les peines, et fuir ce qui met en danger."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Je mens : aucune règle n'est assez sûre pour valoir dans tous les cas. »",
+          "poids": {
+            "sceptique": 2
+          },
+          "echo": {
+            "philosophe": "Montaigne",
+            "idee": "Il n'est rien de si universel que la diversité : aucune règle ne vaut partout."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Je mens, et c'est parfaitement logique : on ne doit la vérité qu'à ceux qui y ont droit. »",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Benjamin Constant",
+            "idee": "Dire la vérité n'est un devoir qu'envers ceux qui ont droit à la vérité."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« Je mens et j'assume le risque : c'est moi qui décide de ce qui est juste. »",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Nietzsche",
+            "idee": "Créer ses propres valeurs plutôt que recevoir celles du troupeau."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q03",
+      "theme": "Le bonheur",
+      "texte": "Une machine te propose de vivre le reste de ta vie dans une simulation parfaite : tu serais heureux en permanence, sans jamais savoir que ce n'est pas réel. Ta réponse ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« J'accepte : si je me sens bien, sans douleur ni angoisse, c'est tout ce qui compte. »",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "Le plaisir est l'absence de douleur dans le corps et de trouble dans l'âme."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« J'accepte, à condition de choisir qui je suis dedans : devenir celui que je n'ose pas être ici. »",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Nietzsche",
+            "idee": "Deviens ce que tu es : donner un style à son caractère."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Je refuse : un bonheur qui dépend d'une machine ne m'appartient pas. »",
+          "poids": {
+            "stoique": 2
+          },
+          "echo": {
+            "philosophe": "Épictète",
+            "idee": "Seul ce qui dépend de nous nous appartient vraiment."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Je refuse : je préfère une vérité difficile à une illusion agréable. »",
+          "poids": {
+            "contemplatif": 2
+          },
+          "echo": {
+            "philosophe": "Platon",
+            "idee": "Nous sommes comme des prisonniers qui prennent des ombres pour la réalité."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« Je ne sais pas : qui me dit que ma vie actuelle n'en est pas déjà une ? »",
+          "poids": {
+            "sceptique": 2
+          },
+          "echo": {
+            "philosophe": "Montaigne",
+            "idee": "Nous veillons dormants, et veillants dormons."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q04",
+      "theme": "La règle",
+      "texte": "Tu trouves un anneau qui te rend invisible à volonté. Personne ne pourra jamais savoir ce que tu fais quand tu le portes. Qu'en fais-tu ?",
+      "relance": "Avec tes mots : y a-t-il une chose que tu ferais invisible, mais jamais à visage découvert ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« Rien ne change : être juste n'a jamais dépendu du fait d'être vu. »",
+          "poids": {
+            "moraliste": 2
+          },
+          "echo": {
+            "philosophe": "Kant",
+            "idee": "Agir par devoir, et non par crainte du regard des autres."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« Je m'en sers pour vivre tout ce que la vraie vie m'interdit. Enfin sans masque. »",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Nietzsche",
+            "idee": "Par-delà le bien et le mal : vivre selon ses propres valeurs, pas selon celles du troupeau."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Je m'en sers, mais avec des règles strictes que je me fixe dès maintenant. »",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Descartes",
+            "idee": "Se donner une morale par provision : des règles fermes pour agir avant de tout savoir."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Je le garde sans m'en servir, pour comprendre ce que la tentation révèle de moi. »",
+          "poids": {
+            "contemplatif": 2
+          },
+          "echo": {
+            "philosophe": "Platon",
+            "idee": "L'anneau de Gygès : sommes-nous justes par nature, ou seulement par peur d'être vus ?"
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« Je le jette : un pouvoir pareil finirait par me posséder. »",
+          "poids": {
+            "stoique": 2
+          },
+          "echo": {
+            "philosophe": "Épictète",
+            "idee": "N'est pas libre celui qui est esclave de ses désirs."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q05",
+      "theme": "Le travail",
+      "texte": "On te propose cinq postes, tous au même salaire. Lequel choisis-tu ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "Concevoir un système complexe et le faire tourner, de A à Z.",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Descartes",
+            "idee": "Conduire ses pensées par ordre, des plus simples aux plus composées."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "Lancer un projet où tout est à inventer, avec beaucoup de risques.",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Nietzsche",
+            "idee": "Il faut porter encore en soi un chaos pour enfanter une étoile qui danse."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "Travailler dans une structure qui aide directement des gens en difficulté.",
+          "poids": {
+            "moraliste": 2
+          },
+          "echo": {
+            "philosophe": "Rousseau",
+            "idee": "La pitié naturelle nous porte à secourir ceux que nous voyons souffrir."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "Un poste tranquille, 4 jours par semaine, avec une équipe sympa… mais un travail ennuyeux.",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "Le bonheur tient à peu de choses : des amis, la liberté, une vie simple."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "Un poste de recherche où je passerais des années sur une seule grande question.",
+          "poids": {
+            "contemplatif": 2
+          },
+          "echo": {
+            "philosophe": "Platon",
+            "idee": "Sortir de la caverne pour contempler la vérité."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q06",
+      "theme": "L'échec",
+      "texte": "Tu as raté quelque chose d'important, et quelqu'un te lâche : « De toute façon, tu n'étais pas fait pour ça. » Quelle est la première pensée qui te traverse ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« Qu'est-ce qui a cloché, exactement ? »",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Descartes",
+            "idee": "Le bon sens est la chose du monde la mieux partagée : ce qui manque, c'est la méthode."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« Ce qu'il pense ne dépend pas de moi. Ce que je fais demain, si. »",
+          "poids": {
+            "stoique": 2
+          },
+          "echo": {
+            "philosophe": "Épictète",
+            "idee": "L'opinion des autres ne dépend pas de nous ; nos actes, si."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Et s'il avait raison ? Ce n'était peut-être pas ma voie. »",
+          "poids": {
+            "contemplatif": 2
+          },
+          "echo": {
+            "philosophe": "Platon",
+            "idee": "Connais-toi toi-même."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Sur quoi il se base ? Un seul échec ne prouve rien. »",
+          "poids": {
+            "sceptique": 2
+          },
+          "echo": {
+            "philosophe": "Hume",
+            "idee": "Aucun cas isolé ne permet de conclure avec certitude pour l'avenir."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« J'ai besoin de voir mes proches et de me changer les idées. »",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "L'amitié est le plus grand des biens que procure la sagesse."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q07",
+      "theme": "Le temps et la mort",
+      "texte": "Si tu savais qu'il te reste un an à vivre, qu'est-ce qui changerait le plus ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "Rien de radical : je resterais le même. La mort faisait partie du programme depuis le début.",
+          "poids": {
+            "stoique": 2
+          },
+          "echo": {
+            "philosophe": "Marc Aurèle",
+            "idee": "Accomplis chaque action comme si c'était la dernière de ta vie."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "Je viderais mon agenda : plus de contraintes, juste des repas, des voyages, les gens que j'aime.",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "La mort n'est rien pour nous : tant que nous sommes, elle n'est pas là."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "Je mettrais de l'ordre : régler mes conflits, transmettre ce que je sais, ne laisser personne dans la galère.",
+          "poids": {
+            "moraliste": 2
+          },
+          "echo": {
+            "philosophe": "Kant",
+            "idee": "Agir de façon à pouvoir se rendre compte à soi-même de sa conduite."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "J'aurais surtout besoin de comprendre : est-ce que tout ça avait un sens ?",
+          "poids": {
+            "contemplatif": 2
+          },
+          "echo": {
+            "philosophe": "Platon",
+            "idee": "Philosopher, c'est apprendre à mourir."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "Je quitterais tout pour faire la seule chose qui compte vraiment pour moi, quitte à choquer.",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Nietzsche",
+            "idee": "Vivre de telle sorte que tu veuilles revivre cette vie à l'infini."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q08",
+      "theme": "Le regard des autres",
+      "texte": "Tu dois choisir : être admiré de tous pour une œuvre que tu sais médiocre, ou incompris de tous pour une œuvre que tu sais excellente. Ton choix ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« Je fais l'œuvre excellente. Qu'on l'admire ou non ne dépend pas de moi, donc ne me regarde pas. »",
+          "poids": {
+            "stoique": 2
+          },
+          "echo": {
+            "philosophe": "Marc Aurèle",
+            "idee": "On s'aime soi-même plus que les autres, mais on fait plus de cas de leur opinion que de la sienne."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« L'œuvre excellente. On la comprendra un jour : certains naissent posthumes. »",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Nietzsche",
+            "idee": "Certains naissent posthumes : une œuvre peut être en avance sur son époque."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Je me méfierais de mon propre jugement : qui me dit que j'ai raison contre tous ? »",
+          "poids": {
+            "sceptique": 2
+          },
+          "echo": {
+            "philosophe": "Montaigne",
+            "idee": "Il n'est rien sur quoi le jugement des hommes soit plus divers."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Admiré, et sans remords. La gloire posthume, je ne serai plus là pour en profiter. »",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "La mort n'est rien pour nous : ce qui vient après elle ne nous touchera jamais."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« Admiré, et je m'en servirais ensuite pour faire connaître la vraie œuvre : c'est une question de stratégie. »",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Spinoza",
+            "idee": "Agir selon la raison, c'est chercher ce qui est réellement utile pour atteindre sa fin."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q09",
+      "theme": "Les passions",
+      "texte": "Une pilule, donnée à toute l'humanité, mettrait fin à toutes les guerres pour toujours. Le prix : plus personne ne ressentirait de colère, d'ambition ni d'esprit de rivalité. Tu la distribues ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« Oui, sans hésiter : une humanité raisonnable, c'est enfin un monde qu'on peut construire. »",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Hobbes",
+            "idee": "Sans un ordre fondé sur la raison, c'est la guerre de chacun contre chacun."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« Non : sans ambition ni rivalité, plus rien de grand ne naîtrait. »",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Héraclite",
+            "idee": "Le conflit est le père de toutes choses."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Non : la paix doit venir de chacun, par la maîtrise de soi, pas d'une pilule. »",
+          "poids": {
+            "stoique": 2
+          },
+          "echo": {
+            "philosophe": "Sénèque",
+            "idee": "La colère n'est pas une fatalité : on s'en guérit par la raison et l'exercice."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Je n'ose pas : qui sait ce qu'on perdrait d'autre avec la colère ? »",
+          "poids": {
+            "sceptique": 2
+          },
+          "echo": {
+            "philosophe": "Montaigne",
+            "idee": "Nos défauts sont mêlés à ce qui nous fait vivre : qui les arracherait détruirait les fondements de notre vie."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« Non : je n'ai pas le droit de changer l'esprit des gens sans leur accord, même pour la paix. »",
+          "poids": {
+            "moraliste": 2
+          },
+          "echo": {
+            "philosophe": "Kant",
+            "idee": "Traiter l'humanité toujours comme une fin, jamais simplement comme un moyen."
+          }
+        }
+      ],
+      "relance": "Avec tes mots : y a-t-il une passion que tu refuserais de perdre, même pour la paix ?"
+    },
+    {
+      "id": "q10",
+      "theme": "La liberté",
+      "texte": "Une expérience prouve que toutes tes décisions sont prévisibles quelques secondes avant que tu en aies conscience. Ta réaction ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« Ça ne me dérange pas : comprendre les causes qui me font agir, c'est justement ça, être libre. »",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Spinoza",
+            "idee": "Les hommes se croient libres parce qu'ils ignorent les causes qui les déterminent."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« J'attends de voir : une seule expérience ne prouve pas grand-chose sur une question aussi vaste. »",
+          "poids": {
+            "sceptique": 2
+          },
+          "echo": {
+            "philosophe": "Hume",
+            "idee": "Le sage proportionne sa croyance aux preuves dont il dispose."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Je ferais exprès l'inverse de la prédiction, juste pour voir. »",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Dostoïevski",
+            "idee": "L'homme préfère parfois agir contre son intérêt, pour prouver qu'il est un homme et non une touche de piano."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Peu importe : je dois agir comme si j'étais libre, sinon plus personne n'est responsable de rien. »",
+          "poids": {
+            "moraliste": 2
+          },
+          "echo": {
+            "philosophe": "Kant",
+            "idee": "La liberté est le postulat sans lequel la morale n'aurait aucun sens."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« C'est vertigineux : alors qui est ce « moi » qui croit choisir ? »",
+          "poids": {
+            "contemplatif": 2
+          },
+          "echo": {
+            "philosophe": "Schopenhauer",
+            "idee": "L'homme peut faire ce qu'il veut, mais il ne peut pas vouloir ce qu'il veut."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "theme": "Le savoir",
+      "texte": "On t'offre la réponse certaine à une seule grande question, mais tu ne pourras jamais l'expliquer ni la prouver à personne. Laquelle choisis-tu ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« Pourquoi il y a quelque chose plutôt que rien. »",
+          "poids": {
+            "contemplatif": 2
+          },
+          "echo": {
+            "philosophe": "Leibniz",
+            "idee": "Pourquoi y a-t-il plutôt quelque chose que rien ?"
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« Aucune : un savoir que je ne pourrais ni vérifier ni partager, je m'en méfierais. »",
+          "poids": {
+            "sceptique": 2
+          },
+          "echo": {
+            "philosophe": "Montaigne",
+            "idee": "Que sais-je ?"
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Comment fonctionne l'univers, de ses lois les plus simples aux plus complexes. »",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Descartes",
+            "idee": "Toute la philosophie est comme un arbre dont les racines sont la métaphysique et le tronc la physique."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Ce qui est vraiment juste : comment nous devrions vivre ensemble. »",
+          "poids": {
+            "moraliste": 2
+          },
+          "echo": {
+            "philosophe": "Rousseau",
+            "idee": "Trouver une forme d'association où chacun, s'unissant à tous, n'obéisse qu'à lui-même."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« Aucune : porter seul un tel secret me gâcherait la vie. »",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "Il faut fuir ce qui trouble l'âme : le savoir vaut par la sérénité qu'il apporte."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "theme": "Le désir",
+      "texte": "Un génie t'offre de réaliser tous tes désirs actuels, à une condition : tu ne pourras plus jamais rien désirer de nouveau. Ta réponse ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« J'accepte : vivre comblé, sans manque, c'est la tranquillité parfaite. »",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "Le plaisir est l'absence de douleur dans le corps et de trouble dans l'âme."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« Je refuse : c'est le désir qui me fait avancer, pas la satisfaction. »",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Nietzsche",
+            "idee": "La volonté de puissance : la vie veut toujours se dépasser elle-même."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Je négocie : je choisis avec soin quelques désirs à réaliser, et je garde les autres. »",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Spinoza",
+            "idee": "Le désir est l'essence même de l'homme ; la raison l'oriente."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Je refuse : une fois comblé, je m'ennuierais à mourir. »",
+          "poids": {
+            "contemplatif": 2
+          },
+          "echo": {
+            "philosophe": "Schopenhauer",
+            "idee": "La vie oscille, comme un pendule, entre la souffrance et l'ennui."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« Je refuse : je préfère apprendre à désirer moins qu'obtenir plus. »",
+          "poids": {
+            "stoique": 2
+          },
+          "echo": {
+            "philosophe": "Épictète",
+            "idee": "Ne demande pas que les choses arrivent comme tu le veux, mais veuille-les comme elles arrivent."
+          }
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "theme": "Le devoir envers les autres",
+      "texte": "Tu gagnes 1 million d'euros au loto. Tu apprends qu'avec cette somme, une association reconnue pourrait sauver environ 200 vies. Qu'en fais-tu ?",
+      "relance": "Avec tes mots : à partir de quelle somme garder son argent devient-il injuste ?",
+      "options": [
+        {
+          "id": "a",
+          "texte": "« Je donne presque tout : 200 vies valent plus que mon confort. »",
+          "poids": {
+            "moraliste": 2
+          },
+          "echo": {
+            "philosophe": "Peter Singer",
+            "idee": "Si l'on peut empêcher un grand mal sans sacrifier rien d'important, on doit le faire."
+          }
+        },
+        {
+          "id": "b",
+          "texte": "« Je garde de quoi vivre sans soucis, un toit, pas de dettes, et je donne le reste : le bonheur demande peu. »",
+          "poids": {
+            "epicurien": 2
+          },
+          "echo": {
+            "philosophe": "Épicure",
+            "idee": "Qui ne se contente pas de peu ne se contentera de rien."
+          }
+        },
+        {
+          "id": "c",
+          "texte": "« Je place l'argent et je donne les intérêts chaque année : à long terme, ça sauvera plus de monde. »",
+          "poids": {
+            "batisseur": 2
+          },
+          "echo": {
+            "philosophe": "Leibniz",
+            "idee": "Chercher, parmi tous les possibles, celui qui produit le plus grand bien."
+          }
+        },
+        {
+          "id": "d",
+          "texte": "« Je garde tout : c'est ma chance de construire la vie que je veux. Je ne suis pas responsable de toute la misère du monde. »",
+          "poids": {
+            "createur": 2
+          },
+          "echo": {
+            "philosophe": "Nietzsche",
+            "idee": "La pitié affaiblit celui qui l'éprouve : il faut d'abord devenir soi-même."
+          }
+        },
+        {
+          "id": "e",
+          "texte": "« Je me méfie : qui me garantit que ces 200 vies seront vraiment sauvées ? »",
+          "poids": {
+            "sceptique": 2
+          },
+          "echo": {
+            "philosophe": "Hume",
+            "idee": "Une promesse n'est pas une preuve : seule l'expérience nous apprend ce qui arrive vraiment."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Dépendances lourdes (PyTorch, ~1 Go) : seulement pour vectoriser et rechercher.
+-r requirements.txt
+sentence-transformers>=3.0

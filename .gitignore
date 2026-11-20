@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+
+# Système et éditeur
+.DS_Store
+.vscode/
+
+# Corpus téléchargé et vecteurs : se régénèrent avec les scripts d'ingestion
+backend/corpus/
+
+# Secrets (clé API) : aucun fichier .env ne doit partir sur GitHub
+.env
+.env.*
+!.env.example
+
+# Next.js
+frontend/node_modules/
+frontend/.next/
+*.tsbuildinfo

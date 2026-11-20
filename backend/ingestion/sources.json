@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "note": "Corpus de départ : au moins un auteur par profil. Wikisource FR n'héberge que des textes du domaine public en France. Pour Gutenberg (domaine public aux États-Unis), vérifier aussi le droit français.",
+  "livres": [
+    {
+      "id": "epictete-manuel",
+      "auteur": "Épictète",
+      "titre": "Manuel (et pensées rapportées par Stobée)",
+      "traducteur": "Jean-Marie Guyau (1854-1888)",
+      "source": {
+        "type": "wikisource",
+        "page": "Manuel d’Épictète (trad. Guyau)",
+        "inclure": "/(Manuel|Pensées d’Épictète rapportées par Stobée)$"
+      }
+    },
+    {
+      "id": "epicure-menecee",
+      "auteur": "Épicure",
+      "titre": "Lettre à Ménécée",
+      "traducteur": "Octave Hamelin (1856-1907)",
+      "source": {
+        "type": "wikisource",
+        "page": "Lettre à Ménécée (traduction O. Hamelin)"
+      }
+    },
+    {
+      "id": "montaigne-essais",
+      "auteur": "Montaigne",
+      "titre": "Essais",
+      "traducteur": null,
+      "source": {
+        "type": "wikisource",
+        "prefixe": "Essais/Livre ",
+        "inclure": "^Essais/Livre (I|II|III)/Chapitre \\d+$"
+      }
+    },
+    {
+      "id": "descartes-discours",
+      "auteur": "Descartes",
+      "titre": "Discours de la méthode",
+      "traducteur": null,
+      "source": {
+        "type": "wikisource",
+        "page": "Discours de la méthode (éd. Cousin)"
+      }
+    },
+    {
+      "id": "nietzsche-zarathoustra",
+      "auteur": "Nietzsche",
+      "titre": "Ainsi parlait Zarathoustra",
+      "traducteur": "Henri Albert (1869-1921)",
+      "source": {
+        "type": "wikisource",
+        "page": "Ainsi parlait Zarathoustra (édition 1898)",
+        "exclure": "Notes"
+      }
+    },
+    {
+      "id": "kant-fondements",
+      "auteur": "Kant",
+      "titre": "Fondements de la métaphysique des mœurs",
+      "traducteur": "Henri Lachelier (1904) — dates à vérifier",
+      "source": {
+        "type": "wikisource",
+        "page": "Fondements de la métaphysique des mœurs (trad. Lachelier 1904)",
+        "inclure": "/(Préface|S1|S2|S3)$"
+      }
+    },
+    {
+      "id": "platon-republique",
+      "auteur": "Platon",
+      "titre": "La République",
+      "traducteur": "Victor Cousin (1792-1867)",
+      "source": {
+        "type": "wikisource",
+        "page": "La République (trad. Cousin)",
+        "inclure": "\\(trad\\. Cousin\\)/Livre [a-zéè]+$"
+      }
+    },
+    {
+      "id": "schopenhauer-aphorismes",
+      "auteur": "Schopenhauer",
+      "titre": "Aphorismes sur la sagesse dans la vie",
+      "traducteur": "Jean-Alexandre Cantacuzène (1829-1897)",
+      "source": {
+        "type": "gutenberg",
+        "id": 35444
+      }
+    },
+    {
+      "id": "marc-aurele-pensees",
+      "auteur": "Marc Aurèle",
+      "titre": "Pensées pour moi-même",
+      "traducteur": "Jules Barthélemy-Saint-Hilaire (1805-1895)",
+      "source": {
+        "type": "wikisource",
+        "prefixe": "Pensées pour moi-même/Livre ",
+        "inclure": "^Pensées pour moi-même/Livre [IVX]+$"
+      }
+    },
+    {
+      "id": "seneque-brievete",
+      "auteur": "Sénèque",
+      "titre": "De la brièveté de la vie",
+      "traducteur": "Joseph-Pierre Charpentier (1797-1878)",
+      "source": {
+        "type": "wikisource",
+        "prefixe": "De la brièveté de la vie/Traduction Charpentier"
+      }
+    },
+    {
+      "id": "seneque-tranquillite",
+      "auteur": "Sénèque",
+      "titre": "De la tranquillité de l’âme",
+      "traducteur": "Charles Du Rozoir (1790-1852)",
+      "source": {
+        "type": "wikisource",
+        "prefixe": "Sur la tranquillité de l’âme"
+      }
+    },
+    {
+      "id": "lucrece-nature",
+      "auteur": "Lucrèce",
+      "titre": "De la nature des choses",
+      "traducteur": "André Lefèvre (1834-1904)",
+      "source": {
+        "type": "wikisource",
+        "prefixe": "De la nature des choses (traduction Lefèvre)/"
+      }
+    },
+    {
+      "id": "spinoza-ethique",
+      "auteur": "Spinoza",
+      "titre": "Éthique",
+      "traducteur": "Charles Appuhn (1862-1942)",
+      "source": {
+        "type": "wikisource",
+        "prefixe": "Éthique (Appuhn, 1913)/",
+        "inclure": "partie"
+      }
+    },
+    {
+      "id": "nietzsche-gai-savoir",
+      "auteur": "Nietzsche",
+      "titre": "Le Gai Savoir",
+      "traducteur": "Henri Albert (1869-1921)",
+      "source": {
+        "type": "wikisource",
+        "prefixe": "Le Gai Savoir/",
+        "inclure": "/(Avant-propos|Livre .+)$"
+      }
+    },
+    {
+      "id": "nietzsche-par-dela",
+      "auteur": "Nietzsche",
+      "titre": "Par-delà le bien et le mal",
+      "traducteur": "Henri Albert (1869-1921)",
+      "source": {
+        "type": "wikisource",
+        "prefixe": "Par delà le bien et le mal/",
+        "inclure": "/(Avant-propos|Chapitre .+)$"
+      }
+    },
+    {
+      "id": "rousseau-emile",
+      "auteur": "Rousseau",
+      "titre": "Émile, ou De l’éducation",
+      "traducteur": null,
+      "source": {
+        "type": "wikisource",
+        "prefixe": "Émile, ou De l’éducation/Édition 1852/",
+        "inclure": "/(Préface|Livre [IV]+)$"
+      }
+    },
+    {
+      "id": "pascal-pensees",
+      "auteur": "Pascal",
+      "titre": "Pensées",
+      "traducteur": "éd. Léon Brunschvicg (1869-1944)",
+      "source": {
+        "type": "wikisource",
+        "prefixe": "Pensées (Pascal, éd. Brunschvicg)/"
+      }
+    }
+  ]
+}

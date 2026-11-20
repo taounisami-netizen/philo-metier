@@ -1,0 +1,188 @@
+:root {
+  --papier: #eef0ec;      /* gris-vert froid, comme une page ancienne bien conservée */
+  --papier-fonce: #e2e6e0;
+  --encre: #1f2b2e;       /* ardoise */
+  --encre-douce: #4d5a5c;
+  --trait: #c3cbc4;
+  --vert-de-gris: #3e7a70; /* patine du bronze */
+  --vert-de-gris-fonce: #2c5c54;
+  --erreur: #8a3b2e;
+  --carte: #f8f9f6;        /* fond des réponses, plus clair que la page */
+  --choisi: #dfeae6;       /* fond d'une réponse choisie, teinté vert-de-gris */
+
+  --mesure: 36rem;         /* longueur de ligne : ~65 caractères */
+  --interligne: 1.65;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--papier); color: var(--encre); }
+
+body {
+  margin: 0;
+  font-family: "Spectral", Georgia, serif;
+  font-size: 1.1875rem;     /* 19px */
+  line-height: var(--interligne);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: var(--mesure);
+  margin: 0 auto;
+  padding: 4.5rem 1.5rem 6rem;
+}
+
+h1, h2, h3 { font-weight: 300; line-height: 1.15; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.4rem, 6vw, 3.4rem); }
+h2 { font-size: 1.9rem; }
+h3 { font-size: 1.25rem; font-weight: 600; letter-spacing: 0; }
+
+p { margin: 0 0 1em; }
+.douce { color: var(--encre-douce); }
+.petite { font-size: 0.95rem; }
+
+a { color: var(--vert-de-gris-fonce); text-underline-offset: 0.18em; }
+
+/* --- Formulaires -------------------------------------------------------- */
+
+label { display: block; font-size: 1rem; margin-bottom: 0.35rem; }
+.indication { font-size: 0.9rem; color: var(--encre-douce); font-style: italic; }
+
+input[type="text"], select, textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 1.05rem;
+  color: var(--encre);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--encre-douce);
+  border-radius: 0;
+  padding: 0.4rem 0;
+  appearance: none;
+}
+textarea { border: 1px solid var(--trait); padding: 0.6rem 0.75rem; min-height: 5.5rem; resize: vertical; line-height: 1.5; }
+select { background-image: linear-gradient(45deg, transparent 50%, var(--encre) 50%), linear-gradient(135deg, var(--encre) 50%, transparent 50%);
+  background-position: calc(100% - 12px) 55%, calc(100% - 6px) 55%; background-size: 6px 6px; background-repeat: no-repeat; }
+
+:focus-visible { outline: 2px solid var(--vert-de-gris); outline-offset: 3px; }
+
+.champ { margin-bottom: 2rem; }
+.erreur { color: var(--erreur); font-size: 0.95rem; margin-top: 0.4rem; }
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.bouton {
+  background: var(--encre);
+  color: var(--papier);
+  border: 1px solid var(--encre);
+  padding: 0.6rem 1.4rem;
+  font-size: 1.05rem;
+}
+.bouton:hover { background: var(--vert-de-gris-fonce); border-color: var(--vert-de-gris-fonce); }
+.bouton:disabled { opacity: 0.4; cursor: not-allowed; background: var(--encre); }
+.lien-bouton {
+  background: none; border: none; padding: 0.6rem 0; color: var(--encre-douce);
+  text-decoration: underline; text-underline-offset: 0.2em; font-size: 1rem;
+}
+
+/* --- Accueil ------------------------------------------------------------ */
+
+.accueil h1 { margin-bottom: 1.5rem; }
+.accueil .chapeau { font-size: 1.3rem; font-weight: 300; margin-bottom: 1.5rem; }
+.accueil .regle { margin-bottom: 3rem; padding-left: 1rem; border-left: 3px solid var(--vert-de-gris); }
+.accueil .regle strong { font-weight: 600; }
+
+/* --- Questionnaire ------------------------------------------------------ */
+
+.avancement { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.95rem; color: var(--encre-douce); }
+.barre { height: 2px; background: var(--trait); margin: 0.6rem 0 3.5rem; }
+.barre > div { height: 100%; background: var(--vert-de-gris); transition: width 0.4s ease; }
+
+.illustration { margin: 0 0 2rem; }
+.illustration svg { display: block; width: 100%; height: auto; }
+
+.theme { font-style: italic; color: var(--vert-de-gris-fonce); font-size: 1.05rem; margin-bottom: 0.75rem; }
+/* La question : le texte le plus foncé et le plus marqué de la page. */
+.question-texte { font-size: 1.75rem; font-weight: 400; line-height: 1.35; color: var(--encre); margin-bottom: 0.9rem; }
+.consigne { font-size: 0.95rem; font-style: italic; color: var(--encre-douce); margin-bottom: 2rem; }
+
+/* Les réponses : des cartes claires, cadrées, clairement cliquables. */
+.options { list-style: none; margin: 0 0 2.25rem; padding: 0; display: grid; gap: 0.65rem; }
+.option {
+  display: block; width: 100%; text-align: left;
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-left: 4px solid var(--trait);
+  border-radius: 4px;
+  padding: 0.9rem 1.1rem;
+  font-size: 1.05rem; line-height: 1.5; color: var(--encre);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+@media (hover: hover) {
+  .option:not(:disabled):not([aria-pressed="true"]):hover { border-color: var(--encre-douce); background: #fff; }
+}
+/* L'élément marquant : la réponse choisie, soulignée dans la marge comme au crayon. */
+.option[aria-pressed="true"] {
+  border-color: var(--vert-de-gris);
+  border-left-color: var(--vert-de-gris);
+  background: var(--choisi);
+}
+.option:disabled { color: var(--encre-douce); background: transparent; cursor: not-allowed; }
+
+.relance { margin-bottom: 2.5rem; }
+.navigation { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+
+/* --- Chargement --------------------------------------------------------- */
+
+.attente { padding-top: 8vh; }
+.attente p { font-size: 1.3rem; font-weight: 300; font-style: italic; }
+@media (prefers-reduced-motion: no-preference) {
+  .attente p { animation: respiration 2.4s ease-in-out infinite; }
+}
+@keyframes respiration { 50% { opacity: 0.45; } }
+
+/* --- Résultat ----------------------------------------------------------- */
+
+.resultat .profil { margin-bottom: 0.5rem; }
+.resultat .trait { font-size: 1.3rem; font-weight: 300; font-style: italic; margin-bottom: 3rem; }
+
+.citation {
+  margin: 0 0 3.5rem;
+  padding: 0 0 0 1.5rem;
+  border-left: 3px solid var(--vert-de-gris);
+}
+.citation blockquote { margin: 0 0 0.75rem; font-size: 1.45rem; font-weight: 300; font-style: italic; line-height: 1.45; }
+.citation figcaption { font-size: 0.95rem; color: var(--encre-douce); }
+
+.bloc { margin-bottom: 3rem; }
+.bloc h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--encre-douce); }
+.metier { font-size: 2rem; font-weight: 300; line-height: 1.2; margin-bottom: 0.75rem; }
+.alternatifs { list-style: none; padding: 0; margin: 0; }
+.alternatifs li { padding: 0.8rem 0; border-top: 1px solid var(--trait); }
+.alternatifs li:last-child { border-bottom: 1px solid var(--trait); }
+.alternatifs strong { font-weight: 600; }
+
+.scores { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
+.scores li { display: grid; grid-template-columns: 11rem 1fr 2.5rem; gap: 0.75rem; align-items: center; padding: 0.2rem 0; }
+.scores .jauge { height: 4px; background: var(--trait); }
+.scores .jauge > div { height: 100%; background: var(--encre-douce); }
+.scores li.dominant .jauge > div { background: var(--vert-de-gris); }
+.scores .valeur { text-align: right; font-variant-numeric: tabular-nums; color: var(--encre-douce); }
+
+.echos { list-style: none; padding: 0; margin: 0; }
+.echos li { margin-bottom: 0.9rem; }
+.echos em { color: var(--encre-douce); }
+
+.note-demo { font-size: 0.9rem; color: var(--encre-douce); border-top: 1px solid var(--trait); padding-top: 1rem; margin-top: 3rem; }
+
+@media (max-width: 520px) {
+  .option { padding: 0.8rem 0.9rem; }
+  body { font-size: 1.0625rem; }
+  .page { padding-top: 2.5rem; }
+  .question-texte { font-size: 1.4rem; }
+  .scores li { grid-template-columns: 8.5rem 1fr 2.5rem; }
+}

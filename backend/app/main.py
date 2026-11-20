@@ -10,13 +10,16 @@ Routes :
     POST /api/resultat      réponses → profil + passages + résultat rédigé
 """
 
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from .generation import echos_choisis, generer, llm_disponible, passages_pour
+from .protection import Limiteur, cle_interne_valide, ip_du_client
 from .rag import CorpusIntrouvable, Recherche
 from .schemas import (
     DemandeResultat,
@@ -48,6 +51,7 @@ etat: dict = {}
 @asynccontextmanager
 async def demarrage(app: FastAPI):
     etat["grille"] = charger_grille()
+    etat["limiteur"] = Limiteur()
     try:
         etat["recherche"] = Recherche()
         print(f"[api] corpus chargé : {len(etat['recherche'].passages)} passages")
@@ -58,10 +62,28 @@ async def demarrage(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Philo-métier", lifespan=demarrage)
-app.add_middleware(  # le site Next.js tourne sur le port 3000
-    CORSMiddleware, allow_origins=["http://localhost:3000"], allow_methods=["*"], allow_headers=["*"],
+# En ligne (PRODUCTION=1) : pas de documentation publique de l'API, et /api/sante en dit le moins possible.
+PRODUCTION = os.environ.get("PRODUCTION") == "1"
+app = FastAPI(
+    title="Philo-métier", lifespan=demarrage,
+    docs_url=None if PRODUCTION else "/docs",
+    redoc_url=None if PRODUCTION else "/redoc",
+    openapi_url=None if PRODUCTION else "/openapi.json",
 )
+# Le navigateur parle au site Next.js, qui relaie vers l'API côté serveur : l'API n'a besoin
+# d'accepter que l'adresse du site. CORS_ORIGINS = liste séparée par des virgules.
+ORIGINES = [o.strip() for o in os.environ.get("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",") if o.strip()]
+app.add_middleware(
+    CORSMiddleware, allow_origins=ORIGINES, allow_methods=["GET", "POST"], allow_headers=["Content-Type"],
+)
+
+
+@app.middleware("http")
+async def seulement_depuis_le_site(request: Request, appel_suivant):
+    """En ligne, refuse toute requête /api qui ne vient pas du site (voir protection.py)."""
+    if request.url.path.startswith("/api") and not cle_interne_valide(request):
+        return JSONResponse({"detail": "Accès refusé."}, status_code=403)
+    return await appel_suivant(request)
 
 
 def get_grille():
@@ -76,6 +98,8 @@ def get_recherche():
 
 @app.get("/api/sante")
 def sante():
+    if PRODUCTION:
+        return {"ok": True}
     recherche = etat.get("recherche")
     return {
         "ok": True,
@@ -98,7 +122,10 @@ def questionnaire(grille=Depends(get_grille)):
 
 
 @app.post("/api/resultat", response_model=Resultat)
-def resultat(demande: DemandeResultat, grille=Depends(get_grille), recherche=Depends(get_recherche)):
+def resultat(demande: DemandeResultat, request: Request,
+             grille=Depends(get_grille), recherche=Depends(get_recherche)):
+    if not etat["limiteur"].autoriser(ip_du_client(request)):
+        raise HTTPException(429, "Trop de demandes depuis ton adresse. Réessaie dans une minute.")
     try:
         analyse = calculer_profil(grille, demande.reponses)
     except ReponsesInvalides as e:
@@ -106,7 +133,9 @@ def resultat(demande: DemandeResultat, grille=Depends(get_grille), recherche=Dep
     passages = passages_pour(recherche, grille, analyse, demande.reponses)
     if not passages:
         raise HTTPException(503, "Aucun passage trouvé pour ce profil dans le corpus.")
-    sortie, mode = generer(grille, demande.entree, analyse, demande.reponses, passages)
+    # Budget Claude du jour : au-delà, le résultat est construit en mode démo (gratuit).
+    llm_autorise = llm_disponible() and etat["limiteur"].reserver_appel_llm()
+    sortie, mode = generer(grille, demande.entree, analyse, demande.reponses, passages, llm_autorise)
     dominant = grille.profil(analyse.dominant)
     return Resultat(
         entree=demande.entree,

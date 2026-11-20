@@ -38,7 +38,7 @@ flowchart LR
 | Recherche (RAG) | sentence-transformers (`multilingual-e5-small`), NumPy | Trouver les passages qui ressemblent aux réponses |
 | Rédaction | API Claude (Anthropic) | Écrire le portrait, choisir le métier et la citation |
 | Corpus | Wikisource, Projet Gutenberg | Textes de philosophie du domaine public |
-| Tests | pytest | 90 tests (calcul, ingestion, API) |
+| Tests | pytest | 104 tests (calcul, ingestion, API, sécurité) |
 
 ## Les choix techniques
 
@@ -49,6 +49,8 @@ flowchart LR
 **Le site marche même sans IA.** Sans clé API, ou si Claude ne répond pas, l'API passe en « mode démo » et construit un résultat à partir de la grille et du corpus.
 
 **Recherche sémantique sans base vectorielle.** Pour ~4 000 passages, un simple produit matrice-vecteur NumPy (similarité cosinus) répond en quelques millisecondes. Une base comme pgvector n'apporterait rien à cette taille. Les détails sont dans [docs/RAG.md](docs/RAG.md).
+
+**Sécurisé pour être public.** La clé API ne quitte jamais le serveur, chaque visiteur est limité en nombre de résultats, un plafond quotidien protège le budget, et seul le site peut appeler l'API. L'audit complet et ses tests sont dans [docs/SECURITE.md](docs/SECURITE.md).
 
 **Des résultats variés.** La recherche part des mots de l'utilisateur, puis tire au sort parmi les passages les plus proches. Deux personnes du même profil ne reçoivent donc pas la même citation.
 
@@ -97,15 +99,16 @@ backend/
 │   ├── scoring.py         # calcul du profil + vérification de la grille
 │   ├── rag.py             # recherche sémantique dans le corpus
 │   ├── generation.py      # appel à Claude, garde-fou des citations, mode démo
+│   ├── protection.py      # limites de requêtes, budget Claude, clé interne
 │   ├── schemas.py         # modèles Pydantic
 │   └── main.py            # routes FastAPI
 ├── ingestion/             # télécharger → nettoyer → découper → vectoriser
 └── tests/
 frontend/
-├── app/                   # pages Next.js
+├── app/                   # pages Next.js + relais sécurisé vers l'API (app/api)
 ├── components/            # illustrations SVG
 └── lib/api.ts             # appels à l'API
-docs/                      # le calcul du profil, le RAG, les captures
+docs/                      # le calcul du profil, le RAG, l'audit de sécurité, les captures
 ```
 
 ## Les textes

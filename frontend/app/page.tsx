@@ -325,7 +325,7 @@ function PageResultat({ resultat, recommencer }: { resultat: Resultat; recommenc
             <>
               {" "}
               (
-              <a href={sortie.citation.url} target="_blank" rel="noreferrer">
+              <a href={sortie.citation.url} target="_blank" rel="noopener noreferrer">
                 lire le passage
               </a>
               )

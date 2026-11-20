@@ -146,8 +146,10 @@ class Entree(BaseModel):
 class Reponse(BaseModel):
     """Une réponse peut contenir 1 ou plusieurs options (max : scoring.MAX_CHOIX)."""
 
-    question_id: str
-    option_ids: list[str] = Field(min_length=1)
+    question_id: str = Field(max_length=10)
+    # Bornes larges mais finies : un visiteur ne peut pas envoyer 100 000 options
+    # (le scoring vérifie ensuite la vraie limite, MAX_CHOIX).
+    option_ids: list[str] = Field(min_length=1, max_length=5)
     # Réponse libre à la relance (facultative, non comptée dans le score).
     texte_libre: str | None = Field(default=None, max_length=500)
 
@@ -185,6 +187,9 @@ class Metier(BaseModel):
     pourquoi: str
 
 
+SOURCES_AUTORISEES = ("https://fr.wikisource.org/", "https://www.gutenberg.org/")
+
+
 class Citation(BaseModel):
     texte: str
     auteur: str
@@ -193,6 +198,14 @@ class Citation(BaseModel):
     # que la citation existe vraiment dans le corpus (anti-hallucination).
     passage_id: str
     url: str | None = None
+
+    @field_validator("url")
+    @classmethod
+    def seulement_nos_sources(cls, valeur: str | None) -> str | None:
+        """Le lien « lire le passage » ne peut pointer que vers nos sources (pas de javascript:…)."""
+        if valeur and not valeur.startswith(SOURCES_AUTORISEES):
+            return None
+        return valeur
 
 
 class LivreConseille(BaseModel):
@@ -270,4 +283,4 @@ class Questionnaire(BaseModel):
 
 class DemandeResultat(BaseModel):
     entree: Entree
-    reponses: list[Reponse]
+    reponses: list[Reponse] = Field(max_length=30)

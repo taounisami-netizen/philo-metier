@@ -11,12 +11,14 @@ Un questionnaire de 13 expériences de pensée (le dilemme du tramway, l'anneau 
 ## Ce que fait le site
 
 1. Tu indiques ton poste actuel, ton statut et, si tu veux, le métier dont tu rêves.
-2. Tu réponds à 13 dilemmes philosophiques. Chaque réponse oblige à choisir une priorité, et tu peux nuancer en écrivant avec tes mots.
-3. Tu obtiens :
+2. Facultatif : tu décris ta **problématique** (« je veux quitter l'hôpital sans reprendre de longues études ») et tes **moyens** (temps, budget, délai, diplôme, mobilité, contrainte).
+3. Tu réponds à 13 dilemmes philosophiques. Chaque réponse oblige à choisir une priorité, et tu peux nuancer en écrivant avec tes mots.
+4. Tu obtiens :
    - ton **profil** parmi 7 (stoïque, épicurien, sceptique, bâtisseur, créateur, moraliste, contemplatif) et ton trait dominant ;
    - le **philosophe** qui te ressemble, et une **citation exacte** tirée de ses livres, avec le lien vers le passage ;
    - le **métier** que tu aurais pu faire, deux alternatives, et l'écart avec le métier que tu vises ;
-   - un **livre** à lire.
+   - un **livre** à lire ;
+   - si tu as posé une problématique : un **diagnostic**, 2 ou 3 **pistes réalistes avec tes moyens** (durée, coût, financements, premières étapes), **une recommandation tranchée** et les risques à vérifier. Tes moyens filtrent ce qui est réaliste, ton profil philosophique choisit la piste qui te ressemble.
 
 ## Architecture
 
@@ -38,7 +40,7 @@ flowchart LR
 | Recherche (RAG) | sentence-transformers (`multilingual-e5-small`), NumPy | Trouver les passages qui ressemblent aux réponses |
 | Rédaction | API Claude (Anthropic) | Écrire le portrait, choisir le métier et la citation |
 | Corpus | Wikisource, Projet Gutenberg | Textes de philosophie du domaine public |
-| Tests | pytest | 104 tests (calcul, ingestion, API, sécurité) |
+| Tests | pytest | 119 tests (calcul, ingestion, API, sécurité, situation) |
 
 ## Les choix techniques
 
@@ -90,6 +92,10 @@ Puis ouvre http://localhost:3000. La documentation de l'API est sur http://local
 cd backend && python -m pytest
 ```
 
+## Mise en ligne
+
+Le site est conçu pour Vercel (site Next.js) et Hugging Face Spaces (API en Docker). Les étapes sont dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
+
 ## Structure
 
 ```
@@ -108,7 +114,8 @@ frontend/
 ├── app/                   # pages Next.js + relais sécurisé vers l'API (app/api)
 ├── components/            # illustrations SVG
 └── lib/api.ts             # appels à l'API
-docs/                      # le calcul du profil, le RAG, l'audit de sécurité, les captures
+deploy/                    # mise en ligne de l'API sur Hugging Face (Dockerfile, script)
+docs/                      # le calcul du profil, le RAG, la sécurité, la mise en ligne, les captures
 ```
 
 ## Les textes
@@ -119,4 +126,3 @@ Tous les textes viennent de Wikisource et du Projet Gutenberg, dans des traducti
 
 - Questions supplémentaires adaptées au métier de l'utilisateur
 - Une page « bibliothèque » pour parcourir les philosophes et leurs livres
-- Mise en ligne

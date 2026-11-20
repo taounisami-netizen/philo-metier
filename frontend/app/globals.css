@@ -186,3 +186,35 @@ button {
   .question-texte { font-size: 1.4rem; }
   .scores li { grid-template-columns: 8.5rem 1fr 2.5rem; }
 }
+
+/* --- Écran « Ta situation » --------------------------------------------------- */
+.situation h1 { margin-bottom: 1.5rem; }
+.situation .chapeau { font-size: 1.2rem; font-weight: 300; margin-bottom: 2.5rem; }
+.grille-moyens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2rem; align-items: end; }
+.actions { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.retour, .lien {
+  background: none; border: none; padding: 0; font: inherit; cursor: pointer;
+  color: var(--encre-douce); text-decoration: underline; text-underline-offset: 3px;
+}
+.retour { margin-bottom: 2rem; font-size: 0.95rem; }
+.retour:hover, .lien:hover { color: var(--vert-de-gris-fonce); }
+.retour:focus-visible, .lien:focus-visible { outline: 2px solid var(--vert-de-gris); outline-offset: 3px; }
+
+/* --- Réponse à la problématique ----------------------------------------------- */
+.problematique .question-posee { font-style: italic; color: var(--encre-douce); margin-bottom: 1rem; }
+.problematique h3 { font-size: 1.15rem; font-weight: 600; margin: 0 0 0.5rem; }
+.recommandation { margin: 1.5rem 0; padding: 1rem 1.25rem; background: var(--choisi); border-left: 4px solid var(--vert-de-gris); }
+.recommandation p { margin: 0; }
+.pistes { list-style: none; padding: 0; margin: 0; counter-reset: piste; }
+.pistes > li { padding: 1.25rem 0; border-top: 1px solid var(--trait); }
+.pistes > li:last-child { border-bottom: 1px solid var(--trait); }
+.pistes dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.2rem 1rem; margin: 0 0 0.75rem; font-size: 0.95rem; }
+.pistes dt { color: var(--encre-douce); }
+.pistes dd { margin: 0; }
+.problematique .sous-titre { font-size: 0.95rem; font-weight: 600; color: var(--encre-douce); margin: 0.75rem 0 0.25rem; }
+.problematique ul { margin: 0; padding-left: 1.2rem; }
+.risques { margin-top: 1.5rem; }
+
+@media (max-width: 640px) {
+  .grille-moyens { grid-template-columns: 1fr; }
+}

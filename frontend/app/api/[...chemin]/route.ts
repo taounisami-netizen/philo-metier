@@ -14,6 +14,10 @@ const API_URL = process.env.API_URL ?? "http://localhost:8000";
 const ROUTES_AUTORISEES = new Set(["questionnaire", "resultat", "sante"]);
 const TAILLE_MAX = 64 * 1024; // 64 Ko : une réponse complète au questionnaire en fait ~10
 
+// Durée maximale d'une requête sur Vercel (secondes). Le premier appel après une période sans
+// visite peut être long : l'API sur Hugging Face doit se réveiller.
+export const maxDuration = 120;
+
 type Contexte = { params: Promise<{ chemin: string[] }> };
 
 function ipDuVisiteur(requete: NextRequest): string {
@@ -51,7 +55,7 @@ async function relayer(requete: NextRequest, contexte: Contexte): Promise<Respon
       headers: entetes,
       body: corps,
       cache: "no-store",
-      signal: AbortSignal.timeout(60_000),
+      signal: AbortSignal.timeout(110_000),
     });
     return new Response(reponse.body, {
       status: reponse.status,

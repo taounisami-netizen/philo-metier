@@ -125,10 +125,80 @@ LIBELLES_STATUT: dict[Statut, str] = {
 }
 
 
+# Les moyens de l'utilisateur : des choix fermés (valeur technique -> texte affiché).
+# Le site construit ses listes à partir de ce dictionnaire, envoyé par GET /api/questionnaire.
+CHOIX_SITUATION: dict[str, tuple[str, dict[str, str]]] = {
+    "temps_hebdo": ("Temps disponible", {
+        "moins_5h": "Moins de 5 h par semaine", "5_10h": "5 à 10 h par semaine",
+        "10_20h": "10 à 20 h par semaine", "temps_plein": "À temps plein",
+    }),
+    "budget": ("Budget pour une formation", {
+        "aucun": "Aucun (formation financée ou gratuite)", "moins_1000": "Moins de 1 000 €",
+        "1000_5000": "1 000 à 5 000 €", "plus_5000": "Plus de 5 000 €",
+    }),
+    "delai": ("Délai pour changer", {
+        "moins_6_mois": "Moins de 6 mois", "6_12_mois": "6 à 12 mois",
+        "1_2_ans": "1 à 2 ans", "plus_2_ans": "Plus de 2 ans",
+    }),
+    "diplome": ("Niveau de diplôme", {
+        "sans": "Sans diplôme", "cap_bep": "CAP / BEP", "bac": "Bac",
+        "bac_2": "Bac +2", "bac_3": "Bac +3", "bac_5": "Bac +5 ou plus",
+    }),
+    "mobilite": ("Mobilité", {
+        "ville": "Rester dans ma ville", "region": "Dans ma région",
+        "france": "Partout en France", "etranger": "Prêt à partir à l'étranger",
+    }),
+}
+
+
+class Situation(BaseModel):
+    """La problématique de l'utilisateur et ses moyens. Tout est facultatif."""
+
+    problematique: str | None = Field(default=None, max_length=300)
+    temps_hebdo: str | None = None
+    budget: str | None = None
+    delai: str | None = None
+    diplome: str | None = None
+    mobilite: str | None = None
+    contrainte: str | None = Field(default=None, max_length=200)
+
+    @field_validator("problematique", "contrainte", "temps_hebdo", "budget", "delai", "diplome", "mobilite")
+    @classmethod
+    def vide_devient_none(cls, valeur: str | None) -> str | None:
+        if valeur is None or not valeur.strip():
+            return None
+        return valeur.strip()
+
+    @model_validator(mode="after")
+    def choix_connus(self) -> "Situation":
+        for champ, (_, choix) in CHOIX_SITUATION.items():
+            valeur = getattr(self, champ)
+            if valeur is not None and valeur not in choix:
+                raise ValueError(f"{champ} : valeur inconnue « {valeur} »")
+        return self
+
+    def libelle(self, champ: str) -> str | None:
+        valeur = getattr(self, champ)
+        return CHOIX_SITUATION[champ][1][valeur] if valeur else None
+
+    def est_vide(self) -> bool:
+        return all(getattr(self, champ) is None for champ in type(self).model_fields)
+
+
 class Entree(BaseModel):
     poste_actuel: str = Field(min_length=2, max_length=120)
     statut: Statut
     job_voulu: str | None = Field(default=None, max_length=120)
+    situation: Situation | None = None
+
+    @field_validator("situation")
+    @classmethod
+    def situation_vide_devient_none(cls, valeur: Situation | None) -> Situation | None:
+        return None if valeur is None or valeur.est_vide() else valeur
+
+    @property
+    def problematique(self) -> str | None:
+        return self.situation.problematique if self.situation else None
 
     @field_validator("poste_actuel")
     @classmethod
@@ -214,6 +284,24 @@ class LivreConseille(BaseModel):
     pourquoi: str
 
 
+class OptionParcours(BaseModel):
+    """Une piste réaliste pour répondre à la problématique, compte tenu des moyens."""
+
+    titre: str          # ex. « Devenir développeur web en reconversion courte »
+    duree: str          # fourchette, ex. « 6 à 9 mois »
+    cout: str           # fourchette ou « financé », ex. « 0 € avec le CPF »
+    financements: str   # dispositifs possibles, ex. « CPF, Projet de transition professionnelle »
+    premieres_etapes: list[str] = Field(min_length=2, max_length=4)
+    pourquoi_toi: str   # le lien avec le profil philosophique
+
+
+class ReponseProblematique(BaseModel):
+    diagnostic: str                                              # la problématique reformulée, et ce qui la bloque
+    options: list[OptionParcours] = Field(min_length=2, max_length=3)
+    recommandation: str                                          # LA piste conseillée, et pourquoi
+    risques: list[str] = Field(min_length=1, max_length=4)
+
+
 class SortieLLM(BaseModel):
     """Ce que le LLM devra renvoyer, en JSON, à l'étape 4."""
 
@@ -222,6 +310,7 @@ class SortieLLM(BaseModel):
     citation: Citation
     livre_a_lire: LivreConseille
     ecart_job_voulu: str | None = None
+    reponse_problematique: ReponseProblematique | None = None
 
 
 class Resultat(BaseModel):
@@ -245,6 +334,15 @@ class Resultat(BaseModel):
             raise ValueError("job_voulu renseigné : ecart_job_voulu est obligatoire")
         if a_un_ecart and not a_un_job_voulu:
             raise ValueError("ecart_job_voulu fourni alors qu'aucun job_voulu n'est renseigné")
+        return self
+
+    @model_validator(mode="after")
+    def reponse_seulement_si_problematique(self) -> "Resultat":
+        # En mode démo (sans IA), pas d'analyse de la problématique : le site l'indique.
+        if self.sortie.reponse_problematique is not None and not self.entree.problematique:
+            raise ValueError("reponse_problematique fournie alors qu'aucune problématique n'est posée")
+        if self.mode == "llm" and self.entree.problematique and self.sortie.reponse_problematique is None:
+            raise ValueError("problématique posée : reponse_problematique est obligatoire")
         return self
 
 
@@ -275,10 +373,17 @@ class StatutPublic(BaseModel):
     libelle: str
 
 
+class ChampSituation(BaseModel):
+    nom: str
+    libelle: str
+    choix: list[StatutPublic]  # même forme : valeur + libellé
+
+
 class Questionnaire(BaseModel):
     questions: list[QuestionPublique]
     statuts: list[StatutPublic]
     max_choix: int
+    situation: list[ChampSituation] = []
 
 
 class DemandeResultat(BaseModel):

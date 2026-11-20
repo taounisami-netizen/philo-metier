@@ -4,14 +4,18 @@ import { useEffect, useState } from "react";
 import {
   chargerQuestionnaire,
   envoyerReponses,
+  SITUATION_VIDE,
+  type ChampSituation,
   type Entree,
   type Questionnaire,
   type Reponse,
+  type ReponseProblematique,
   type Resultat,
+  type Situation,
 } from "@/lib/api";
 import IllustrationTramway from "@/components/IllustrationTramway";
 
-type Etape = "accueil" | "questions" | "attente" | "resultat";
+type Etape = "accueil" | "situation" | "questions" | "attente" | "resultat";
 
 // « une forte part du stoïque », « de l'épicurien »…
 const PART_DE: Record<string, string> = {
@@ -40,7 +44,7 @@ export default function Page() {
   const [etape, setEtape] = useState<Etape>("accueil");
   const [questionnaire, setQuestionnaire] = useState<Questionnaire | null>(null);
   const [erreurServeur, setErreurServeur] = useState<string | null>(null);
-  const [entree, setEntree] = useState<Entree>({ poste_actuel: "", statut: "", job_voulu: null });
+  const [entree, setEntree] = useState<Entree>({ poste_actuel: "", statut: "", job_voulu: null, situation: null });
   const [reponses, setReponses] = useState<Record<string, Reponse>>({});
   const [index, setIndex] = useState(0);
   const [resultat, setResultat] = useState<Resultat | null>(null);
@@ -87,7 +91,19 @@ export default function Page() {
           erreurServeur={erreurServeur}
           pret={questionnaire !== null}
           maxChoix={questionnaire?.max_choix ?? 2}
-          commencer={() => setEtape("questions")}
+          commencer={() => setEtape("situation")}
+        />
+      )}
+      {etape === "situation" && questionnaire && (
+        <EcranSituation
+          champs={questionnaire.situation}
+          situation={entree.situation ?? SITUATION_VIDE}
+          setSituation={(situation) => setEntree({ ...entree, situation })}
+          retour={() => setEtape("accueil")}
+          continuer={() => {
+            setEtape("questions");
+            window.scrollTo(0, 0);
+          }}
         />
       )}
       {etape === "questions" && questionnaire && (
@@ -139,7 +155,8 @@ function Accueil(props: {
       <h1>Le métier que TA philosophie t'aurait choisi</h1>
       <p className="chapeau">
         Treize questions tirées des grands débats de la philosophie. À la fin : ton trait dominant, le philosophe qui te
-        ressemble, une phrase tirée de ses livres, et le métier que tu aurais pu faire.
+        ressemble, une phrase tirée de ses livres, et le métier que tu aurais pu faire. Si tu décris ta situation, tu
+        reçois aussi des pistes concrètes, réalistes avec tes moyens.
       </p>
       <p className="regle">
         À chaque question, tu peux cocher jusqu'à <strong>{EN_LETTRES[props.maxChoix] ?? props.maxChoix} réponses</strong>.
@@ -193,8 +210,104 @@ function Accueil(props: {
 
         {props.erreurServeur && <p className="erreur">{props.erreurServeur}</p>}
         <button className="bouton" type="submit" disabled={!props.pret}>
-          Commencer le questionnaire
+          Continuer
         </button>
+      </form>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------------- */
+
+function EcranSituation(props: {
+  champs: ChampSituation[];
+  situation: Situation;
+  setSituation: (s: Situation | null) => void;
+  retour: () => void;
+  continuer: () => void;
+}) {
+  const { situation, setSituation } = props;
+  const modifier = (champ: keyof Situation, valeur: string) =>
+    setSituation({ ...situation, [champ]: valeur.trim() === "" ? null : valeur });
+
+  return (
+    <section className="situation">
+      <button type="button" className="retour" onClick={props.retour}>
+        ← Retour
+      </button>
+      <h1>Ta situation</h1>
+      <p className="chapeau">
+        Facultatif, mais c'est ce qui rend le résultat utile. Décris ce que tu cherches à résoudre et les moyens dont tu
+        disposes : les pistes proposées tiendront dans ces limites.
+      </p>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          props.continuer();
+        }}
+      >
+        <div className="champ">
+          <label htmlFor="problematique">Ta problématique</label>
+          <p className="indication">En une ou deux phrases : ce que tu veux changer, et ce qui te bloque.</p>
+          <textarea
+            id="problematique"
+            rows={3}
+            maxLength={300}
+            placeholder="ex. Je veux quitter l'hôpital sans reprendre de longues études."
+            value={situation.problematique ?? ""}
+            onChange={(e) => modifier("problematique", e.target.value)}
+          />
+        </div>
+
+        <div className="grille-moyens">
+          {props.champs.map((champ) => (
+            <div className="champ" key={champ.nom}>
+              <label htmlFor={champ.nom}>{champ.libelle}</label>
+              <select
+                id={champ.nom}
+                value={(situation[champ.nom as keyof Situation] as string | null) ?? ""}
+                onChange={(e) => modifier(champ.nom as keyof Situation, e.target.value)}
+              >
+                <option value="">Non précisé</option>
+                {champ.choix.map((c) => (
+                  <option key={c.valeur} value={c.valeur}>
+                    {c.libelle}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+
+        <div className="champ">
+          <label htmlFor="contrainte">Une contrainte importante</label>
+          <p className="indication">Ce qui doit absolument être respecté.</p>
+          <input
+            id="contrainte"
+            type="text"
+            maxLength={200}
+            placeholder="ex. je ne peux pas déménager, je dois garder un salaire"
+            value={situation.contrainte ?? ""}
+            onChange={(e) => modifier("contrainte", e.target.value)}
+          />
+        </div>
+
+        <div className="actions">
+          <button className="bouton" type="submit">
+            Commencer le questionnaire
+          </button>
+          <button
+            type="button"
+            className="lien"
+            onClick={() => {
+              setSituation(null);
+              props.continuer();
+            }}
+          >
+            Passer cette étape
+          </button>
+        </div>
       </form>
     </section>
   );
@@ -304,6 +417,61 @@ function Questions(props: {
 
 /* ------------------------------------------------------------------------- */
 
+function Problematique({ question, reponse }: { question: string; reponse: ReponseProblematique | null }) {
+  return (
+    <section className="bloc problematique">
+      <h2>Ta problématique</h2>
+      <p className="question-posee">« {question} »</p>
+      {!reponse ? (
+        <p className="douce">
+          L'analyse de ta problématique a besoin de l'IA, qui n'est pas disponible pour le moment. Réessaie un peu plus
+          tard.
+        </p>
+      ) : (
+        <>
+          <p>{reponse.diagnostic}</p>
+          <div className="recommandation">
+            <h3>Ce que je te conseille</h3>
+            <p>{reponse.recommandation}</p>
+          </div>
+          <ol className="pistes">
+            {reponse.options.map((o) => (
+              <li key={o.titre}>
+                <h3>{o.titre}</h3>
+                <dl>
+                  <dt>Durée</dt>
+                  <dd>{o.duree}</dd>
+                  <dt>Coût</dt>
+                  <dd>{o.cout}</dd>
+                  <dt>Financements</dt>
+                  <dd>{o.financements}</dd>
+                </dl>
+                <p>{o.pourquoi_toi}</p>
+                <p className="sous-titre">Pour commencer cette semaine</p>
+                <ul>
+                  {o.premieres_etapes.map((etape) => (
+                    <li key={etape}>{etape}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ol>
+          <div className="risques">
+            <p className="sous-titre">À vérifier avant de te lancer</p>
+            <ul>
+              {reponse.risques.map((r) => (
+                <li key={r}>{r}</li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------------- */
+
 function PageResultat({ resultat, recommencer }: { resultat: Resultat; recommencer: () => void }) {
   const { sortie, profil } = resultat;
   const secondaire = PART_DE[profil.secondaire];
@@ -333,6 +501,13 @@ function PageResultat({ resultat, recommencer }: { resultat: Resultat; recommenc
           )}
         </figcaption>
       </figure>
+
+      {resultat.entree.situation?.problematique && (
+        <Problematique
+          question={resultat.entree.situation.problematique}
+          reponse={sortie.reponse_problematique}
+        />
+      )}
 
       <section className="bloc">
         <h2>Le métier que tu aurais pu faire</h2>

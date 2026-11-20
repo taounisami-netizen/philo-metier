@@ -22,6 +22,8 @@ from .generation import echos_choisis, generer, llm_disponible, passages_pour
 from .protection import Limiteur, cle_interne_valide, ip_du_client
 from .rag import CorpusIntrouvable, Recherche
 from .schemas import (
+    CHOIX_SITUATION,
+    ChampSituation,
     DemandeResultat,
     OptionPublique,
     QuestionPublique,
@@ -96,6 +98,12 @@ def get_recherche():
     return etat["recherche"]
 
 
+@app.get("/")
+def accueil():
+    """Page d'accueil minimale (Hugging Face l'affiche dans l'onglet « App » du Space)."""
+    return {"service": "philo-metier", "ok": True}
+
+
 @app.get("/api/sante")
 def sante():
     if PRODUCTION:
@@ -118,6 +126,11 @@ def questionnaire(grille=Depends(get_grille)):
         ],
         statuts=[StatutPublic(valeur=s.value, libelle=s.libelle) for s in Statut],
         max_choix=MAX_CHOIX,
+        situation=[
+            ChampSituation(nom=nom, libelle=libelle,
+                           choix=[StatutPublic(valeur=v, libelle=l) for v, l in choix.items()])
+            for nom, (libelle, choix) in CHOIX_SITUATION.items()
+        ],
     )
 
 
@@ -130,7 +143,7 @@ def resultat(demande: DemandeResultat, request: Request,
         analyse = calculer_profil(grille, demande.reponses)
     except ReponsesInvalides as e:
         raise HTTPException(422, str(e))
-    passages = passages_pour(recherche, grille, analyse, demande.reponses)
+    passages = passages_pour(recherche, grille, analyse, demande.reponses, entree=demande.entree)
     if not passages:
         raise HTTPException(503, "Aucun passage trouvé pour ce profil dans le corpus.")
     # Budget Claude du jour : au-delà, le résultat est construit en mode démo (gratuit).

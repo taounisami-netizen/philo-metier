@@ -10,12 +10,51 @@ export type Question = {
   options: Option[];
 };
 export type Statut = { valeur: string; libelle: string };
-export type Questionnaire = { questions: Question[]; statuts: Statut[]; max_choix: number };
+export type ChampSituation = { nom: string; libelle: string; choix: Statut[] };
+export type Questionnaire = {
+  questions: Question[];
+  statuts: Statut[];
+  max_choix: number;
+  situation: ChampSituation[];
+};
 
-export type Entree = { poste_actuel: string; statut: string; job_voulu: string | null };
+// La problématique et les moyens de l'utilisateur. Tout est facultatif.
+export type Situation = {
+  problematique: string | null;
+  temps_hebdo: string | null;
+  budget: string | null;
+  delai: string | null;
+  diplome: string | null;
+  mobilite: string | null;
+  contrainte: string | null;
+};
+export const SITUATION_VIDE: Situation = {
+  problematique: null, temps_hebdo: null, budget: null, delai: null, diplome: null, mobilite: null, contrainte: null,
+};
+
+export type Entree = {
+  poste_actuel: string;
+  statut: string;
+  job_voulu: string | null;
+  situation: Situation | null;
+};
 export type Reponse = { question_id: string; option_ids: string[]; texte_libre: string | null };
 
 export type Metier = { titre: string; pourquoi: string };
+export type OptionParcours = {
+  titre: string;
+  duree: string;
+  cout: string;
+  financements: string;
+  premieres_etapes: string[];
+  pourquoi_toi: string;
+};
+export type ReponseProblematique = {
+  diagnostic: string;
+  options: OptionParcours[];
+  recommandation: string;
+  risques: string[];
+};
 export type Resultat = {
   entree: Entree;
   nom_profil: string;
@@ -36,6 +75,7 @@ export type Resultat = {
     citation: { texte: string; auteur: string; livre: string; passage_id: string; url: string | null };
     livre_a_lire: { titre: string; auteur: string; pourquoi: string };
     ecart_job_voulu: string | null;
+    reponse_problematique: ReponseProblematique | null;
   };
 };
 

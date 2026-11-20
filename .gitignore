@@ -19,3 +19,6 @@ backend/corpus/
 frontend/node_modules/
 frontend/.next/
 *.tsbuildinfo
+
+# Dossier temporaire de mise en ligne
+deploy/build/

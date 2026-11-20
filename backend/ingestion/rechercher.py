@@ -15,7 +15,6 @@ Usage (depuis backend/) :
 """
 
 import argparse
-import json
 from pathlib import Path
 
 import numpy as np
@@ -36,9 +35,9 @@ def rechercher(question: str, k: int = 5, profil: str | None = None, auteur: str
                modele=None, passages=None, vecteurs=None) -> list[tuple[float, dict]]:
     passages = passages if passages is not None else charger_passages()
     vecteurs = vecteurs if vecteurs is not None else np.load(DOSSIER_CORPUS / "vecteurs.npy")
-    modele = modele or charger_modele(json.loads((DOSSIER_CORPUS / "index.json").read_text("utf-8"))["modele"])
+    modele = modele or charger_modele()
 
-    q = modele.encode([PREFIXE_QUESTION + question], normalize_embeddings=True)[0]
+    q = modele.encoder([PREFIXE_QUESTION + question])[0]
     similarites = vecteurs @ q  # s_i = p_i · q
 
     # Filtre : on met à -inf les passages qui ne correspondent pas.

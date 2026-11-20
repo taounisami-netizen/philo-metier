@@ -100,7 +100,7 @@ def get_recherche():
 
 @app.get("/")
 def accueil():
-    """Page d'accueil minimale (Hugging Face l'affiche dans l'onglet « App » du Space)."""
+    """Page d'accueil minimale : Render l'appelle pour vérifier que l'API est en vie."""
     return {"service": "philo-metier", "ok": True}
 
 

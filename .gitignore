@@ -7,8 +7,15 @@ __pycache__/
 .DS_Store
 .vscode/
 
-# Corpus téléchargé et vecteurs : se régénèrent avec les scripts d'ingestion
-backend/corpus/
+# Corpus : les textes bruts se régénèrent avec les scripts d'ingestion.
+# Les 3 fichiers finaux sont versionnés, car l'API en ligne en a besoin.
+backend/corpus/*
+!backend/corpus/passages.jsonl
+!backend/corpus/vecteurs.npy
+!backend/corpus/index.json
+
+# Modèle d'embeddings (téléchargé par : python -m app.encodeur --telecharger)
+backend/modele/
 
 # Secrets (clé API) : aucun fichier .env ne doit partir sur GitHub
 .env
@@ -19,6 +26,3 @@ backend/corpus/
 frontend/node_modules/
 frontend/.next/
 *.tsbuildinfo
-
-# Dossier temporaire de mise en ligne
-deploy/build/

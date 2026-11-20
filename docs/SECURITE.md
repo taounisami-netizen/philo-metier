@@ -38,7 +38,7 @@ Aucune faille de type XSS : React échappe tout le texte affiché, et le code n'
 ## 3. Dépendances
 
 - `npm audit` : 0 vulnérabilité.
-- `pip-audit` sur `requirements-ingestion.txt` : aucune vulnérabilité connue.
+- `pip-audit` sur `requirements.txt` (ce que l'API installe en ligne, onnxruntime compris) : aucune vulnérabilité connue.
 
 À relancer avant chaque mise en ligne, car de nouvelles failles sont publiées régulièrement.
 

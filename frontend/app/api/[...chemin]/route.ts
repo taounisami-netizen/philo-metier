@@ -15,7 +15,7 @@ const ROUTES_AUTORISEES = new Set(["questionnaire", "resultat", "sante"]);
 const TAILLE_MAX = 64 * 1024; // 64 Ko : une réponse complète au questionnaire en fait ~10
 
 // Durée maximale d'une requête sur Vercel (secondes). Le premier appel après une période sans
-// visite peut être long : l'API sur Hugging Face doit se réveiller.
+// visite peut être long : l'API sur Render (plan gratuit) doit se réveiller, ~1 minute.
 export const maxDuration = 120;
 
 type Contexte = { params: Promise<{ chemin: string[] }> };
@@ -45,6 +45,7 @@ async function relayer(requete: NextRequest, contexte: Contexte): Promise<Respon
 
   const entetes: Record<string, string> = {
     "Content-Type": "application/json",
+    Accept: "application/json", // pendant un réveil, Render montre une page d'attente aux navigateurs, pas aux API
     "X-Client-IP": ipDuVisiteur(requete),
   };
   if (process.env.CLE_INTERNE) entetes["X-Cle-Interne"] = process.env.CLE_INTERNE;

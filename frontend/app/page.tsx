@@ -49,14 +49,24 @@ export default function Page() {
   const [index, setIndex] = useState(0);
   const [resultat, setResultat] = useState<Resultat | null>(null);
 
+  const [reveil, setReveil] = useState(false);
+
   useEffect(() => {
+    // Si le questionnaire tarde, c'est que l'API se réveille : on prévient le visiteur.
+    const minuteur = setTimeout(() => setReveil(true), 3000);
     chargerQuestionnaire()
       .then(setQuestionnaire)
       .catch(() =>
         setErreurServeur(
-          "Le serveur ne répond pas. Vérifie que l'API tourne dans un autre terminal : uvicorn app.main:app --port 8000",
+          process.env.NODE_ENV === "development"
+            ? "Le serveur ne répond pas. Vérifie que l'API tourne dans un autre terminal : uvicorn app.main:app --port 8000"
+            : "Le serveur ne répond pas. Recharge la page dans une minute.",
         ),
-      );
+      )
+      .finally(() => {
+        clearTimeout(minuteur);
+        setReveil(false);
+      });
   }, []);
 
   async function terminer() {
@@ -90,6 +100,7 @@ export default function Page() {
           statuts={questionnaire?.statuts ?? []}
           erreurServeur={erreurServeur}
           pret={questionnaire !== null}
+          reveil={reveil}
           maxChoix={questionnaire?.max_choix ?? 2}
           commencer={() => setEtape("situation")}
         />
@@ -136,6 +147,7 @@ function Accueil(props: {
   statuts: { valeur: string; libelle: string }[];
   erreurServeur: string | null;
   pret: boolean;
+  reveil: boolean;
   maxChoix: number;
   commencer: () => void;
 }) {
@@ -208,6 +220,11 @@ function Accueil(props: {
           />
         </div>
 
+        {props.reveil && (
+          <p className="indication" role="status">
+            Le serveur se réveille, cela peut prendre jusqu'à une minute. Tu peux remplir le formulaire en attendant.
+          </p>
+        )}
         {props.erreurServeur && <p className="erreur">{props.erreurServeur}</p>}
         <button className="bouton" type="submit" disabled={!props.pret}>
           Continuer

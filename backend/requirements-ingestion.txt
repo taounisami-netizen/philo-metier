@@ -1,3 +1,6 @@
-# Dépendances lourdes (PyTorch, ~1 Go) : seulement pour vectoriser et rechercher.
+# Outils en plus pour le développement (le pipeline d'ingestion n'a besoin que de requirements.txt) :
+#   onnx       → construire le mini-modèle des tests de l'encodeur ;
+#   tokenizers → comparer SentencePiece au découpeur tokenizer.json (ingestion.verifier_encodeur).
 -r requirements.txt
-sentence-transformers>=3.0
+onnx>=1.15
+tokenizers>=0.15

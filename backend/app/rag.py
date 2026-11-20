@@ -1,7 +1,7 @@
 """Recherche dans le corpus, côté API.
 
-Le modèle d'embeddings et les vecteurs sont chargés UNE fois au démarrage du serveur
-(quelques secondes), puis chaque recherche ne coûte qu'un produit matrice-vecteur.
+Le modèle d'embeddings (ONNX, voir encodeur.py) et les vecteurs sont chargés UNE fois au
+démarrage du serveur, puis chaque recherche ne coûte qu'un produit matrice-vecteur.
 Le calcul est expliqué dans ingestion/rechercher.py et dans le README.
 """
 
@@ -11,6 +11,8 @@ from pathlib import Path
 import numpy as np
 
 from ingestion.rechercher import top_k
+
+from .encodeur import NOM_MODELE, Encodeur, ModeleIntrouvable
 
 DOSSIER_CORPUS = Path(__file__).parent.parent / "corpus"
 PREFIXE_QUESTION = "query: "
@@ -36,12 +38,17 @@ class Recherche:
         if len(self.passages) != self.vecteurs.shape[0]:
             raise CorpusIntrouvable("passages.jsonl et vecteurs.npy ne correspondent pas : relance ingestion.vectoriser")
 
-        from sentence_transformers import SentenceTransformer  # import lent
-        self.modele = SentenceTransformer(index["modele"])
+        if index.get("modele") != NOM_MODELE:
+            print(f"[api] ATTENTION : vecteurs calculés avec {index.get('modele')}, questions encodées avec "
+                  f"{NOM_MODELE}. Relance python -m ingestion.vectoriser pour qu'ils correspondent.")
+        try:
+            self.modele = Encodeur()
+        except ModeleIntrouvable as e:
+            raise CorpusIntrouvable(str(e)) from e
         self._profils = [set(p["profils"]) for p in self.passages]
 
     def vecteur(self, texte: str) -> np.ndarray:
-        return self.modele.encode([PREFIXE_QUESTION + texte], normalize_embeddings=True)[0]
+        return self.modele.encoder([PREFIXE_QUESTION + texte])[0]
 
     def chercher(self, question: str, profils: list[str], k: int = 4) -> list[dict]:
         """Les k passages les plus proches de la question, chez les auteurs des profils donnés."""

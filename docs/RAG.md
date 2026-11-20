@@ -36,7 +36,8 @@ garantit seulement le domaine public aux États-Unis : vérifier le traducteur.
 ## Lancer le pipeline (depuis `backend/`, `.venv` activé)
 
 ```bash
-pip install -r requirements-ingestion.txt     # une fois (~1 Go, PyTorch inclus)
+pip install -r requirements-ingestion.txt     # une fois
+python -m app.encodeur --telecharger          # modèle ONNX (~120 Mo), une fois
 
 python -m ingestion.telecharger --lister      # 1. voir les pages trouvées (✓ gardée, ✗ exclue)
 python -m ingestion.telecharger               # 2. télécharger → corpus/brut/

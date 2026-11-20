@@ -37,10 +37,10 @@ flowchart LR
 |---|---|---|
 | Site | Next.js 16, React 19, TypeScript | Formulaire, questionnaire, page de résultat |
 | API | Python, FastAPI, Pydantic v2 | Questions, calcul du profil, orchestration |
-| Recherche (RAG) | sentence-transformers (`multilingual-e5-small`), NumPy | Trouver les passages qui ressemblent aux réponses |
+| Recherche (RAG) | `multilingual-e5-small` en ONNX int8 (onnxruntime), NumPy | Trouver les passages qui ressemblent aux réponses |
 | Rédaction | API Claude (Anthropic) | Écrire le portrait, choisir le métier et la citation |
 | Corpus | Wikisource, Projet Gutenberg | Textes de philosophie du domaine public |
-| Tests | pytest | 119 tests (calcul, ingestion, API, sécurité, situation) |
+| Tests | pytest | 123 tests (calcul, ingestion, encodeur, API, sécurité, situation) |
 
 ## Les choix techniques
 
@@ -50,7 +50,7 @@ flowchart LR
 
 **Le site marche même sans IA.** Sans clé API, ou si Claude ne répond pas, l'API passe en « mode démo » et construit un résultat à partir de la grille et du corpus.
 
-**Recherche sémantique sans base vectorielle.** Pour ~4 000 passages, un simple produit matrice-vecteur NumPy (similarité cosinus) répond en quelques millisecondes. Une base comme pgvector n'apporterait rien à cette taille. Les détails sont dans [docs/RAG.md](docs/RAG.md).
+**Recherche sémantique sans base vectorielle.** Pour ~4 000 passages, un simple produit matrice-vecteur NumPy (similarité cosinus) répond en quelques millisecondes. Une base comme pgvector n'apporterait rien à cette taille. Le modèle d'embeddings tourne en ONNX quantifié (int8) plutôt qu'avec PyTorch : ~120 Mo au lieu de ~1 Go, ce qui permet d'héberger l'API sur un serveur gratuit à 512 Mo. Les détails sont dans [docs/RAG.md](docs/RAG.md).
 
 **Sécurisé pour être public.** La clé API ne quitte jamais le serveur, chaque visiteur est limité en nombre de résultats, un plafond quotidien protège le budget, et seul le site peut appeler l'API. L'audit complet et ses tests sont dans [docs/SECURITE.md](docs/SECURITE.md).
 
@@ -65,10 +65,11 @@ Prérequis : Python 3.11+, Node.js 20+. Une clé API Anthropic est facultative (
 cd backend
 python3 -m venv .venv
 source .venv/bin/activate                      # Windows : .venv\Scripts\activate
-pip install -r requirements-ingestion.txt      # ~1 Go (PyTorch)
+pip install -r requirements-ingestion.txt
+python -m app.encodeur --telecharger           # modèle d'embeddings ONNX (~120 Mo, une fois)
 cp .env.example .env                           # puis colle ta clé Anthropic (facultatif)
 
-# 2. Corpus : télécharge et indexe les livres (une seule fois, quelques minutes)
+# 2. Corpus : déjà fourni (passages + vecteurs). Pour le reconstruire depuis les livres :
 python -m ingestion.telecharger
 python -m ingestion.nettoyer
 python -m ingestion.decouper
@@ -94,7 +95,7 @@ cd backend && python -m pytest
 
 ## Mise en ligne
 
-Le site est conçu pour Vercel (site Next.js) et Hugging Face Spaces (API en Docker). Les étapes sont dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
+Le site est en ligne sur Vercel (site Next.js) et Render (API en Docker, plan gratuit). Les étapes sont dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
 
 ## Structure
 
@@ -104,17 +105,20 @@ backend/
 │   ├── grille/            # profils.json (7 profils) et questions.json (13 questions)
 │   ├── scoring.py         # calcul du profil + vérification de la grille
 │   ├── rag.py             # recherche sémantique dans le corpus
+│   ├── encodeur.py        # modèle d'embeddings en ONNX (sans PyTorch)
 │   ├── generation.py      # appel à Claude, garde-fou des citations, mode démo
 │   ├── protection.py      # limites de requêtes, budget Claude, clé interne
 │   ├── schemas.py         # modèles Pydantic
 │   └── main.py            # routes FastAPI
 ├── ingestion/             # télécharger → nettoyer → découper → vectoriser
+├── corpus/                # passages.jsonl, vecteurs.npy, index.json
+├── Dockerfile             # image de l'API pour Render
 └── tests/
 frontend/
 ├── app/                   # pages Next.js + relais sécurisé vers l'API (app/api)
 ├── components/            # illustrations SVG
 └── lib/api.ts             # appels à l'API
-deploy/                    # mise en ligne de l'API sur Hugging Face (Dockerfile, script)
+render.yaml                # mise en ligne de l'API sur Render
 docs/                      # le calcul du profil, le RAG, la sécurité, la mise en ligne, les captures
 ```
 

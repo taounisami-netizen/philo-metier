@@ -1,0 +1,11 @@
+# Rien de secret ni d'inutile dans l'image.
+.env
+.env.*
+.venv/
+**/__pycache__/
+.pytest_cache/
+tests/
+modele/
+corpus/brut/
+corpus/propre/
+corpus/manuel/

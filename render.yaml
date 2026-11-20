@@ -1,0 +1,24 @@
+# Mise en ligne de l'API sur Render (Blueprint). Voir docs/DEPLOIEMENT.md.
+services:
+  - type: web
+    name: philo-metier-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /
+    autoDeployTrigger: commit
+    buildFilter:
+      paths:
+        - backend/**
+      ignoredPaths:
+        - backend/tests/**
+    envVars:
+      # Secrets : Render demande leur valeur à la création. Ils ne sont jamais dans le code.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CLE_INTERNE
+        sync: false
+      - key: CLAUDE_MODEL
+        value: claude-haiku-5-5

@@ -91,8 +91,17 @@ async function lire<T>(reponse: Response): Promise<T> {
   return reponse.json();
 }
 
-export async function chargerQuestionnaire(): Promise<Questionnaire> {
-  return lire(await fetch("/api/questionnaire"));
+// En ligne, l'API s'endort après 15 minutes sans visite et met environ une minute à se réveiller.
+// Si le premier appel échoue pendant ce réveil, on réessaie deux fois avant d'abandonner.
+export async function chargerQuestionnaire(essais = 3): Promise<Questionnaire> {
+  for (let essai = 1; ; essai++) {
+    try {
+      return await lire(await fetch("/api/questionnaire"));
+    } catch (e) {
+      if (essai >= essais) throw e;
+      await new Promise((suite) => setTimeout(suite, 3000));
+    }
+  }
 }
 
 export async function envoyerReponses(entree: Entree, reponses: Reponse[]): Promise<Resultat> {

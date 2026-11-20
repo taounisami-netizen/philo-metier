@@ -234,3 +234,56 @@ def test_reponse_en_texte_acceptee_si_le_modele_n_utilise_pas_l_outil(monkeypatc
     grille, entree, analyse, reponses = _contexte()
     sortie = generation.sortie_llm(grille, entree, analyse, reponses, [{"id": "x", "auteur": "a", "livre": "l", "texte": "t"}])
     assert sortie.metier_principal.titre == "Psychologue"
+
+
+# --- Réponses coupées (cas réel en ligne : « thinking » + outil, coupé à 2 500 jetons) ---------
+
+PASSAGE_TEST = [{"id": "x", "auteur": "a", "livre": "l", "texte": "t"}]
+
+
+def _faux_client_successif(reponses, appels):
+    """Client qui renvoie une réponse différente à chaque appel."""
+    class Messages:
+        def create(self, **kwargs):
+            appels.append(kwargs)
+            return reponses[len(appels) - 1]
+
+    class Client:
+        messages = Messages()
+
+    return lambda *a, **k: Client()
+
+
+def test_outil_coupe_par_max_tokens_puis_reessai_avec_plus_de_place(monkeypatch):
+    import anthropic
+    coupee = _Bloc(content=[_Bloc(type="thinking", thinking="…"),
+                            _Bloc(type="tool_use", input={"metier_principal": {"titre": "X", "pourquoi": "Y"}})],
+                   stop_reason="max_tokens")
+    complete = _Bloc(content=[_Bloc(type="tool_use", input=_sortie_json())], stop_reason="tool_use")
+    appels = []
+    monkeypatch.setattr(anthropic, "Anthropic", _faux_client_successif([coupee, complete], appels))
+    grille, entree, analyse, reponses = _contexte()
+    sortie = generation.sortie_llm(grille, entree, analyse, reponses, PASSAGE_TEST)
+    assert sortie.metier_principal.titre == "Psychologue"
+    assert [a["max_tokens"] for a in appels] == list(generation.JETONS_MAX)
+    assert appels[1]["max_tokens"] > appels[0]["max_tokens"]
+
+
+def test_echec_resume_sans_texte_du_visiteur(monkeypatch):
+    import anthropic
+    secret = "texte-prive-du-visiteur"
+    incomplete = _Bloc(content=[_Bloc(type="tool_use", input={"metier_principal": {"titre": secret, "pourquoi": secret}})],
+                       stop_reason="tool_use")
+    monkeypatch.setattr(anthropic, "Anthropic", _faux_client_successif([incomplete, incomplete], []))
+    grille, entree, analyse, reponses = _contexte()
+    with pytest.raises(RuntimeError) as erreur:
+        generation.sortie_llm(grille, entree, analyse, reponses, PASSAGE_TEST)
+    assert "citation" in str(erreur.value) and "metiers_alternatifs" in str(erreur.value)
+    assert secret not in str(erreur.value)  # rien de ce que le modèle (ou le visiteur) a écrit
+
+
+def test_modele_lu_au_moment_de_l_appel(monkeypatch):
+    monkeypatch.delenv("CLAUDE_MODEL", raising=False)
+    assert generation.modele_claude() == generation.MODELE_PAR_DEFAUT
+    monkeypatch.setenv("CLAUDE_MODEL", "modele-de-test")
+    assert generation.modele_claude() == "modele-de-test"

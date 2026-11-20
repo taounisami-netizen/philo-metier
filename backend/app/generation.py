@@ -32,7 +32,17 @@ from .schemas import (
 )
 from .scoring import Grille
 
-MODELE_CLAUDE = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5-5")
+MODELE_PAR_DEFAUT = "claude-sonnet-5-5"
+# Jetons maximum par tentative. Le modèle peut d'abord réfléchir (blocs « thinking »), ce qui
+# consomme aussi ces jetons : une réponse avec problématique en utilise ~5 700 (mesuré avec
+# python -m app.diagnostic_llm). On ne paie que les jetons écrits : la marge ne coûte rien,
+# et elle évite une seconde tentative qui doublerait l'attente.
+JETONS_MAX = (12000, 16000)
+
+
+def modele_claude() -> str:
+    # Lu au moment de l'appel, pas à l'import : backend/.env est chargé APRÈS l'import de ce module.
+    return os.environ.get("CLAUDE_MODEL", MODELE_PAR_DEFAUT)
 PASSAGES_DOMINANT = 4
 PASSAGES_SECONDAIRE = 2
 # On cherche plus large que nécessaire, puis on tire au sort parmi les plus proches :
@@ -330,24 +340,25 @@ OUTIL_RESULTAT = {
 
 
 def _lire_reponse(reponse) -> dict:
+    # D'abord : une réponse coupée est forcément incomplète, même si un bloc d'outil a commencé.
+    if getattr(reponse, "stop_reason", "") == "max_tokens":
+        raise ValueError("réponse coupée (max_tokens atteint)")
     for bloc in reponse.content:
         if getattr(bloc, "type", "") == "tool_use":
             return bloc.input
     texte = "".join(b.text for b in reponse.content if getattr(b, "type", "") == "text")
-    if getattr(reponse, "stop_reason", "") == "max_tokens":
-        raise ValueError("réponse coupée (max_tokens atteint)")
     return _extraire_json(texte)  # au cas où le modèle répondrait quand même en texte
 
 
 def sortie_llm(grille, entree, analyse, reponses, passages) -> SortieLLM:
     import anthropic  # importé seulement si une clé est configurée
 
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(timeout=90)  # le relais du site abandonne au bout de 110 s
     contenu = message_utilisateur(grille, entree, analyse, reponses, passages)
     derniere_erreur = None
-    for _ in range(2):  # une seconde chance si le résultat est invalide
+    for jetons in JETONS_MAX:  # une seconde chance, avec plus de place, si le résultat est invalide
         reponse = client.messages.create(
-            model=MODELE_CLAUDE, max_tokens=2500, system=CONSIGNES,
+            model=modele_claude(), max_tokens=jetons, system=CONSIGNES,
             messages=[{"role": "user", "content": contenu}],
             # « auto » et non « tool » : certains modèles (dont Haiku) refusent qu'on force un outil.
             # La consigne demande de l'utiliser ; s'il répond quand même en texte, on lit le JSON du texte.
@@ -366,7 +377,15 @@ def sortie_llm(grille, entree, analyse, reponses, passages) -> SortieLLM:
             return sortie
         except (ValueError, ValidationError) as e:
             derniere_erreur = e
-    raise RuntimeError(f"Réponse du LLM inexploitable : {derniere_erreur}")
+    raise RuntimeError(f"Réponse du LLM inexploitable : {_resume_erreur(derniere_erreur)}")
+
+
+def _resume_erreur(e: Exception) -> str:
+    """Raison courte, sans aucun texte de l'utilisateur ni du modèle (on peut l'écrire dans les journaux)."""
+    if isinstance(e, ValidationError):
+        champs = sorted({".".join(str(x) for x in err["loc"]) or "?" for err in e.errors()})
+        return "champs manquants ou invalides : " + ", ".join(champs)
+    return str(e)[:200]
 
 
 def _masquer_cle(texte: str) -> str:
@@ -386,7 +405,9 @@ def generer(grille, entree, analyse, reponses, passages, llm_autorise: bool = Tr
             sortie = sortie_llm(grille, entree, analyse, reponses, passages)
             return securiser_citation(sortie, passages), "llm"
         except Exception as e:  # réseau, quota, JSON… : le site doit quand même répondre
-            # En ligne : seulement le type d'erreur, jamais de contenu. En local : le détail, pour déboguer.
-            detail = "" if os.environ.get("PRODUCTION") == "1" else f" ({_masquer_cle(str(e)[:300])})"
+            # En ligne : le type d'erreur, plus la raison quand c'est notre propre message (RuntimeError,
+            # sans texte du visiteur). Les autres erreurs ne montrent leur détail qu'en local.
+            montrer = os.environ.get("PRODUCTION") != "1" or isinstance(e, RuntimeError)
+            detail = f" ({_masquer_cle(str(e)[:300])})" if montrer else ""
             print(f"[generation] LLM indisponible, mode démo : {type(e).__name__}{detail}")
     return sortie_demo(grille, entree, analyse, passages), "demo"

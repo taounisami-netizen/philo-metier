@@ -40,7 +40,7 @@ flowchart LR
 | Recherche (RAG) | `multilingual-e5-small` en ONNX int8 (onnxruntime), NumPy | Trouver les passages qui ressemblent aux réponses |
 | Rédaction | API Claude (Anthropic) | Écrire le portrait, choisir le métier et la citation |
 | Corpus | Wikisource, Projet Gutenberg | Textes de philosophie du domaine public |
-| Tests | pytest | 123 tests (calcul, ingestion, encodeur, API, sécurité, situation) |
+| Tests | pytest | 128 tests (calcul, ingestion, encodeur, API, sécurité, situation) |
 
 ## Les choix techniques
 

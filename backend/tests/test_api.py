@@ -6,8 +6,11 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app import generation
-from app.main import app, get_recherche
-from app.schemas import Citation, Metier, SortieLLM, LivreConseille
+from app import main as api
+from app.main import app, get_orientation, get_recherche
+from app.orientation import Orientation, charger_metiers
+from app.schemas import Entree, Redaction, Reponse
+from app.scoring import calculer_profil, charger_grille
 
 PASSAGE_EPICTETE = (
     "Parmi les choses, les unes dépendent de nous, les autres n'en dépendent pas. "
@@ -21,15 +24,17 @@ class FausseRecherche:
 
     def chercher(self, question, profils, k=4):
         return [{
-            "id": f"{profils[0]}-000-000", "auteur": "Épictète", "livre": "Manuel",
+            "id": f"{profils[0]}-000-{i:03d}", "auteur": "Épictète", "livre": "Manuel",
             "texte": PASSAGE_EPICTETE, "url": "https://fr.wikisource.org/wiki/Manuel", "profils": profils,
-        }]
+        } for i in range(k)]
 
 
 @pytest.fixture
 def client(monkeypatch):
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    for nom in ("ANTHROPIC_API_KEY", "CLE_INTERNE"):
+        monkeypatch.delenv(nom, raising=False)
     app.dependency_overrides[get_recherche] = lambda: FausseRecherche()
+    app.dependency_overrides[get_orientation] = lambda: Orientation(encodeur=None)
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
@@ -37,6 +42,19 @@ def client(monkeypatch):
 
 def reponses_toutes(option="a", n=13):
     return [{"question_id": f"q{i:02d}", "option_ids": [option]} for i in range(1, n + 1)]
+
+
+def demande(job_voulu="Chef de projet", situation=None):
+    entree = {"poste_actuel": "Développeur web", "statut": "alternant", "job_voulu": job_voulu}
+    if situation:
+        entree["situation"] = situation
+    return {"entree": entree, "reponses": reponses_toutes()}
+
+
+def faux_redaction(job=True, problematique=None):
+    return Redaction(pourquoi_metier_principal="Rédigé par Claude.", pourquoi_metiers_alternatifs=["Un.", "Deux."],
+                     pourquoi_livre="Pour toi.", ecart_job_voulu="Proche par la méthode." if job else None,
+                     reponse_problematique=problematique)
 
 
 def test_questionnaire_ne_revele_pas_les_points(client):
@@ -47,87 +65,103 @@ def test_questionnaire_ne_revele_pas_les_points(client):
     assert {"valeur": "etudiant", "libelle": "Étudiant"} in data["statuts"]
 
 
-def test_resultat_en_mode_demo(client):
-    demande = {
-        "entree": {"poste_actuel": "Développeur web", "statut": "alternant", "job_voulu": "Chef de projet"},
-        "reponses": reponses_toutes(),
-    }
-    r = client.post("/api/resultat", json=demande)
+# --- Résultat calculé (sans IA) -----------------------------------------------------------------
+
+def test_resultat_calcule_sans_ia(client):
+    r = client.post("/api/resultat", json=demande())
     assert r.status_code == 200, r.text
     data = r.json()
-    assert data["mode"] == "demo"
-    assert data["sortie"]["citation"]["texte"] in PASSAGE_EPICTETE  # extrait réel
-    assert data["sortie"]["ecart_job_voulu"]                        # job voulu → écart rempli
-    assert len(data["sortie"]["metiers_alternatifs"]) == 2
+    sortie = data["sortie"]
+    titres = {m.titre for m in charger_metiers()}
+    assert sortie["metier_principal"]["titre"] in titres                 # vient du tableau
+    assert all(m["titre"] in titres for m in sortie["metiers_alternatifs"])
+    assert len({sortie["metier_principal"]["titre"], *(m["titre"] for m in sortie["metiers_alternatifs"])}) == 3
+    assert sortie["metier_principal"]["acces"]["voie"]                    # avec sa voie d'accès
+    assert sortie["citation"]["texte"] in PASSAGE_EPICTETE                # extrait réel
+    assert sortie["ecart_job_voulu"]                                      # job voulu → écart rempli
+    assert data["redaction_possible"] is False                            # pas de clé d'API
+
+
+def test_memes_reponses_meme_resultat(client):
+    premier = client.post("/api/resultat", json=demande()).json()
+    second = client.post("/api/resultat", json=demande()).json()
+    assert premier == second
+
+
+def test_la_graine_change_avec_les_reponses():
+    from app.schemas import DemandeResultat
+    a = DemandeResultat(**demande())
+    b = DemandeResultat(**(demande() | {"reponses": reponses_toutes("b")}))
+    assert generation.graine(a) == generation.graine(DemandeResultat(**demande()))
+    assert generation.graine(a) != generation.graine(b)
 
 
 def test_reponses_incompletes_refusees(client):
-    demande = {"entree": {"poste_actuel": "Étudiant", "statut": "etudiant"}, "reponses": reponses_toutes(n=5)}
-    r = client.post("/api/resultat", json=demande)
+    demande_courte = {"entree": {"poste_actuel": "Étudiant", "statut": "etudiant"}, "reponses": reponses_toutes(n=5)}
+    r = client.post("/api/resultat", json=demande_courte)
     assert r.status_code == 422 and "sans réponse" in r.text
 
 
-# --- Garde-fou sur les citations ---------------------------------------------
+# --- Rédaction par Claude (POST /api/redaction) ---------------------------------------------------
 
-def test_citation_exacte_acceptee_malgre_guillemets_et_espaces():
-    assert generation.citation_est_dans_le_passage(
-        "les unes dépendent de nous,   les autres n’en dépendent pas", PASSAGE_EPICTETE)
-
-
-def test_citation_inventee_refusee():
-    assert not generation.citation_est_dans_le_passage(
-        "Le sage ne craint rien car tout dépend de lui.", PASSAGE_EPICTETE)
+def test_redaction_impossible_sans_cle(client):
+    r = client.post("/api/redaction", json=demande())
+    assert r.status_code == 503
 
 
-def faux_llm(texte_citation, passage_id="stoique-000-000"):
-    return SortieLLM(
-        metier_principal=Metier(titre="Contrôleur aérien", pourquoi="…"),
-        metiers_alternatifs=[Metier(titre="A", pourquoi="…"), Metier(titre="B", pourquoi="…")],
-        citation=Citation(texte=texte_citation, auteur="Épictète", livre="Manuel", passage_id=passage_id),
-        livre_a_lire=LivreConseille(titre="Manuel", auteur="Épictète", pourquoi="…"),
-        ecart_job_voulu="…",
-    )
+def test_redaction_par_claude(client, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "fausse-cle")
+    recu = {}
+    monkeypatch.setattr(api, "rediger", lambda contenu, entree: recu.update(contenu=contenu) or faux_redaction())
+    assert client.post("/api/resultat", json=demande()).json()["redaction_possible"] is True
+    r = client.post("/api/redaction", json=demande())
+    assert r.status_code == 200, r.text
+    assert r.json()["pourquoi_metier_principal"] == "Rédigé par Claude."
+    # Claude reçoit les choix déjà faits, à expliquer
+    principal = client.post("/api/resultat", json=demande()).json()["sortie"]["metier_principal"]["titre"]
+    assert f"Métier principal : {principal}" in recu["contenu"]
 
 
-def test_citation_inventee_par_le_llm_remplacee_par_un_extrait_reel(client, monkeypatch):
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "test")
-    monkeypatch.setattr(generation, "sortie_llm", lambda *a: faux_llm("Une phrase qu'Épictète n'a jamais écrite."))
-    demande = {"entree": {"poste_actuel": "Infirmier", "statut": "salarie", "job_voulu": "Médecin"},
-               "reponses": reponses_toutes()}
-    data = client.post("/api/resultat", json=demande).json()
-    assert data["mode"] == "llm"
-    assert data["sortie"]["metier_principal"]["titre"] == "Contrôleur aérien"
-    assert data["sortie"]["citation"]["texte"] != "Une phrase qu'Épictète n'a jamais écrite."
-    assert data["sortie"]["citation"]["texte"] in PASSAGE_EPICTETE
-
-
-def test_erreur_du_llm_retombe_sur_le_mode_demo(client, monkeypatch):
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "test")
+def test_panne_de_claude_le_resultat_calcule_reste(client, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "fausse-cle")
 
     def panne(*a):
         raise RuntimeError("quota dépassé")
 
-    monkeypatch.setattr(generation, "sortie_llm", panne)
-    demande = {"entree": {"poste_actuel": "Infirmier", "statut": "salarie"}, "reponses": reponses_toutes()}
-    r = client.post("/api/resultat", json=demande)
-    assert r.status_code == 200 and r.json()["mode"] == "demo"
+    monkeypatch.setattr(api, "rediger", panne)
+    assert client.post("/api/redaction", json=demande()).status_code == 503
+    assert client.post("/api/resultat", json=demande()).status_code == 200
 
 
 def test_json_du_llm_entoure_de_texte():
     assert generation._extraire_json('Voici :\n```json\n{"a": 1}\n```') == {"a": 1}
 
 
-def test_message_pour_le_llm_contient_l_essentiel():
-    from app.schemas import Entree, Reponse
-    from app.scoring import calculer_profil, charger_grille
+def _contexte(entree=None):
     grille = charger_grille()
-    reponses = [Reponse(question_id=f"q{i:02d}", option_ids=["a"], texte_libre="Je dirais la vérité." if i == 4 else None)
-                for i in range(1, 14)]
+    reponses = [Reponse(**r) for r in reponses_toutes()]
+    reponses[3] = Reponse(question_id="q04", option_ids=["a"], texte_libre="Je dirais la vérité.")
+    entree = entree or Entree(poste_actuel="Développeur", statut="alternant", job_voulu="Médecin")
     analyse = calculer_profil(grille, reponses)
-    entree = Entree(poste_actuel="Développeur", statut="alternant", job_voulu=None)
-    msg = generation.message_utilisateur(grille, entree, analyse, reponses, FausseRecherche().chercher("", ["stoique"]))
-    assert "Développeur" in msg and "Alternant" in msg and "[stoique-000-000]" in msg
-    assert "Je dirais la vérité." in msg
+    import random
+    passages = FausseRecherche().chercher("", [analyse.dominant])
+    choix = Orientation(encodeur=None).orienter(analyse, entree)
+    sortie = generation.sortie_calculee(grille, entree, analyse, passages, choix, random.Random(0))
+    return grille, entree, analyse, reponses, sortie, choix, passages
+
+
+def message(entree=None):
+    grille, entree, analyse, reponses, sortie, choix, passages = _contexte(entree)
+    return generation.message_utilisateur(grille, entree, analyse, reponses, sortie, choix, passages[0])
+
+
+def test_message_pour_le_llm_contient_l_essentiel():
+    _, _, _, _, sortie, choix, _ = _contexte()
+    msg = message()
+    assert "Développeur" in msg and "Alternant" in msg and "Je dirais la vérité." in msg
+    assert "CHOIX DE L'ALGORITHME (à expliquer, pas à modifier)" in msg
+    assert choix.principal.voie.nom in msg and sortie.metiers_alternatifs[1].titre in msg
+    assert PASSAGE_EPICTETE in msg
 
 
 # --- Variété des passages -------------------------------------------------------
@@ -183,64 +217,6 @@ def _faux_client(blocs, stop_reason="tool_use", appels=None):
     return lambda *a, **k: Client()
 
 
-def _sortie_json(job=True):
-    return {
-        "metier_principal": {"titre": "Psychologue", "pourquoi": "Tu cherches le sens."},
-        "metiers_alternatifs": [{"titre": "Écrivain", "pourquoi": "…"}, {"titre": "Chercheur", "pourquoi": "…"}],
-        "citation": {"texte": "Ce qui dépend de nous", "auteur": "Épictète", "livre": "Manuel",
-                     "passage_id": "stoique-000-000"},
-        "livre_a_lire": {"titre": "Manuel", "auteur": "Épictète", "pourquoi": "…"},
-        "ecart_job_voulu": "Proche par l'écoute." if job else None,
-    }
-
-
-def _contexte():
-    from app.scoring import calculer_profil, charger_grille
-    from app.schemas import Entree, Reponse
-    grille = charger_grille()
-    reponses = [Reponse(**r) for r in reponses_toutes()]
-    entree = Entree(poste_actuel="Dev", statut="alternant", job_voulu="Médecin")
-    return grille, entree, calculer_profil(grille, reponses), reponses
-
-
-def test_claude_repond_par_l_outil(monkeypatch):
-    import anthropic
-    appels = []
-    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="tool_use", input=_sortie_json())], appels=appels))
-    grille, entree, analyse, reponses = _contexte()
-    sortie = generation.sortie_llm(grille, entree, analyse, reponses, [{"id": "x", "auteur": "a", "livre": "l", "texte": "t"}])
-    assert sortie.metier_principal.titre == "Psychologue"
-    assert appels[0]["tools"][0]["name"] == "rediger_resultat"
-    assert "$ref" not in json.dumps(appels[0]["tools"][0]["input_schema"])
-
-
-def test_citation_avec_retour_a_la_ligne_dans_du_texte_brut():
-    texte = '{"a": "ligne 1\nligne 2 avec des « guillemets »"}'
-    assert generation._extraire_json(texte)["a"].startswith("ligne 1")
-
-
-def test_reponse_coupee_signalee(monkeypatch):
-    import anthropic
-    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="text", text='{"metier')], stop_reason="max_tokens"))
-    grille, entree, analyse, reponses = _contexte()
-    with pytest.raises(RuntimeError, match="max_tokens"):
-        generation.sortie_llm(grille, entree, analyse, reponses, [{"id": "x", "auteur": "a", "livre": "l", "texte": "t"}])
-
-
-def test_reponse_en_texte_acceptee_si_le_modele_n_utilise_pas_l_outil(monkeypatch):
-    import anthropic
-    texte = "Voici :\n```json\n" + json.dumps(_sortie_json(), ensure_ascii=False) + "\n```"
-    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="text", text=texte)], stop_reason="end_turn"))
-    grille, entree, analyse, reponses = _contexte()
-    sortie = generation.sortie_llm(grille, entree, analyse, reponses, [{"id": "x", "auteur": "a", "livre": "l", "texte": "t"}])
-    assert sortie.metier_principal.titre == "Psychologue"
-
-
-# --- Réponses coupées (cas réel en ligne : « thinking » + outil, coupé à 2 500 jetons) ---------
-
-PASSAGE_TEST = [{"id": "x", "auteur": "a", "livre": "l", "texte": "t"}]
-
-
 def _faux_client_successif(reponses, appels):
     """Client qui renvoie une réponse différente à chaque appel."""
     class Messages:
@@ -254,32 +230,72 @@ def _faux_client_successif(reponses, appels):
     return lambda *a, **k: Client()
 
 
+def _redaction_json(job=True):
+    return json.loads(faux_redaction(job).model_dump_json())
+
+
+ENTREE_JOB = Entree(poste_actuel="Dev", statut="alternant", job_voulu="Médecin")
+
+
+def test_claude_repond_par_l_outil(monkeypatch):
+    import anthropic
+    appels = []
+    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="tool_use", input=_redaction_json())], appels=appels))
+    redaction = generation.rediger("contenu", ENTREE_JOB)
+    assert redaction.pourquoi_metier_principal == "Rédigé par Claude."
+    assert appels[0]["tools"][0]["name"] == "rediger_resultat"
+    assert "$ref" not in json.dumps(appels[0]["tools"][0]["input_schema"])
+
+
+def test_citation_avec_retour_a_la_ligne_dans_du_texte_brut():
+    texte = '{"a": "ligne 1\nligne 2 avec des « guillemets »"}'
+    assert generation._extraire_json(texte)["a"].startswith("ligne 1")
+
+
+def test_reponse_coupee_signalee(monkeypatch):
+    import anthropic
+    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="text", text='{"pourquoi')], stop_reason="max_tokens"))
+    with pytest.raises(RuntimeError, match="max_tokens"):
+        generation.rediger("contenu", ENTREE_JOB)
+
+
+def test_reponse_en_texte_acceptee_si_le_modele_n_utilise_pas_l_outil(monkeypatch):
+    import anthropic
+    texte = "Voici :\n```json\n" + json.dumps(_redaction_json(), ensure_ascii=False) + "\n```"
+    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="text", text=texte)], stop_reason="end_turn"))
+    assert generation.rediger("contenu", ENTREE_JOB).pourquoi_livre == "Pour toi."
+
+
 def test_outil_coupe_par_max_tokens_puis_reessai_avec_plus_de_place(monkeypatch):
     import anthropic
     coupee = _Bloc(content=[_Bloc(type="thinking", thinking="…"),
-                            _Bloc(type="tool_use", input={"metier_principal": {"titre": "X", "pourquoi": "Y"}})],
+                            _Bloc(type="tool_use", input={"pourquoi_metier_principal": "X"})],
                    stop_reason="max_tokens")
-    complete = _Bloc(content=[_Bloc(type="tool_use", input=_sortie_json())], stop_reason="tool_use")
+    complete = _Bloc(content=[_Bloc(type="tool_use", input=_redaction_json())], stop_reason="tool_use")
     appels = []
     monkeypatch.setattr(anthropic, "Anthropic", _faux_client_successif([coupee, complete], appels))
-    grille, entree, analyse, reponses = _contexte()
-    sortie = generation.sortie_llm(grille, entree, analyse, reponses, PASSAGE_TEST)
-    assert sortie.metier_principal.titre == "Psychologue"
+    assert generation.rediger("contenu", ENTREE_JOB).pourquoi_metier_principal == "Rédigé par Claude."
     assert [a["max_tokens"] for a in appels] == list(generation.JETONS_MAX)
-    assert appels[1]["max_tokens"] > appels[0]["max_tokens"]
 
 
 def test_echec_resume_sans_texte_du_visiteur(monkeypatch):
     import anthropic
     secret = "texte-prive-du-visiteur"
-    incomplete = _Bloc(content=[_Bloc(type="tool_use", input={"metier_principal": {"titre": secret, "pourquoi": secret}})],
-                       stop_reason="tool_use")
+    incomplete = _Bloc(content=[_Bloc(type="tool_use", input={"pourquoi_metier_principal": secret})], stop_reason="tool_use")
     monkeypatch.setattr(anthropic, "Anthropic", _faux_client_successif([incomplete, incomplete], []))
-    grille, entree, analyse, reponses = _contexte()
     with pytest.raises(RuntimeError) as erreur:
-        generation.sortie_llm(grille, entree, analyse, reponses, PASSAGE_TEST)
-    assert "citation" in str(erreur.value) and "metiers_alternatifs" in str(erreur.value)
+        generation.rediger("contenu", ENTREE_JOB)
+    assert "pourquoi_livre" in str(erreur.value) and "pourquoi_metiers_alternatifs" in str(erreur.value)
     assert secret not in str(erreur.value)  # rien de ce que le modèle (ou le visiteur) a écrit
+
+
+def test_ecart_obligatoire_si_job_voulu(monkeypatch):
+    import anthropic
+    appels = []
+    monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="tool_use", input=_redaction_json(job=False))], appels=appels))
+    with pytest.raises(RuntimeError, match="ecart_job_voulu"):
+        generation.rediger("contenu", ENTREE_JOB)
+    assert len(appels) == 2  # une seconde chance a été donnée
 
 
 def test_modele_lu_au_moment_de_l_appel(monkeypatch):

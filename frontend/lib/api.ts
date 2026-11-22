@@ -40,7 +40,9 @@ export type Entree = {
 };
 export type Reponse = { question_id: string; option_ids: string[]; texte_libre: string | null };
 
-export type Metier = { titre: string; pourquoi: string };
+// La voie d'accès la plus réaliste avec les moyens de l'utilisateur (calculée par l'API).
+export type Acces = { voie: string; duree: string; cout: string };
+export type Metier = { titre: string; pourquoi: string; acces: Acces | null };
 export type OptionParcours = {
   titre: string;
   duree: string;
@@ -62,7 +64,8 @@ export type Resultat = {
   description_profil: string;
   philosophes: string[];
   echos: { philosophe: string; idee: string }[];
-  mode: "llm" | "demo";
+  assouplissements: string[]; // moyens relâchés pour trouver des métiers, ex. « le délai »
+  redaction_possible: boolean; // l'API peut demander à Claude de rédiger les explications
   profil: {
     dominant: string;
     secondaire: string;
@@ -75,8 +78,16 @@ export type Resultat = {
     citation: { texte: string; auteur: string; livre: string; passage_id: string; url: string | null };
     livre_a_lire: { titre: string; auteur: string; pourquoi: string };
     ecart_job_voulu: string | null;
-    reponse_problematique: ReponseProblematique | null;
   };
+};
+
+// Les explications rédigées par Claude, qui remplacent les phrases types du résultat calculé.
+export type Redaction = {
+  pourquoi_metier_principal: string;
+  pourquoi_metiers_alternatifs: string[];
+  pourquoi_livre: string;
+  ecart_job_voulu: string | null;
+  reponse_problematique: ReponseProblematique | null;
 };
 
 async function lire<T>(reponse: Response): Promise<T> {
@@ -104,12 +115,20 @@ export async function chargerQuestionnaire(essais = 3): Promise<Questionnaire> {
   }
 }
 
-export async function envoyerReponses(entree: Entree, reponses: Reponse[]): Promise<Resultat> {
-  return lire(
-    await fetch("/api/resultat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ entree, reponses }),
-    }),
-  );
+function envoyer<T>(route: string, entree: Entree, reponses: Reponse[]): Promise<T> {
+  return fetch(`/api/${route}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ entree, reponses }),
+  }).then((r) => lire<T>(r));
+}
+
+// 1. Le résultat calculé (profil, métiers, citation, livre) : immédiat, sans IA.
+export function envoyerReponses(entree: Entree, reponses: Reponse[]): Promise<Resultat> {
+  return envoyer("resultat", entree, reponses);
+}
+
+// 2. Les explications rédigées par Claude (~30 s). Mêmes données : l'API recalcule le même résultat.
+export function demanderRedaction(entree: Entree, reponses: Reponse[]): Promise<Redaction> {
+  return envoyer("redaction", entree, reponses);
 }

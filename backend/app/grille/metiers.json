@@ -1,0 +1,1315 @@
+{
+ "version": 1,
+ "avertissement": "Ordres de grandeur pour la France (2026), à vérifier sur onisep.fr et moncompteformation.gouv.fr. Durées en mois ; coût de la formation avant aides.",
+ "legende": {
+  "niveau_requis": "diplôme minimal pour entrer dans la formation : sans, cap_bep, bac, bac_2, bac_3, bac_5",
+  "cout": "finance (gratuit pour l'apprenant : alternance, formation publique ou rémunérée), moins_1000, 1000_5000, plus_5000",
+  "rythme": "alternance (contrat de travail + école), temps_plein, temps_partiel (soirs, week-ends, à distance)"
+ },
+ "metiers": [
+  {
+   "id": "medecin-urgentiste",
+   "titre": "Médecin urgentiste",
+   "profils": {
+    "stoique": 1,
+    "moraliste": 0.5
+   },
+   "description": "Prend en charge les patients en situation d'urgence vitale, décide vite et garde son calme sous pression.",
+   "voies": [
+    {
+     "nom": "Études de médecine (PASS ou L.AS) puis internat de médecine d'urgence",
+     "niveau_requis": "bac",
+     "duree_mois": 132,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "pilote-de-ligne",
+   "titre": "Pilote de ligne",
+   "profils": {
+    "stoique": 1,
+    "batisseur": 0.4
+   },
+   "description": "Conduit un avion de transport de passagers, applique des procédures strictes et gère les imprévus en vol.",
+   "voies": [
+    {
+     "nom": "Formation de pilote de ligne de l'ENAC (concours, formation gratuite)",
+     "niveau_requis": "bac",
+     "duree_mois": 30,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "École de pilotage privée (licence ATPL)",
+     "niveau_requis": "bac",
+     "duree_mois": 24,
+     "cout": "plus_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "controleur-aerien",
+   "titre": "Contrôleur aérien",
+   "profils": {
+    "stoique": 1,
+    "batisseur": 0.5
+   },
+   "description": "Guide les avions dans l'espace aérien, coordonne des dizaines de vols et garde la tête froide quand tout s'accélère.",
+   "voies": [
+    {
+     "nom": "Concours ICNA de l'ENAC (formation rémunérée)",
+     "niveau_requis": "bac_2",
+     "duree_mois": 36,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "sapeur-pompier",
+   "titre": "Sapeur-pompier",
+   "profils": {
+    "stoique": 1,
+    "moraliste": 0.5
+   },
+   "description": "Intervient sur les incendies, accidents et secours à personne, en équipe et dans l'urgence.",
+   "voies": [
+    {
+     "nom": "Concours de sapeur-pompier professionnel puis formation initiale rémunérée",
+     "niveau_requis": "sans",
+     "duree_mois": 9,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Sapeur-pompier volontaire (formation initiale de quelques semaines, en parallèle d'un emploi)",
+     "niveau_requis": "sans",
+     "duree_mois": 3,
+     "cout": "finance",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "ambulancier",
+   "titre": "Ambulancier",
+   "profils": {
+    "stoique": 1,
+    "moraliste": 0.5
+   },
+   "description": "Transporte et surveille des patients, y compris en urgence, avec calme et précision.",
+   "voies": [
+    {
+     "nom": "Diplôme d'État d'ambulancier (DEA)",
+     "niveau_requis": "sans",
+     "duree_mois": 5,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "aiguilleur-du-rail",
+   "titre": "Aiguilleur du rail",
+   "profils": {
+    "stoique": 1,
+    "batisseur": 0.4
+   },
+   "description": "Règle la circulation des trains depuis un poste d'aiguillage : sécurité, rigueur et sang-froid.",
+   "voies": [
+    {
+     "nom": "Recrutement par l'opérateur ferroviaire puis formation interne rémunérée",
+     "niveau_requis": "bac",
+     "duree_mois": 6,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "gestionnaire-de-crise",
+   "titre": "Gestionnaire de crise",
+   "profils": {
+    "stoique": 1,
+    "batisseur": 0.5
+   },
+   "description": "Anticipe et pilote les situations de crise (risques industriels, sécurité civile, cyberattaques) pour une organisation.",
+   "voies": [
+    {
+     "nom": "Master gestion des risques et des crises, en alternance",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "negociateur-immobilier",
+   "titre": "Négociateur immobilier",
+   "profils": {
+    "stoique": 0.8,
+    "createur": 0.5
+   },
+   "description": "Négocie l'achat et la vente de biens entre particuliers, encaisse les refus et garde son calme dans les tractations.",
+   "voies": [
+    {
+     "nom": "BTS professions immobilières en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Recrutement en agence avec formation interne",
+     "niveau_requis": "bac",
+     "duree_mois": 3,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "chef-cuisinier",
+   "titre": "Chef cuisinier",
+   "profils": {
+    "epicurien": 1,
+    "createur": 0.4
+   },
+   "description": "Imagine et prépare les plats d'un restaurant, travaille les produits et fait plaisir à ceux qui s'attablent.",
+   "voies": [
+    {
+     "nom": "CAP cuisine en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "CAP cuisine pour adultes en reconversion (GRETA, AFPA)",
+     "niveau_requis": "sans",
+     "duree_mois": 9,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "boulanger",
+   "titre": "Boulanger",
+   "profils": {
+    "epicurien": 1
+   },
+   "description": "Fabrique le pain et les viennoiseries du quartier, un métier de gestes, de produits et de liens avec les habitants.",
+   "voies": [
+    {
+     "nom": "CAP boulanger en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "CAP boulanger pour adultes en reconversion",
+     "niveau_requis": "sans",
+     "duree_mois": 8,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "artisan-ebeniste",
+   "titre": "Artisan ébéniste",
+   "profils": {
+    "epicurien": 1,
+    "createur": 0.5,
+    "contemplatif": 0.3
+   },
+   "description": "Conçoit et fabrique des meubles en bois massif, du dessin à la finition.",
+   "voies": [
+    {
+     "nom": "CAP ébéniste en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "CAP ébéniste pour adultes en reconversion",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "paysagiste",
+   "titre": "Paysagiste",
+   "profils": {
+    "epicurien": 1,
+    "contemplatif": 0.3
+   },
+   "description": "Crée et entretient des jardins et des espaces verts, au grand air et au rythme des saisons.",
+   "voies": [
+    {
+     "nom": "CAPa jardinier paysagiste en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Titre professionnel d'ouvrier du paysage pour adultes",
+     "niveau_requis": "sans",
+     "duree_mois": 7,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "caviste-sommelier",
+   "titre": "Caviste ou sommelier",
+   "profils": {
+    "epicurien": 1
+   },
+   "description": "Conseille et fait découvrir les vins, raconte les domaines et accorde les bouteilles aux repas.",
+   "voies": [
+    {
+     "nom": "Formation de caviste pour adultes",
+     "niveau_requis": "bac",
+     "duree_mois": 5,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Mention complémentaire sommellerie en alternance (après un CAP)",
+     "niveau_requis": "cap_bep",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "organisateur-evenements",
+   "titre": "Organisateur d'événements",
+   "profils": {
+    "epicurien": 1,
+    "createur": 0.5
+   },
+   "description": "Organise des fêtes, salons et séminaires : lieux, prestataires, accueil, et des gens qui passent un bon moment.",
+   "voies": [
+    {
+     "nom": "BTS tourisme ou bachelor événementiel en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "guide-conferencier",
+   "titre": "Guide-conférencier",
+   "profils": {
+    "epicurien": 1,
+    "contemplatif": 0.5
+   },
+   "description": "Fait découvrir monuments, musées et villes à des visiteurs, en racontant leur histoire.",
+   "voies": [
+    {
+     "nom": "Licence professionnelle guide-conférencier",
+     "niveau_requis": "bac_2",
+     "duree_mois": 12,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "animateur-socioculturel",
+   "titre": "Animateur socioculturel",
+   "profils": {
+    "epicurien": 0.8,
+    "moraliste": 0.5
+   },
+   "description": "Anime des activités de loisirs et de lien social pour des enfants, des jeunes ou des seniors.",
+   "voies": [
+    {
+     "nom": "BPJEPS animation en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "BPJEPS animation en formation continue",
+     "niveau_requis": "sans",
+     "duree_mois": 10,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "analyste-cybersecurite",
+   "titre": "Analyste en cybersécurité",
+   "profils": {
+    "sceptique": 1,
+    "batisseur": 0.6
+   },
+   "description": "Surveille les systèmes informatiques, cherche les failles et enquête sur les attaques avant qu'elles ne fassent des dégâts.",
+   "voies": [
+    {
+     "nom": "Bachelor ou BUT informatique orienté cybersécurité en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Bachelor cybersécurité en alternance (une année après un bac+2)",
+     "niveau_requis": "bac_2",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Formation intensive certifiante en cybersécurité",
+     "niveau_requis": "bac",
+     "duree_mois": 8,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "data-analyst",
+   "titre": "Data analyst",
+   "profils": {
+    "sceptique": 1,
+    "batisseur": 0.6
+   },
+   "description": "Analyse les données d'une organisation pour l'aider à décider : chiffres vérifiés, tableaux de bord, conclusions prudentes.",
+   "voies": [
+    {
+     "nom": "Bachelor ou BUT science des données en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Formation intensive certifiante de data analyst",
+     "niveau_requis": "bac",
+     "duree_mois": 6,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Formation de data analyst à distance, à temps partiel",
+     "niveau_requis": "bac",
+     "duree_mois": 12,
+     "cout": "1000_5000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "testeur-logiciel",
+   "titre": "Testeur logiciel",
+   "profils": {
+    "sceptique": 1,
+    "batisseur": 0.5
+   },
+   "description": "Cherche ce qui ne marche pas dans un logiciel avant ses utilisateurs : scénarios de test, bugs, preuves.",
+   "voies": [
+    {
+     "nom": "Formation certifiante de testeur logiciel (ISTQB)",
+     "niveau_requis": "bac",
+     "duree_mois": 5,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Bachelor qualité logicielle en alternance",
+     "niveau_requis": "bac_2",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "technicien-qualite",
+   "titre": "Technicien qualité",
+   "profils": {
+    "sceptique": 1,
+    "batisseur": 0.5
+   },
+   "description": "Contrôle produits et procédés, mesure les écarts et remonte à leurs causes plutôt que de se fier aux apparences.",
+   "voies": [
+    {
+     "nom": "BTS ou BUT qualité en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Titre professionnel de technicien qualité pour adultes",
+     "niveau_requis": "bac",
+     "duree_mois": 9,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "auditeur",
+   "titre": "Auditeur",
+   "profils": {
+    "sceptique": 1,
+    "batisseur": 0.5,
+    "moraliste": 0.3
+   },
+   "description": "Vérifie les comptes et les procédures d'une entreprise, sans se contenter de ce qu'on lui présente.",
+   "voies": [
+    {
+     "nom": "Diplôme de comptabilité et de gestion (DCG) en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Master audit et contrôle en alternance",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "journaliste-investigation",
+   "titre": "Journaliste d'investigation",
+   "profils": {
+    "sceptique": 1,
+    "moraliste": 0.5
+   },
+   "description": "Enquête, recoupe les sources et vérifie les faits avant de publier.",
+   "voies": [
+    {
+     "nom": "École de journalisme reconnue, en alternance",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Master de journalisme à l'université",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "enqueteur-gendarmerie",
+   "titre": "Enquêteur en gendarmerie",
+   "profils": {
+    "sceptique": 0.8,
+    "stoique": 0.6,
+    "moraliste": 0.5
+   },
+   "description": "Mène des enquêtes, recueille des preuves et confronte les versions jusqu'à établir les faits.",
+   "voies": [
+    {
+     "nom": "Concours de sous-officier de gendarmerie puis formation rémunérée",
+     "niveau_requis": "bac",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "controleur-transports",
+   "titre": "Contrôleur dans les transports",
+   "profils": {
+    "sceptique": 0.8,
+    "stoique": 0.6
+   },
+   "description": "Vérifie titres de transport et situations à bord, démêle les versions contradictoires sans s'emporter.",
+   "voies": [
+    {
+     "nom": "Recrutement par l'opérateur de transport puis formation interne rémunérée",
+     "niveau_requis": "sans",
+     "duree_mois": 2,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "chercheur-scientifique",
+   "titre": "Chercheur scientifique",
+   "profils": {
+    "sceptique": 1,
+    "contemplatif": 0.6,
+    "batisseur": 0.4
+   },
+   "description": "Formule des hypothèses, les met à l'épreuve et publie seulement ce que les données confirment.",
+   "voies": [
+    {
+     "nom": "Master puis doctorat (contrat doctoral rémunéré)",
+     "niveau_requis": "bac_3",
+     "duree_mois": 60,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "developpeur-logiciel",
+   "titre": "Développeur logiciel",
+   "profils": {
+    "batisseur": 1,
+    "createur": 0.4
+   },
+   "description": "Conçoit et construit des applications, pièce par pièce, avec méthode et logique.",
+   "voies": [
+    {
+     "nom": "BUT ou bachelor informatique en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Titre professionnel de développeur web en formation intensive",
+     "niveau_requis": "bac",
+     "duree_mois": 8,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Formation de développeur à distance, à temps partiel",
+     "niveau_requis": "bac",
+     "duree_mois": 12,
+     "cout": "1000_5000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "ingenieur",
+   "titre": "Ingénieur",
+   "profils": {
+    "batisseur": 1,
+    "sceptique": 0.3
+   },
+   "description": "Conçoit des systèmes techniques (ouvrages, machines, logiciels) en découpant les problèmes et en calculant.",
+   "voies": [
+    {
+     "nom": "École d'ingénieurs en alternance (après un bac+2)",
+     "niveau_requis": "bac_2",
+     "duree_mois": 36,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "dessinateur-projeteur-bim",
+   "titre": "Dessinateur-projeteur BIM",
+   "profils": {
+    "batisseur": 1,
+    "createur": 0.4
+   },
+   "description": "Modélise des bâtiments et des ouvrages en 3D (BIM) et organise les plans de tous les corps de métier.",
+   "voies": [
+    {
+     "nom": "BTS bâtiment ou travaux publics en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Formation BIM courte pour profils techniques",
+     "niveau_requis": "bac_2",
+     "duree_mois": 6,
+     "cout": "1000_5000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "electricien",
+   "titre": "Électricien",
+   "profils": {
+    "batisseur": 1,
+    "stoique": 0.3
+   },
+   "description": "Installe et dépanne les réseaux électriques des bâtiments, en suivant plans et normes à la lettre.",
+   "voies": [
+    {
+     "nom": "CAP électricien en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Titre professionnel d'électricien pour adultes (souvent financé par la région ou France Travail)",
+     "niveau_requis": "sans",
+     "duree_mois": 8,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "technicien-maintenance",
+   "titre": "Technicien de maintenance industrielle",
+   "profils": {
+    "batisseur": 1,
+    "stoique": 0.3
+   },
+   "description": "Diagnostique et répare les machines d'une usine, avec méthode, avant que la production ne s'arrête.",
+   "voies": [
+    {
+     "nom": "BTS maintenance des systèmes en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Titre professionnel de technicien de maintenance pour adultes",
+     "niveau_requis": "cap_bep",
+     "duree_mois": 9,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "chef-de-projet",
+   "titre": "Chef de projet",
+   "profils": {
+    "batisseur": 1,
+    "createur": 0.3
+   },
+   "description": "Organise un projet de bout en bout : planning, budget, équipe, et que tout s'enchaîne dans l'ordre.",
+   "voies": [
+    {
+     "nom": "Bachelor chef de projet en alternance (une année après un bac+2)",
+     "niveau_requis": "bac_2",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Master management de projet en alternance",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "data-scientist",
+   "titre": "Data scientist",
+   "profils": {
+    "batisseur": 1,
+    "sceptique": 0.6
+   },
+   "description": "Construit des modèles statistiques et d'apprentissage automatique pour prévoir et automatiser.",
+   "voies": [
+    {
+     "nom": "Master science des données en alternance",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "actuaire",
+   "titre": "Actuaire",
+   "profils": {
+    "batisseur": 1,
+    "sceptique": 0.5
+   },
+   "description": "Calcule les risques pour les assurances et les banques avec des modèles mathématiques.",
+   "voies": [
+    {
+     "nom": "Master d'actuariat à l'université",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "architecte",
+   "titre": "Architecte",
+   "profils": {
+    "batisseur": 1,
+    "createur": 0.6
+   },
+   "description": "Conçoit des bâtiments en conciliant usages, contraintes techniques et esthétique.",
+   "voies": [
+    {
+     "nom": "École nationale supérieure d'architecture (5 ans)",
+     "niveau_requis": "bac",
+     "duree_mois": 60,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "entrepreneur",
+   "titre": "Entrepreneur",
+   "profils": {
+    "createur": 1,
+    "epicurien": 0.3
+   },
+   "description": "Crée sa propre activité, prend des risques et construit quelque chose qui n'existait pas.",
+   "voies": [
+    {
+     "nom": "Création d'entreprise avec un accompagnement (réseaux d'aide à la création, CCI)",
+     "niveau_requis": "sans",
+     "duree_mois": 3,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Lancement d'une activité en parallèle de son emploi (micro-entreprise)",
+     "niveau_requis": "sans",
+     "duree_mois": 6,
+     "cout": "moins_1000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "createur-de-contenu",
+   "titre": "Créateur de contenu",
+   "profils": {
+    "createur": 1,
+    "epicurien": 0.4
+   },
+   "description": "Imagine, tourne et publie des vidéos, des podcasts ou des articles qui portent sa voix.",
+   "voies": [
+    {
+     "nom": "Lancement en autodidacte, avec une formation courte au montage",
+     "niveau_requis": "sans",
+     "duree_mois": 6,
+     "cout": "moins_1000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "designer-graphique",
+   "titre": "Designer graphique",
+   "profils": {
+    "createur": 1,
+    "batisseur": 0.3
+   },
+   "description": "Crée l'identité visuelle de marques, d'affiches et de sites : couleurs, formes et typographie.",
+   "voies": [
+    {
+     "nom": "DN MADE (diplôme national des métiers d'art et du design)",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Titre professionnel de designer web en formation intensive",
+     "niveau_requis": "bac",
+     "duree_mois": 9,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "photographe",
+   "titre": "Photographe",
+   "profils": {
+    "createur": 1,
+    "contemplatif": 0.4
+   },
+   "description": "Raconte des moments et des personnes en images, avec un regard bien à soi.",
+   "voies": [
+    {
+     "nom": "CAP photographe pour adultes en reconversion",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Activité de photographe indépendant en parallèle de son emploi",
+     "niveau_requis": "sans",
+     "duree_mois": 6,
+     "cout": "1000_5000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "coach-sportif",
+   "titre": "Coach sportif",
+   "profils": {
+    "createur": 1,
+    "stoique": 0.4,
+    "epicurien": 0.3
+   },
+   "description": "Fait progresser les autres à travers l'effort et le dépassement de soi.",
+   "voies": [
+    {
+     "nom": "BPJEPS activités de la forme en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "BPJEPS activités de la forme en formation continue",
+     "niveau_requis": "sans",
+     "duree_mois": 10,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "realisateur",
+   "titre": "Réalisateur",
+   "profils": {
+    "createur": 1,
+    "contemplatif": 0.4
+   },
+   "description": "Porte un film de l'écriture au montage et impose sa vision à toute une équipe.",
+   "voies": [
+    {
+     "nom": "École de cinéma publique (concours)",
+     "niveau_requis": "bac_2",
+     "duree_mois": 48,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "École de cinéma privée",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "plus_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "artiste-plasticien",
+   "titre": "Artiste plasticien",
+   "profils": {
+    "createur": 1,
+    "contemplatif": 0.5
+   },
+   "description": "Crée des œuvres (peinture, sculpture, installations) et les montre au public.",
+   "voies": [
+    {
+     "nom": "École supérieure d'art publique (beaux-arts)",
+     "niveau_requis": "bac",
+     "duree_mois": 60,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "directeur-artistique",
+   "titre": "Directeur artistique",
+   "profils": {
+    "createur": 1,
+    "batisseur": 0.3
+   },
+   "description": "Définit l'univers visuel d'une marque ou d'une campagne et guide les créatifs.",
+   "voies": [
+    {
+     "nom": "Mastère de direction artistique en alternance",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "aide-soignant",
+   "titre": "Aide-soignant",
+   "profils": {
+    "moraliste": 1,
+    "stoique": 0.4
+   },
+   "description": "Accompagne les patients dans les soins du quotidien, avec attention et respect de leur dignité.",
+   "voies": [
+    {
+     "nom": "Diplôme d'État d'aide-soignant (formation souvent financée par la région)",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Diplôme d'État d'aide-soignant en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 18,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "conseiller-insertion",
+   "titre": "Conseiller en insertion professionnelle",
+   "profils": {
+    "moraliste": 1,
+    "epicurien": 0.3
+   },
+   "description": "Aide des personnes éloignées de l'emploi à reprendre pied et à construire un projet.",
+   "voies": [
+    {
+     "nom": "Titre professionnel de conseiller en insertion professionnelle",
+     "niveau_requis": "bac",
+     "duree_mois": 9,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Titre professionnel de conseiller en insertion professionnelle en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "travailleur-social",
+   "titre": "Éducateur spécialisé",
+   "profils": {
+    "moraliste": 1,
+    "epicurien": 0.3
+   },
+   "description": "Accompagne des enfants ou des adultes en difficulté pour qu'ils retrouvent leur autonomie.",
+   "voies": [
+    {
+     "nom": "Diplôme d'État d'éducateur spécialisé en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Diplôme d'État d'éducateur spécialisé en formation initiale",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "enseignant",
+   "titre": "Professeur des écoles",
+   "profils": {
+    "moraliste": 1,
+    "contemplatif": 0.4
+   },
+   "description": "Transmet les savoirs de base et veille à ce que chaque élève ait sa chance.",
+   "voies": [
+    {
+     "nom": "Master MEEF puis concours de professeur des écoles",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Contractuel de l'Éducation nationale (recrutement direct, formation en poste)",
+     "niveau_requis": "bac_3",
+     "duree_mois": 2,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "charge-projet-solidarite",
+   "titre": "Chargé de projet solidarité",
+   "profils": {
+    "moraliste": 1,
+    "batisseur": 0.4
+   },
+   "description": "Monte et suit des projets d'aide pour une association ou une ONG, en France ou à l'étranger.",
+   "voies": [
+    {
+     "nom": "Master solidarité internationale ou économie sociale en alternance",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ]
+  },
+  {
+   "id": "medecin",
+   "titre": "Médecin",
+   "profils": {
+    "moraliste": 1,
+    "contemplatif": 0.3
+   },
+   "description": "Soigne les patients et les accompagne dans la durée, avec un fort sens de la responsabilité.",
+   "voies": [
+    {
+     "nom": "Études de médecine (PASS ou L.AS) puis internat de médecine générale",
+     "niveau_requis": "bac",
+     "duree_mois": 108,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "avocat",
+   "titre": "Avocat",
+   "profils": {
+    "moraliste": 1,
+    "sceptique": 0.5,
+    "createur": 0.3
+   },
+   "description": "Défend les droits de ses clients et argumente pour que justice soit rendue.",
+   "voies": [
+    {
+     "nom": "Master de droit, examen d'entrée à l'école d'avocats puis formation",
+     "niveau_requis": "bac_3",
+     "duree_mois": 36,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "magistrat",
+   "titre": "Magistrat",
+   "profils": {
+    "moraliste": 1,
+    "sceptique": 0.5
+   },
+   "description": "Juge ou poursuit au nom de la société, en appliquant la loi avec impartialité.",
+   "voies": [
+    {
+     "nom": "Concours de l'École nationale de la magistrature puis formation rémunérée",
+     "niveau_requis": "bac_5",
+     "duree_mois": 31,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "libraire",
+   "titre": "Libraire",
+   "profils": {
+    "contemplatif": 1,
+    "epicurien": 0.5
+   },
+   "description": "Choisit, lit et conseille des livres, et fait vivre un lieu de culture.",
+   "voies": [
+    {
+     "nom": "Formation de libraire en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Formation de libraire pour adultes en reconversion",
+     "niveau_requis": "bac",
+     "duree_mois": 6,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "adjoint-patrimoine",
+   "titre": "Adjoint du patrimoine",
+   "profils": {
+    "contemplatif": 0.9,
+    "epicurien": 0.3
+   },
+   "description": "Accueille le public et prend soin des collections d'une bibliothèque, d'un musée ou d'archives.",
+   "voies": [
+    {
+     "nom": "Recrutement direct par une collectivité (catégorie C, sans concours) puis formation en poste",
+     "niveau_requis": "sans",
+     "duree_mois": 3,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "correcteur-relecteur",
+   "titre": "Correcteur-relecteur",
+   "profils": {
+    "contemplatif": 0.9,
+    "sceptique": 0.5
+   },
+   "description": "Relit textes et livres avant publication, traque les erreurs et soigne la langue.",
+   "voies": [
+    {
+     "nom": "Formation de correcteur à distance, à temps partiel",
+     "niveau_requis": "bac",
+     "duree_mois": 6,
+     "cout": "1000_5000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "bibliothecaire",
+   "titre": "Bibliothécaire",
+   "profils": {
+    "contemplatif": 1,
+    "epicurien": 0.3
+   },
+   "description": "Organise et fait vivre les collections d'une médiathèque, et accompagne les lecteurs.",
+   "voies": [
+    {
+     "nom": "BUT information-communication, métiers du livre, en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Concours d'assistant de conservation des bibliothèques (préparation à distance)",
+     "niveau_requis": "bac_2",
+     "duree_mois": 6,
+     "cout": "moins_1000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "ecrivain",
+   "titre": "Écrivain",
+   "profils": {
+    "contemplatif": 1,
+    "createur": 0.6
+   },
+   "description": "Écrit romans, essais ou poésie, le plus souvent en parallèle d'un autre métier.",
+   "voies": [
+    {
+     "nom": "Écriture en parallèle de son emploi, avec un atelier d'écriture",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "moins_1000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "musicien",
+   "titre": "Musicien",
+   "profils": {
+    "contemplatif": 1,
+    "createur": 0.6
+   },
+   "description": "Joue, compose ou enseigne la musique.",
+   "voies": [
+    {
+     "nom": "Conservatoire (cursus menant au diplôme d'études musicales)",
+     "niveau_requis": "sans",
+     "duree_mois": 36,
+     "cout": "moins_1000",
+     "rythme": "temps_partiel"
+    }
+   ]
+  },
+  {
+   "id": "psychologue",
+   "titre": "Psychologue",
+   "profils": {
+    "contemplatif": 1,
+    "moraliste": 0.5
+   },
+   "description": "Écoute et accompagne des personnes qui cherchent à comprendre ce qu'elles vivent.",
+   "voies": [
+    {
+     "nom": "Licence puis master de psychologie à l'université",
+     "niveau_requis": "bac",
+     "duree_mois": 60,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "professeur-philosophie",
+   "titre": "Professeur de philosophie",
+   "profils": {
+    "contemplatif": 1,
+    "moraliste": 0.5
+   },
+   "description": "Apprend aux élèves à penser par eux-mêmes à partir des grands textes.",
+   "voies": [
+    {
+     "nom": "Master MEEF de philosophie puis CAPES",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ]
+  },
+  {
+   "id": "chercheur-sciences-humaines",
+   "titre": "Chercheur en sciences humaines",
+   "profils": {
+    "contemplatif": 1,
+    "sceptique": 0.6
+   },
+   "description": "Étudie l'histoire, la société ou les idées, et publie ses travaux.",
+   "voies": [
+    {
+     "nom": "Master puis doctorat en sciences humaines (contrat doctoral rémunéré)",
+     "niveau_requis": "bac_3",
+     "duree_mois": 60,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ]
+  }
+ ]
+}

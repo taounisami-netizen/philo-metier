@@ -7,9 +7,11 @@ from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from app import generation
-from app.main import app, get_recherche
+from app import main as api
+from app.main import app, get_orientation, get_recherche
+from app.orientation import Orientation
 from app.schemas import Entree, OptionParcours, ReponseProblematique, Situation
-from tests.test_api import FausseRecherche, _Bloc, _contexte, _faux_client, _sortie_json, faux_llm, reponses_toutes
+from tests.test_api import FausseRecherche, _Bloc, _faux_client, _redaction_json, faux_redaction, message, reponses_toutes
 
 SITUATION = {
     "problematique": "Je veux quitter l'hôpital sans reprendre de longues études.",
@@ -24,6 +26,7 @@ def client(monkeypatch):
     for nom in ("ANTHROPIC_API_KEY", "CLE_INTERNE"):
         monkeypatch.delenv(nom, raising=False)
     app.dependency_overrides[get_recherche] = lambda: FausseRecherche()
+    app.dependency_overrides[get_orientation] = lambda: Orientation(encodeur=None)
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
@@ -66,62 +69,59 @@ def test_problematique_trop_longue_refusee():
 # --- Ce que Claude reçoit -----------------------------------------------------------------
 
 def test_le_message_contient_les_moyens_en_clair():
-    grille, _, analyse, reponses = _contexte()
-    entree = Entree(**ENTREE)
-    message = generation.message_utilisateur(grille, entree, analyse, reponses, [])
-    assert "5 à 10 h par semaine" in message and "Bac +3" in message and "Dans ma région" in message
+    msg = message(Entree(**ENTREE))
+    assert "5 à 10 h par semaine" in msg and "Bac +3" in msg and "Dans ma région" in msg
     # Les textes libres sont encadrés comme des données
-    assert "<texte_utilisateur>Je veux quitter l'hôpital" in message
-    assert "<texte_utilisateur>Deux enfants en bas âge</texte_utilisateur>" in message
+    assert "<texte_utilisateur>Je veux quitter l'hôpital" in msg
+    assert "<texte_utilisateur>Deux enfants en bas âge</texte_utilisateur>" in msg
 
 
 def test_sans_situation_le_message_le_dit():
-    grille, _, analyse, reponses = _contexte()
-    entree = Entree(poste_actuel="Dev", statut="salarie")
-    assert "Problématique et moyens : non précisés" in generation.message_utilisateur(grille, entree, analyse, reponses, [])
+    assert "Problématique et moyens : non précisés" in message(Entree(poste_actuel="Dev", statut="salarie"))
 
 
 def test_la_recherche_de_passages_part_de_la_problematique():
-    grille, _, analyse, reponses = _contexte()
+    from app.scoring import calculer_profil, charger_grille
+    from app.schemas import Reponse
+    grille = charger_grille()
+    analyse = calculer_profil(grille, [Reponse(**r) for r in reponses_toutes()])
     requete = generation.construire_requete(grille, analyse, [], Entree(**ENTREE))
     assert requete.startswith(SITUATION["problematique"])
 
 
 # --- Résultat ----------------------------------------------------------------------------------
 
-def test_mode_demo_sans_analyse_de_la_problematique(client):
-    r = client.post("/api/resultat", json={"entree": ENTREE, "reponses": reponses_toutes()})
-    assert r.status_code == 200
-    data = r.json()
-    assert data["mode"] == "demo" and data["sortie"]["reponse_problematique"] is None
+def test_les_metiers_respectent_les_moyens(client):
+    from app.orientation import charger_metiers, voie_possible
+    data = client.post("/api/resultat", json={"entree": ENTREE, "reponses": reponses_toutes()}).json()
+    assert data["assouplissements"] == []
+    fiches = {m.titre: m for m in charger_metiers()}
+    contraintes = {c: SITUATION[c] for c in ("delai", "temps_hebdo", "budget", "diplome")}
+    for metier in [data["sortie"]["metier_principal"], *data["sortie"]["metiers_alternatifs"]]:
+        voie = next(v for v in fiches[metier["titre"]].voies if v.nom == metier["acces"]["voie"])
+        assert voie_possible(voie, contraintes), metier["titre"]
 
 
 def test_avec_claude_la_reponse_est_transmise(client, monkeypatch):
     monkeypatch.setenv("ANTHROPIC_API_KEY", "fausse-cle")
-    sortie = faux_llm("Rien.")
-    sortie.ecart_job_voulu = None
-    sortie.reponse_problematique = reponse_problematique()
-    monkeypatch.setattr(generation, "sortie_llm", lambda *a: sortie)
-    data = client.post("/api/resultat", json={"entree": ENTREE, "reponses": reponses_toutes()}).json()
-    assert data["mode"] == "llm"
-    assert data["sortie"]["reponse_problematique"]["options"][0]["titre"] == "Infirmière en santé au travail"
+    monkeypatch.setattr(api, "rediger", lambda *a: faux_redaction(job=False, problematique=reponse_problematique()))
+    data = client.post("/api/redaction", json={"entree": ENTREE, "reponses": reponses_toutes()}).json()
+    assert data["reponse_problematique"]["options"][0]["titre"] == "Infirmière en santé au travail"
 
 
 def test_claude_doit_repondre_a_la_problematique(monkeypatch):
     import anthropic
-    sans_reponse = _sortie_json(job=False)  # pas de reponse_problematique
     appels = []
+    sans_reponse = _redaction_json(job=False)  # pas de reponse_problematique
     monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="tool_use", input=sans_reponse)], appels=appels))
-    grille, _, analyse, reponses = _contexte()
     with pytest.raises(RuntimeError, match="reponse_problematique"):
-        generation.sortie_llm(grille, Entree(**ENTREE), analyse, reponses, [])
+        generation.rediger("contenu", Entree(**ENTREE))
     assert len(appels) == 2  # une seconde chance a été donnée
 
 
 def test_reponse_ignoree_sans_problematique(monkeypatch):
     import anthropic
-    avec_reponse = _sortie_json(job=False) | {"reponse_problematique": json.loads(reponse_problematique().model_dump_json())}
+    avec_reponse = _redaction_json(job=False) | {"reponse_problematique": json.loads(reponse_problematique().model_dump_json())}
     monkeypatch.setattr(anthropic, "Anthropic", _faux_client([_Bloc(type="tool_use", input=avec_reponse)]))
-    grille, _, analyse, reponses = _contexte()
     entree = Entree(poste_actuel="Dev", statut="salarie")
-    assert generation.sortie_llm(grille, entree, analyse, reponses, []).reponse_problematique is None
+    assert generation.rediger("contenu", entree).reponse_problematique is None

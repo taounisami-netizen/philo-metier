@@ -34,7 +34,7 @@ class Limiteur:
     def __init__(self, par_minute: int | None = None, par_jour: int | None = None,
                  llm_par_jour: int | None = None, horloge=time.time):
         self.par_minute = par_minute if par_minute is not None else _entier("LIMITE_PAR_MINUTE", 5)
-        self.par_jour = par_jour if par_jour is not None else _entier("LIMITE_PAR_JOUR", 30)
+        self.par_jour = par_jour if par_jour is not None else _entier("LIMITE_PAR_JOUR", 60)
         self.llm_par_jour = llm_par_jour if llm_par_jour is not None else _entier("LIMITE_LLM_PAR_JOUR", 300)
         self.horloge = horloge
         self._verrou = threading.Lock()

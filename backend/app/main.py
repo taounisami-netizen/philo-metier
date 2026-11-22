@@ -7,8 +7,11 @@ Documentation interactive : http://localhost:8000/docs
 Routes :
     GET  /api/sante         état du serveur (corpus chargé ? LLM configuré ?)
     GET  /api/questionnaire questions (sans les points), statuts, nombre max de choix
-    POST /api/resultat      réponses → profil + passages + résultat rédigé
+    POST /api/resultat      réponses → profil, métiers, citation, livre : calculés, sans IA (immédiat)
+    POST /api/redaction     mêmes données → explications rédigées par Claude (~30 s)
 """
+
+import random
 
 import os
 from contextlib import asynccontextmanager
@@ -18,7 +21,9 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from .generation import echos_choisis, generer, llm_disponible, passages_pour
+from .generation import (echos_choisis, graine, journaliser_erreur, llm_disponible, message_utilisateur,
+                         passages_pour, rediger, sortie_calculee)
+from .orientation import Orientation
 from .protection import Limiteur, cle_interne_valide, ip_du_client
 from .rag import CorpusIntrouvable, Recherche
 from .schemas import (
@@ -28,6 +33,7 @@ from .schemas import (
     OptionPublique,
     QuestionPublique,
     Questionnaire,
+    Redaction,
     Resultat,
     Statut,
     StatutPublic,
@@ -53,13 +59,17 @@ etat: dict = {}
 @asynccontextmanager
 async def demarrage(app: FastAPI):
     etat["grille"] = charger_grille()
-    etat["limiteur"] = Limiteur()
+    etat["limiteur"] = Limiteur()            # résultats calculés
+    etat["limiteur_redaction"] = Limiteur()  # rédactions par Claude (et budget Claude du jour)
     try:
         etat["recherche"] = Recherche()
         print(f"[api] corpus chargé : {len(etat['recherche'].passages)} passages")
     except CorpusIntrouvable as e:
         etat["recherche"] = None
         print(f"[api] ATTENTION : {e}")
+    encodeur = etat["recherche"].modele if etat["recherche"] else None
+    etat["orientation"] = Orientation(encodeur=encodeur)
+    print(f"[api] orientation : {len(etat['orientation'].metiers)} métiers")
     print(f"[api] LLM : {'Claude configuré' if llm_disponible() else 'pas de clé → mode démo'}")
     yield
 
@@ -90,6 +100,10 @@ async def seulement_depuis_le_site(request: Request, appel_suivant):
 
 def get_grille():
     return etat["grille"]
+
+
+def get_orientation():
+    return etat["orientation"]
 
 
 def get_recherche():
@@ -134,21 +148,27 @@ def questionnaire(grille=Depends(get_grille)):
     )
 
 
-@app.post("/api/resultat", response_model=Resultat)
-def resultat(demande: DemandeResultat, request: Request,
-             grille=Depends(get_grille), recherche=Depends(get_recherche)):
-    if not etat["limiteur"].autoriser(ip_du_client(request)):
-        raise HTTPException(429, "Trop de demandes depuis ton adresse. Réessaie dans une minute.")
+def _calculer(demande: DemandeResultat, grille, recherche, orientation):
+    """Tout le résultat sans IA. Déterministe : /api/redaction recalcule exactement la même chose."""
     try:
         analyse = calculer_profil(grille, demande.reponses)
     except ReponsesInvalides as e:
         raise HTTPException(422, str(e))
-    passages = passages_pour(recherche, grille, analyse, demande.reponses, entree=demande.entree)
+    alea = random.Random(graine(demande))
+    passages = passages_pour(recherche, grille, analyse, demande.reponses, alea=alea, entree=demande.entree)
     if not passages:
         raise HTTPException(503, "Aucun passage trouvé pour ce profil dans le corpus.")
-    # Budget Claude du jour : au-delà, le résultat est construit en mode démo (gratuit).
-    llm_autorise = llm_disponible() and etat["limiteur"].reserver_appel_llm()
-    sortie, mode = generer(grille, demande.entree, analyse, demande.reponses, passages, llm_autorise)
+    choix = orientation.orienter(analyse, demande.entree)
+    sortie = sortie_calculee(grille, demande.entree, analyse, passages, choix, alea)
+    return analyse, passages, choix, sortie
+
+
+@app.post("/api/resultat", response_model=Resultat)
+def resultat(demande: DemandeResultat, request: Request, grille=Depends(get_grille),
+             recherche=Depends(get_recherche), orientation=Depends(get_orientation)):
+    if not etat["limiteur"].autoriser(ip_du_client(request)):
+        raise HTTPException(429, "Trop de demandes depuis ton adresse. Réessaie dans une minute.")
+    analyse, _, choix, sortie = _calculer(demande, grille, recherche, orientation)
     dominant = grille.profil(analyse.dominant)
     return Resultat(
         entree=demande.entree,
@@ -159,5 +179,24 @@ def resultat(demande: DemandeResultat, request: Request,
         philosophes=dominant.philosophes,
         echos=echos_choisis(grille, demande.reponses, analyse.dominant)[:4],
         sortie=sortie,
-        mode=mode,
+        assouplissements=choix.libelles_assouplissements,
+        redaction_possible=llm_disponible(),
     )
+
+
+@app.post("/api/redaction", response_model=Redaction)
+def redaction(demande: DemandeResultat, request: Request, grille=Depends(get_grille),
+              recherche=Depends(get_recherche), orientation=Depends(get_orientation)):
+    limiteur = etat["limiteur_redaction"]
+    if not limiteur.autoriser(ip_du_client(request)):
+        raise HTTPException(429, "Trop de demandes depuis ton adresse. Réessaie dans une minute.")
+    # Budget Claude du jour : au-delà, le site garde le résultat calculé (gratuit).
+    if not llm_disponible() or not limiteur.reserver_appel_llm():
+        raise HTTPException(503, "La rédaction par l'IA n'est pas disponible pour le moment.")
+    analyse, passages, choix, sortie = _calculer(demande, grille, recherche, orientation)
+    contenu = message_utilisateur(grille, demande.entree, analyse, demande.reponses, sortie, choix, passages[0])
+    try:
+        return rediger(contenu, demande.entree)
+    except Exception as e:  # réseau, quota, réponse invalide… : le résultat calculé reste affiché
+        journaliser_erreur(e)
+        raise HTTPException(503, "La rédaction par l'IA n'est pas disponible pour le moment.")

@@ -59,5 +59,6 @@ Ensuite, chaque `git push` redéploie automatiquement le site.
 ## Bon à savoir
 
 - **Réveil de l'API** : le plan gratuit de Render met l'API en veille après 15 minutes sans visite, et le réveil prend environ une minute. Le site charge le questionnaire dès l'ouverture de la page d'accueil, affiche un message si le réveil est en cours, et réessaie tout seul. Le visiteur remplit le formulaire pendant ce temps.
-- **Budget** : la limite du Workspace philo-metier (5 $/mois), le plafond de 300 appels à Claude par jour et la limite par visiteur s'appliquent. Au-delà, le site passe en mode démo, qui est gratuit.
+- **Budget** : la limite du Workspace philo-metier (5 $/mois), le plafond de 300 appels à Claude par jour et la limite par adresse IP s'appliquent. Au-delà, le site affiche le résultat calculé (gratuit) avec des explications types.
+- **Réveil permanent** (facultatif) : une tâche cron-job.org appelle `https://philo-metier-api.onrender.com/` toutes les 10 minutes pour que l'API ne s'endorme pas. Cette adresse n'appelle jamais Claude : aucun coût.
 - **Si une clé fuit** : supprime-la dans la console Anthropic, crée-en une nouvelle et remplace le secret dans Render (**Environment**). Pour `CLE_INTERNE`, génère une nouvelle valeur et mets-la à jour des deux côtés.

@@ -112,15 +112,19 @@ résultats.
    des idées des philosophes derrière les réponses cochées.
 3. Recherche : les 16 passages les plus proches chez les auteurs du profil dominant, puis
    **tirage au sort de 4** (poids $1/\text{rang}$ : les plus proches ont plus de chances,
-   au plus 2 passages par livre), et de même 2 parmi 8 chez le profil secondaire. Deux
-   personnes au même profil ne reçoivent donc pas toujours le même passage.
-4. **Avec une clé Anthropic** : Claude rédige le résultat en JSON (métier, explications,
-   citation, livre). Le JSON est validé par Pydantic ; s'il est invalide, Claude a une
-   seconde chance.
-5. **Garde-fou** : la citation doit être un extrait exact d'un des passages fournis
-   (comparaison après normalisation des espaces et des guillemets). Sinon, elle est
-   remplacée par un vrai extrait : aucune citation inventée ne peut s'afficher.
-6. **Sans clé, ou si Claude ne répond pas** : « mode démo », un résultat construit à partir
-   de la grille et du meilleur passage. Le site fonctionne toujours.
+   au plus 2 passages par livre), et de même 2 parmi 8 chez le profil secondaire. Le
+   tirage est **fixé par les réponses** (graine = empreinte SHA-256 de la demande) : deux
+   personnes au même profil ne reçoivent pas toujours le même passage, mais une même
+   personne qui répond pareil retrouve le même.
+4. **Citation** : un extrait réel (premières phrases entières) du premier passage tiré.
+   Le **métier** et sa voie d'accès sont choisis par `orientation.py` (voir
+   [SCORING.md](SCORING.md#orientation--du-profil-au-métier)), le **livre** est celui de la
+   citation s'il fait partie des livres du profil. Tout ce résultat est affiché tout de suite.
+5. **Avec une clé Anthropic**, un second appel (`/api/redaction`) recalcule le même
+   résultat et demande à Claude d'**expliquer** ces choix et de répondre à la problématique,
+   en JSON validé par Pydantic (une seconde chance si c'est invalide). Claude ne peut ni
+   changer de métier ni écrire de citation : aucune citation inventée ne peut s'afficher.
+6. **Sans clé, ou si Claude ne répond pas** : le résultat calculé reste affiché, avec des
+   explications types. Le site fonctionne toujours.
 
 La clé est lue dans `backend/.env`, que `.gitignore` exclut : elle ne part jamais sur GitHub.

@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   chargerQuestionnaire,
+  demanderRedaction,
   envoyerReponses,
   SITUATION_VIDE,
+  type Acces,
   type ChampSituation,
   type Entree,
   type Questionnaire,
+  type Redaction,
   type Reponse,
   type ReponseProblematique,
   type Resultat,
@@ -16,6 +19,8 @@ import {
 import IllustrationTramway from "@/components/IllustrationTramway";
 
 type Etape = "accueil" | "situation" | "questions" | "attente" | "resultat";
+// Les explications de Claude arrivent après le résultat calculé.
+type EtatRedaction = "attente" | "faite" | "indisponible";
 
 // « une forte part du stoïque », « de l'épicurien »…
 const PART_DE: Record<string, string> = {
@@ -48,6 +53,10 @@ export default function Page() {
   const [reponses, setReponses] = useState<Record<string, Reponse>>({});
   const [index, setIndex] = useState(0);
   const [resultat, setResultat] = useState<Resultat | null>(null);
+  const [redaction, setRedaction] = useState<Redaction | null>(null);
+  const [etatRedaction, setEtatRedaction] = useState<EtatRedaction>("indisponible");
+  // Numéro de la dernière demande : une rédaction qui arrive après « Recommencer » est ignorée.
+  const demandeEnCours = useRef(0);
 
   const [reveil, setReveil] = useState(false);
 
@@ -59,7 +68,7 @@ export default function Page() {
       .catch(() =>
         setErreurServeur(
           process.env.NODE_ENV === "development"
-            ? "Le serveur ne répond pas. Vérifie que l'API tourne dans un autre terminal : uvicorn app.main:app --port 8000"
+            ? "Le serveur ne répond pas. Vérifie que l'API tourne dans un autre terminal : uvicorn app.main:app --reload --port 8001"
             : "Le serveur ne répond pas. Recharge la page dans une minute.",
         ),
       )
@@ -74,9 +83,27 @@ export default function Page() {
     setEtape("attente");
     try {
       const liste = questionnaire.questions.map((q) => reponses[q.id]);
-      setResultat(await envoyerReponses(entree, liste));
+      const calcule = await envoyerReponses(entree, liste);
+      setResultat(calcule);
+      setRedaction(null);
       setEtape("resultat");
       window.scrollTo(0, 0);
+      // Le résultat calculé est affiché ; Claude rédige les explications pendant ce temps.
+      const numero = ++demandeEnCours.current;
+      if (!calcule.redaction_possible) {
+        setEtatRedaction("indisponible");
+        return;
+      }
+      setEtatRedaction("attente");
+      demanderRedaction(entree, liste)
+        .then((r) => {
+          if (numero !== demandeEnCours.current) return;
+          setRedaction(r);
+          setEtatRedaction("faite");
+        })
+        .catch(() => {
+          if (numero === demandeEnCours.current) setEtatRedaction("indisponible");
+        });
     } catch (e) {
       setErreurServeur(`Le résultat n'a pas pu être calculé : ${(e as Error).message}`);
       setEtape("questions");
@@ -84,9 +111,11 @@ export default function Page() {
   }
 
   function recommencer() {
+    demandeEnCours.current++;
     setReponses({});
     setIndex(0);
     setResultat(null);
+    setRedaction(null);
     setErreurServeur(null);
     setEtape("accueil");
   }
@@ -131,10 +160,12 @@ export default function Page() {
       {etape === "attente" && (
         <section className="attente" aria-live="polite">
           <p>Lecture de tes philosophes en cours…</p>
-          <p className="douce petite">Recherche des passages qui te ressemblent, puis rédaction de ton portrait.</p>
+          <p className="douce petite">Calcul de ton profil, puis recherche des métiers et des passages qui te ressemblent.</p>
         </section>
       )}
-      {etape === "resultat" && resultat && <PageResultat resultat={resultat} recommencer={recommencer} />}
+      {etape === "resultat" && resultat && (
+        <PageResultat resultat={resultat} redaction={redaction} etatRedaction={etatRedaction} recommencer={recommencer} />
+      )}
     </main>
   );
 }
@@ -434,18 +465,30 @@ function Questions(props: {
 
 /* ------------------------------------------------------------------------- */
 
-function Problematique({ question, reponse }: { question: string; reponse: ReponseProblematique | null }) {
+function Problematique({
+  question,
+  reponse,
+  etat,
+}: {
+  question: string;
+  reponse: ReponseProblematique | null;
+  etat: EtatRedaction;
+}) {
   return (
     <section className="bloc problematique">
       <h2>Ta problématique</h2>
       <p className="question-posee">« {question} »</p>
-      {!reponse ? (
+      {!reponse && etat === "attente" && (
+        <p className="douce en-cours">Le site analyse ta problématique avec tes moyens…</p>
+      )}
+      {!reponse && etat !== "attente" && (
         <p className="douce">
           L'analyse de ta problématique a besoin de l'IA, qui n'est pas disponible pour le moment. Réessaie un peu plus
           tard.
         </p>
-      ) : (
-        <>
+      )}
+      {reponse && (
+        <div className="apparition">
           <p>{reponse.diagnostic}</p>
           <div className="recommandation">
             <h3>Ce que je te conseille</h3>
@@ -481,17 +524,42 @@ function Problematique({ question, reponse }: { question: string; reponse: Repon
               ))}
             </ul>
           </div>
-        </>
+        </div>
       )}
     </section>
   );
 }
 
+function VoieAcces({ acces }: { acces: Acces | null }) {
+  if (!acces) return null;
+  return (
+    <p className="acces">
+      Pour y accéder : {acces.voie}, {acces.duree}, {acces.cout}.
+    </p>
+  );
+}
+
+// Un texte du résultat : la phrase type du calcul, puis celle de Claude quand elle arrive (en fondu).
+function Texte({ calcule, redige }: { calcule: string; redige: string | null | undefined }) {
+  return <span key={redige ? "redige" : "calcule"} className={redige ? "apparition" : undefined}>{redige ?? calcule}</span>;
+}
+
 /* ------------------------------------------------------------------------- */
 
-function PageResultat({ resultat, recommencer }: { resultat: Resultat; recommencer: () => void }) {
+function PageResultat({
+  resultat,
+  redaction,
+  etatRedaction,
+  recommencer,
+}: {
+  resultat: Resultat;
+  redaction: Redaction | null;
+  etatRedaction: EtatRedaction;
+  recommencer: () => void;
+}) {
   const { sortie, profil } = resultat;
   const secondaire = PART_DE[profil.secondaire];
+  const ecart = redaction?.ecart_job_voulu ?? sortie.ecart_job_voulu;
 
   return (
     <article className="resultat">
@@ -501,6 +569,12 @@ function PageResultat({ resultat, recommencer }: { resultat: Resultat; recommenc
         {resultat.trait_dominant}
         {profil.mixte && secondaire ? `, avec une forte part ${secondaire}` : ""}
       </p>
+      {etatRedaction === "attente" && (
+        <p className="en-cours douce" role="status">
+          Ton résultat est prêt. Le site rédige en ce moment des explications rien que pour toi : elles apparaîtront
+          ici d'ici une trentaine de secondes.
+        </p>
+      )}
 
       <figure className="citation">
         <blockquote>« {sortie.citation.texte} »</blockquote>
@@ -522,38 +596,51 @@ function PageResultat({ resultat, recommencer }: { resultat: Resultat; recommenc
       {resultat.entree.situation?.problematique && (
         <Problematique
           question={resultat.entree.situation.problematique}
-          reponse={sortie.reponse_problematique}
+          reponse={redaction?.reponse_problematique ?? null}
+          etat={etatRedaction}
         />
       )}
 
       <section className="bloc">
         <h2>Le métier que tu aurais pu faire</h2>
         <p className="metier">{sortie.metier_principal.titre}</p>
-        <p>{sortie.metier_principal.pourquoi}</p>
+        <p>
+          <Texte calcule={sortie.metier_principal.pourquoi} redige={redaction?.pourquoi_metier_principal} />
+        </p>
+        <VoieAcces acces={sortie.metier_principal.acces} />
+        {resultat.assouplissements.length > 0 && (
+          <p className="douce petite">
+            Aucun métier ne tenait dans tous tes moyens : on a assoupli {resultat.assouplissements.join(", puis ")}.
+          </p>
+        )}
       </section>
 
       <section className="bloc">
         <h2>Deux autres pistes</h2>
         <ul className="alternatifs">
-          {sortie.metiers_alternatifs.map((m) => (
+          {sortie.metiers_alternatifs.map((m, i) => (
             <li key={m.titre}>
-              <strong>{m.titre}.</strong> {m.pourquoi}
+              <strong>{m.titre}.</strong> <Texte calcule={m.pourquoi} redige={redaction?.pourquoi_metiers_alternatifs[i]} />
+              <VoieAcces acces={m.acces} />
             </li>
           ))}
         </ul>
       </section>
 
-      {sortie.ecart_job_voulu && resultat.entree.job_voulu && (
+      {ecart && resultat.entree.job_voulu && (
         <section className="bloc">
           <h2>Et le métier que tu vises : {resultat.entree.job_voulu}</h2>
-          <p>{sortie.ecart_job_voulu}</p>
+          <p>
+            <Texte calcule={sortie.ecart_job_voulu ?? ""} redige={redaction?.ecart_job_voulu} />
+          </p>
         </section>
       )}
 
       <section className="bloc">
         <h2>Le livre à lire en premier</h2>
         <p>
-          <cite>{sortie.livre_a_lire.titre}</cite>, {sortie.livre_a_lire.auteur}. {sortie.livre_a_lire.pourquoi}
+          <cite>{sortie.livre_a_lire.titre}</cite>, {sortie.livre_a_lire.auteur}.{" "}
+          <Texte calcule={sortie.livre_a_lire.pourquoi} redige={redaction?.pourquoi_livre} />
         </p>
       </section>
 
@@ -589,12 +676,15 @@ function PageResultat({ resultat, recommencer }: { resultat: Resultat; recommenc
         Recommencer le questionnaire
       </button>
 
-      {resultat.mode === "demo" && (
-        <p className="note-demo">
-          Résultat rédigé sans IA (aucune clé d'API configurée, ou IA indisponible) : le métier vient de la grille des
-          profils et la citation est le passage du corpus le plus proche de ton profil.
-        </p>
-      )}
+      <p className="note-demo">
+        Le métier, sa voie d'accès, la citation et le livre sont calculés à partir de tes réponses et de tes moyens :
+        mêmes réponses, même résultat.{" "}
+        {etatRedaction === "indisponible"
+          ? "Les explications sont des phrases types : l'IA qui les personnalise n'est pas disponible pour le moment. "
+          : "Les explications sont rédigées par une IA (Claude), qui ne change aucun de ces choix. "}
+        Durées et coûts des formations : des ordres de grandeur, à vérifier sur onisep.fr et
+        moncompteformation.gouv.fr.
+      </p>
     </article>
   );
 }

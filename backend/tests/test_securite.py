@@ -4,14 +4,16 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app import generation
-from app.main import app, etat, get_recherche
+from app import main as api
+from app.main import app, etat, get_orientation, get_recherche
+from app.orientation import Orientation
 from app.protection import Limiteur
 from app.schemas import Citation
-from tests.test_api import FausseRecherche, faux_llm, reponses_toutes
+from tests.test_api import FausseRecherche, faux_redaction, reponses_toutes
 
 # Volontairement différente du format des vraies clés, pour ne pas déclencher les détecteurs de secrets de GitHub.
 FAUSSE_CLE = "fausse-cle-de-test-0123456789"
-# Avec un job voulu : le faux LLM des tests renvoie toujours un « écart avec le job voulu ».
+# Avec un job voulu : la fausse rédaction des tests contient toujours un « écart avec le job voulu ».
 ENTREE = {"poste_actuel": "Infirmier", "statut": "salarie", "job_voulu": "Médecin"}
 
 
@@ -20,6 +22,7 @@ def client(monkeypatch):
     for nom in ("ANTHROPIC_API_KEY", "CLE_INTERNE"):
         monkeypatch.delenv(nom, raising=False)
     app.dependency_overrides[get_recherche] = lambda: FausseRecherche()
+    app.dependency_overrides[get_orientation] = lambda: Orientation(encodeur=None)
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
@@ -33,22 +36,23 @@ def demande():
 
 def test_la_cle_n_apparait_dans_aucune_reponse(client, monkeypatch):
     monkeypatch.setenv("ANTHROPIC_API_KEY", FAUSSE_CLE)
-    monkeypatch.setattr(generation, "sortie_llm", lambda *a: faux_llm("Rien."))
+    monkeypatch.setattr(api, "rediger", lambda *a: faux_redaction())
     for r in (client.get("/api/sante"), client.get("/api/questionnaire"),
               client.post("/api/resultat", json=demande()),
+              client.post("/api/redaction", json=demande()),
               client.post("/api/resultat", json={"entree": ENTREE, "reponses": []})):
         assert FAUSSE_CLE not in r.text and "sk-ant" not in r.text
 
 
-def test_une_erreur_du_llm_ne_recopie_pas_son_message_dans_les_logs(client, monkeypatch, capsys):
+def test_une_erreur_du_llm_ne_recopie_pas_la_cle_dans_les_logs(client, monkeypatch, capsys):
     monkeypatch.setenv("ANTHROPIC_API_KEY", FAUSSE_CLE)
 
     def panne(*a):  # une erreur dont le message contiendrait la clé
         raise RuntimeError(f"échec avec la clé {FAUSSE_CLE}")
 
-    monkeypatch.setattr(generation, "sortie_llm", panne)
-    r = client.post("/api/resultat", json=demande())
-    assert r.json()["mode"] == "demo"
+    monkeypatch.setattr(api, "rediger", panne)
+    r = client.post("/api/redaction", json=demande())
+    assert r.status_code == 503 and FAUSSE_CLE not in r.text
     assert FAUSSE_CLE not in capsys.readouterr().out
 
 
@@ -69,14 +73,22 @@ def test_limite_par_jour():
     assert limiteur.autoriser("1.2.3.4")
 
 
-def test_budget_claude_du_jour_puis_mode_demo(client, monkeypatch):
+def test_budget_claude_du_jour_puis_resultat_calcule_seul(client, monkeypatch):
     monkeypatch.setenv("ANTHROPIC_API_KEY", FAUSSE_CLE)
     appels = []
-    monkeypatch.setattr(generation, "sortie_llm", lambda *a: appels.append(1) or faux_llm("Rien."))
-    etat["limiteur"] = Limiteur(par_minute=100, par_jour=100, llm_par_jour=2)
-    modes = [client.post("/api/resultat", json=demande()).json()["mode"] for _ in range(4)]
-    assert modes == ["llm", "llm", "demo", "demo"]
+    monkeypatch.setattr(api, "rediger", lambda *a: appels.append(1) or faux_redaction())
+    etat["limiteur_redaction"] = Limiteur(par_minute=100, par_jour=100, llm_par_jour=2)
+    codes = [client.post("/api/redaction", json=demande()).status_code for _ in range(4)]
+    assert codes == [200, 200, 503, 503]
     assert len(appels) == 2  # Claude n'a été payé que deux fois
+    assert client.post("/api/resultat", json=demande()).status_code == 200  # le calcul, lui, continue
+
+
+def test_la_redaction_a_sa_propre_limite_par_minute(client, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", FAUSSE_CLE)
+    monkeypatch.setattr(api, "rediger", lambda *a: faux_redaction())
+    codes = [client.post("/api/redaction", json=demande()).status_code for _ in range(7)]
+    assert codes[:5] == [200] * 5 and codes[5:] == [429] * 2
 
 
 def test_le_budget_repart_le_lendemain():

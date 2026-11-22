@@ -62,6 +62,54 @@ $\tfrac{1}{18} \approx 0{,}06$ : le profil est mixte quand le 1er et le 2e sont 
 par moins de 2 points environ. En cas d'égalité parfaite, l'ordre de `profils.json`
 départage, ce qui garde le calcul déterministe.
 
+## Orientation : du profil au métier
+
+Le métier n'est pas choisi par l'IA : il sort d'un calcul, dans `backend/app/orientation.py`,
+à partir du tableau `backend/app/grille/metiers.json` (59 métiers, au moins 8 par profil).
+
+**1. Le tableau.** Chaque métier est relié à 1 à 3 profils avec un poids $w_p$ (1 pour son
+profil principal, 0,3 à 0,6 pour les autres), et a une ou plusieurs **voies d'accès** :
+diplôme requis, durée en mois, coût (financé, moins de 1 000 €, 1 000 à 5 000 €, plus de
+5 000 €) et rythme (alternance, temps plein, temps partiel). Chaque profil a au moins un
+métier accessible sans diplôme et sans frais (vérifié par un test).
+
+**2. L'affinité.** C'est la moyenne pondérée des scores de l'utilisateur sur les profils du métier :
+
+$$A(m) = \frac{\sum_p w_p \cdot S(p)}{\sum_p w_p}$$
+
+Un métier « pur » du profil dominant vaut $S(\text{dominant})$. Un métier qui mêle le
+dominant et le secondaire peut passer devant quand les deux scores sont proches (profil mixte).
+
+**3. Le texte libre.** Le poste actuel et le métier voulu sont comparés à la description
+de chaque métier avec le modèle d'embeddings (cosinus). On centre-réduit ces 59 similarités
+($z$-score, borné à $\pm 2$), pour ne garder que l'écart à la moyenne :
+
+$$\text{note}(m) = A(m) + 0{,}03 \cdot z_{\text{voulu}}(m) + 0{,}015 \cdot z_{\text{poste}}(m)$$
+
+Le bonus vaut au plus $\pm 0{,}09$ : il départage les métiers proches pour le profil, mais
+ne fait pas passer devant un métier d'un profil nettement plus faible (testé). Le poste
+actuel lui-même n'est jamais proposé.
+
+**4. Le réalisme.** Si l'utilisateur indique ses moyens, une voie n'est possible que si
+son diplôme requis, son coût et sa durée tiennent dans ses moyens, et si son rythme est
+compatible avec son temps disponible (alternance et temps plein : temps plein ; temps
+partiel : au moins 5 à 10 h par semaine). Un métier est retenu s'il a au moins une voie
+possible ; on affiche la plus accessible (coût, puis durée ; sans diplôme connu, les voies
+qui exigent un niveau plus élevé passent après).
+
+Si moins de 3 métiers passent, ou si aucun n'appartient au profil dominant ou secondaire,
+on **assouplit** les moyens dans cet ordre : délai, temps disponible, budget, diplôme. Le
+site le dit (« on a assoupli le délai »), et Claude le mentionne avec tact.
+
+**5. Le choix.** Métier principal = meilleure note. Puis le meilleur autre métier du profil
+dominant, et le meilleur du profil secondaire. À note égale, l'ordre du tableau départage :
+mêmes réponses → même résultat.
+
+**Modifier le tableau.** Ajouter un métier dans `metiers.json` (identifiant unique,
+profils, description d'une phrase, voies d'accès), puis relancer `python -m pytest` : les
+tests vérifient le format, l'unicité et la couverture de chaque profil. Les durées et coûts
+sont des ordres de grandeur, à vérifier sur onisep.fr et moncompteformation.gouv.fr.
+
 ## Modifier la grille
 
 - Ajouter une question : 5 options, 1 ou 2 profils par option, poids de 1 ou 2, une idée

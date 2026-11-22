@@ -252,9 +252,18 @@ class AnalyseProfil(BaseModel):
     mixte: bool  # True si l'écart est trop faible pour trancher
 
 
+class AccesMetier(BaseModel):
+    """La voie d'accès la plus réaliste avec les moyens de l'utilisateur (orientation.py)."""
+
+    voie: str    # ex. « Titre professionnel de technicien qualité pour adultes »
+    duree: str   # ex. « environ 9 mois »
+    cout: str    # ex. « gratuit pour toi (financé) »
+
+
 class Metier(BaseModel):
     titre: str
     pourquoi: str
+    acces: AccesMetier | None = None
 
 
 SOURCES_AUTORISEES = ("https://fr.wikisource.org/", "https://www.gutenberg.org/")
@@ -302,13 +311,24 @@ class ReponseProblematique(BaseModel):
     risques: list[str] = Field(min_length=1, max_length=4)
 
 
-class SortieLLM(BaseModel):
-    """Ce que le LLM devra renvoyer, en JSON, à l'étape 4."""
+class Sortie(BaseModel):
+    """Le résultat calculé (orientation.py + RAG) : métiers, citation, livre.
+    Les « pourquoi » sont d'abord des phrases types, puis remplacés par ceux de Claude (Redaction)."""
 
     metier_principal: Metier
     metiers_alternatifs: list[Metier] = Field(min_length=2, max_length=2)
     citation: Citation
     livre_a_lire: LivreConseille
+    ecart_job_voulu: str | None = None
+
+
+class Redaction(BaseModel):
+    """Ce que Claude rédige, en JSON, à partir des choix DÉJÀ faits par le calcul.
+    Il ne choisit rien : il explique, et répond à la problématique s'il y en a une."""
+
+    pourquoi_metier_principal: str
+    pourquoi_metiers_alternatifs: list[str] = Field(min_length=2, max_length=2)
+    pourquoi_livre: str
     ecart_job_voulu: str | None = None
     reponse_problematique: ReponseProblematique | None = None
 
@@ -320,11 +340,14 @@ class Resultat(BaseModel):
     profil: AnalyseProfil
     nom_profil: str
     trait_dominant: str
-    sortie: SortieLLM
+    sortie: Sortie
     description_profil: str = ""
     philosophes: list[str] = []
     echos: list[Echo] = []  # idées des philosophes derrière les réponses choisies
-    mode: Literal["llm", "demo"] = "demo"  # "demo" : texte généré sans LLM (pas de clé d'API)
+    # Moyens qu'il a fallu relâcher pour trouver des métiers (ex. « le délai »), dans l'ordre.
+    assouplissements: list[str] = []
+    # True si le site peut demander à Claude de rédiger les explications (POST /api/redaction).
+    redaction_possible: bool = False
 
     @model_validator(mode="after")
     def ecart_seulement_si_job_voulu(self) -> "Resultat":
@@ -334,15 +357,6 @@ class Resultat(BaseModel):
             raise ValueError("job_voulu renseigné : ecart_job_voulu est obligatoire")
         if a_un_ecart and not a_un_job_voulu:
             raise ValueError("ecart_job_voulu fourni alors qu'aucun job_voulu n'est renseigné")
-        return self
-
-    @model_validator(mode="after")
-    def reponse_seulement_si_problematique(self) -> "Resultat":
-        # En mode démo (sans IA), pas d'analyse de la problématique : le site l'indique.
-        if self.sortie.reponse_problematique is not None and not self.entree.problematique:
-            raise ValueError("reponse_problematique fournie alors qu'aucune problématique n'est posée")
-        if self.mode == "llm" and self.entree.problematique and self.sortie.reponse_problematique is None:
-            raise ValueError("problématique posée : reponse_problematique est obligatoire")
         return self
 
 

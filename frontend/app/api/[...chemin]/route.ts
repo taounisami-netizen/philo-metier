@@ -11,7 +11,7 @@
 import type { NextRequest } from "next/server";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
-const ROUTES_AUTORISEES = new Set(["questionnaire", "resultat", "sante"]);
+const ROUTES_AUTORISEES = new Set(["questionnaire", "resultat", "redaction", "sante"]);
 const TAILLE_MAX = 64 * 1024; // 64 Ko : une réponse complète au questionnaire en fait ~10
 
 // Durée maximale d'une requête sur Vercel (secondes). Le premier appel après une période sans

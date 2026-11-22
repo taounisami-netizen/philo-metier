@@ -8,7 +8,7 @@ Principe (détaillé dans docs/SCORING.md, partie « Orientation ») :
 
 2. Ressemblance avec le texte libre. Le poste actuel et le métier voulu sont comparés à la
    description de chaque métier avec le modèle d'embeddings (cosinus). On centre-réduit ces
-   similarités sur les 56 métiers (z-score, borné à ±2) pour ne garder que l'écart à la moyenne :
+   similarités sur tous les métiers (z-score, borné à ±2) pour ne garder que l'écart à la moyenne :
        note(m) = A(m) + 0,03 · z_voulu(m) + 0,015 · z_poste(m)
    Le bonus reste petit (au plus ±0,09) : il départage des métiers proches pour le profil,
    sans faire passer un métier d'un autre profil devant.
@@ -21,6 +21,11 @@ Principe (détaillé dans docs/SCORING.md, partie « Orientation ») :
 4. Choix. Métier principal = meilleure note. Puis un autre métier du profil dominant, et
    un métier du profil secondaire. Égalités départagées par l'ordre du tableau : mêmes
    réponses → même résultat.
+
+5. Étranger. Certains métiers ne s'exercent qu'à l'étranger (lieu = « etranger ») : ils ne
+   sont proposés qu'à qui a répondu « Prêt à partir à l'étranger » à la question Mobilité.
+   Pour cette personne, si aucun des trois métiers choisis n'est à l'étranger, on ajoute
+   une piste à l'étranger : le métier « etranger » le mieux noté.
 """
 
 import json
@@ -33,13 +38,14 @@ from typing import Literal
 import numpy as np
 from pydantic import BaseModel, Field
 
-from .schemas import AnalyseProfil, Entree, ProfilId
+from .schemas import AnalyseProfil, Entree, Lien, ProfilId
 
 FICHIER_METIERS = Path(__file__).parent / "grille" / "metiers.json"
 
 Niveau = Literal["sans", "cap_bep", "bac", "bac_2", "bac_3", "bac_5"]
 Cout = Literal["finance", "moins_1000", "1000_5000", "plus_5000"]
 Rythme = Literal["alternance", "temps_plein", "temps_partiel"]
+Lieu = Literal["france", "etranger"]
 
 ORDRE_DIPLOME = ["sans", "cap_bep", "bac", "bac_2", "bac_3", "bac_5"]
 BUDGET_RANG = {"aucun": 0, "moins_1000": 1, "1000_5000": 2, "plus_5000": 3}
@@ -77,6 +83,8 @@ class FicheMetier(BaseModel):
     profils: dict[ProfilId, float] = Field(min_length=1)
     description: str
     voies: list[Voie] = Field(min_length=1)
+    lieu: Lieu = "france"
+    liens: list[Lien] = []
 
     @property
     def profil_principal(self) -> str:
@@ -99,6 +107,10 @@ def charger_metiers(fichier: Path = FICHIER_METIERS) -> list[FicheMetier]:
 # ---------------------------------------------------------------------------
 # Réalisme : les voies d'accès compatibles avec les moyens
 # ---------------------------------------------------------------------------
+
+def pret_a_partir(entree: Entree) -> bool:
+    return entree.situation is not None and entree.situation.mobilite == "etranger"
+
 
 def contraintes_de(entree: Entree) -> dict[str, str]:
     situation = entree.situation
@@ -185,6 +197,11 @@ class ResultatOrientation:
     principal: Choix
     alternatifs: list[Choix]
     assouplissements: list[str] = field(default_factory=list)  # contraintes relâchées, dans l'ordre
+    etranger: Choix | None = None  # piste à l'étranger, pour qui est prêt à partir
+
+    @property
+    def choix_affiches(self) -> list[Choix]:
+        return [self.principal, *self.alternatifs, *([self.etranger] if self.etranger else [])]
 
     @property
     def libelles_assouplissements(self) -> list[str]:
@@ -218,7 +235,9 @@ class Orientation:
         scores = {s.profil_id: s.score for s in analyse.scores}
         bonus = self.bonus_texte(entree)
         notes = {m.id: affinite(m, scores) + bonus[i] for i, m in enumerate(self.metiers)}
-        candidats = [m for m in self.metiers if not est_le_poste_actuel(m, entree.poste_actuel)]
+        partir = pret_a_partir(entree)
+        candidats = [m for m in self.metiers if not est_le_poste_actuel(m, entree.poste_actuel)
+                     and (partir or m.lieu == "france")]
         profils_cles = {analyse.dominant, analyse.secondaire}
 
         contraintes = contraintes_de(entree)
@@ -241,4 +260,12 @@ class Orientation:
         for profil in (analyse.dominant, analyse.secondaire):
             trouve = next((c for c in reste if c.metier.profil_principal == profil and c not in alternatifs), None)
             alternatifs.append(trouve or next(c for c in reste if c not in alternatifs))
-        return ResultatOrientation(principal, alternatifs, assouplies)
+
+        etranger = None
+        if partir and all(c.metier.lieu == "france" for c in [principal, *alternatifs]):
+            # D'abord les métiers accessibles avec les moyens retenus pour les autres, puis la meilleure note.
+            ailleurs = [(m, meilleure_voie(m, contraintes)) for m in candidats if m.lieu == "etranger"]
+            if ailleurs:
+                m, voie = min(ailleurs, key=lambda mv: (mv[1] is None, -notes[mv[0].id]))
+                etranger = Choix(m, voie or meilleure_voie(m, {}), round(notes[m.id], 4))
+        return ResultatOrientation(principal, alternatifs, assouplies, etranger)

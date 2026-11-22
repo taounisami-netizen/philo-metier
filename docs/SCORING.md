@@ -65,7 +65,8 @@ départage, ce qui garde le calcul déterministe.
 ## Orientation : du profil au métier
 
 Le métier n'est pas choisi par l'IA : il sort d'un calcul, dans `backend/app/orientation.py`,
-à partir du tableau `backend/app/grille/metiers.json` (59 métiers, au moins 8 par profil).
+à partir du tableau `backend/app/grille/metiers.json` (89 métiers, au moins 8 par profil,
+dont 22 métiers rares ou artisanaux et 8 métiers qui s'exercent à l'étranger).
 
 **1. Le tableau.** Chaque métier est relié à 1 à 3 profils avec un poids $w_p$ (1 pour son
 profil principal, 0,3 à 0,6 pour les autres), et a une ou plusieurs **voies d'accès** :
@@ -81,7 +82,7 @@ Un métier « pur » du profil dominant vaut $S(\text{dominant})$. Un métier qu
 dominant et le secondaire peut passer devant quand les deux scores sont proches (profil mixte).
 
 **3. Le texte libre.** Le poste actuel et le métier voulu sont comparés à la description
-de chaque métier avec le modèle d'embeddings (cosinus). On centre-réduit ces 59 similarités
+de chaque métier avec le modèle d'embeddings (cosinus). On centre-réduit ces similarités
 ($z$-score, borné à $\pm 2$), pour ne garder que l'écart à la moyenne :
 
 $$\text{note}(m) = A(m) + 0{,}03 \cdot z_{\text{voulu}}(m) + 0{,}015 \cdot z_{\text{poste}}(m)$$
@@ -104,6 +105,20 @@ site le dit (« on a assoupli le délai »), et Claude le mentionne avec tact.
 **5. Le choix.** Métier principal = meilleure note. Puis le meilleur autre métier du profil
 dominant, et le meilleur du profil secondaire. À note égale, l'ordre du tableau départage :
 mêmes réponses → même résultat.
+
+**6. L'étranger.** Huit métiers ne s'exercent qu'à l'étranger (`"lieu": "etranger"` : VIE,
+volontariat de solidarité, professeur de français langue étrangère, moniteur de plongée…), un
+par profil au moins. Ils ne sont proposés qu'à qui a répondu « Prêt à partir à l'étranger » à
+la question Mobilité. Pour cette personne, si aucun des trois métiers choisis n'est à
+l'étranger, le site ajoute une **piste à l'étranger** : le métier « etranger » le mieux noté
+parmi ceux qu'une voie rend accessibles avec ses moyens (à défaut, le mieux noté).
+
+**7. S'informer.** Chaque métier porte des liens vers sa fiche ONISEP (études, accès,
+salaire de début), retrouvée par son identifiant dans le jeu de données officiel « Idéo-Fiches
+métiers » de l'ONISEP (data.gouv.fr) ; à défaut, vers un site officiel (Business France pour
+le VIE, France Volontaires, CNED…). L'API refuse tout lien vers un autre site (test). Pas de
+lien France Travail : depuis le ROME 4.0, la page d'un code ne montre qu'un des métiers de ce
+code (le code du luthier affiche « facteur d'instruments à clavier »).
 
 **Modifier le tableau.** Ajouter un métier dans `metiers.json` (identifiant unique,
 profils, description d'une phrase, voies d'accès), puis relancer `python -m pytest` : les

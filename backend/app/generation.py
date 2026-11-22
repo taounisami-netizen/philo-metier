@@ -117,6 +117,7 @@ def passages_pour(recherche, grille: Grille, analyse: AnalyseProfil, reponses: l
                                 PASSAGES_DOMINANT, alea)
     secondaires = tirer_passages(recherche.chercher(requete, [analyse.secondaire], k=CANDIDATS_SECONDAIRE),
                                  PASSAGES_SECONDAIRE, alea)
+    principaux.sort(key=lambda p: not citation_presentable(p))  # la citation affichée vient du premier
     vus, resultat = set(), []
     for p in principaux + secondaires:
         if p["id"] not in vus:
@@ -136,12 +137,81 @@ def graine(demande: DemandeResultat) -> int:
 # Résultat calculé (sans IA)
 # ---------------------------------------------------------------------------
 
-def extrait(passage: str, max_mots: int = 60) -> str:
-    """Les premières phrases entières d'un passage, sans dépasser max_mots."""
-    phrases = re.split(r"(?<=[.!?…])\s+", " ".join(passage.split()))
+ROMAIN = r"[IVXLCDM]+"
+BOM = "\ufeff"
+# Un paragraphe entier qui n'est pas du texte : « III », « 12. », « 65 bis. », « ⁂ », « Notes »…
+PARAGRAPHE_NUMERO = re.compile(rf"(?:{ROMAIN}|\d+)\s*(?:bis|b)?\s*[.\]]?|[⁂*\s]+|notes?|sommaire", re.I)
+# Titres qui ne sont pas en capitales : « Chap. VIII », « De l’Oisiveté. Chap. VIII. »,
+# « SECTION II ( suite) », « Quatrième et dernière partie. », « XVII la vie humaine comparée à un théâtre. »
+TITRE_NOMME = re.compile(
+    r"(?:.{0,120}\bChap\.\s*[IVXL]+\.?|Chap\..{0,60}|(?i:section|livre|chapitre|partie)\b.{0,30}"
+    r"|.{0,40}\b[Pp]artie\.?|[IVXL]+\.?\s+[a-zà-ÿ][^.!?]{0,100}\.)"
+)
+# Un numéro au début d'un paragraphe ou après une fin de phrase : « XLVIII Si tu… », « ? 395. Ont-ils… »
+NUMERO_EN_TETE = re.compile(r"^(?:[IVXL]+|\d+)\.?\s+(?=[A-ZÀ-ÝŒ«—])")  # pas M ni D : « M. Descartes »
+NUMERO_APRES_PHRASE = re.compile(r"(?<=[.!?»;:])\s+(?:\d+|[IVXL]+)\.?\s+(?=[A-ZÀ-ÝŒ«—])")
+# Lucrèce : un numéro de vers toutes les dix lignes, au milieu du texte (« montagnes, 20 Sous les bois »)
+NUMERO_DE_VERS = re.compile(r"(?<=\D)\s+\d*0\s+(?=[A-ZÀ-ÝŒ])")
+# Montaigne : lettrine détachée au début d'un chapitre (« L A mort », « C I cero », « O NC »)
+LETTRINE = re.compile(r"^[A-ZÀ-Ý]’?\s[A-ZÀ-Ýa-zà-ÿ]")
+
+
+def est_titre(paragraphe: str) -> bool:
+    """Titre de section ou numérotation : pas une phrase de l'auteur."""
+    p = " ".join(paragraphe.replace(BOM, " ").split())
+    if not p or PARAGRAPHE_NUMERO.fullmatch(p) or TITRE_NOMME.fullmatch(p):
+        return True
+    lettres = [c for c in p if c.isalpha()]
+    if lettres and not any(c.islower() for c in lettres):
+        return True  # tout en capitales : « PREMIÈRE PARTIE. », « LIVRE III », « DÉMONSTRATION »
+    # ligne courte avec un renvoi chiffré : « Première copie 257] 74 bis »
+    return len(p.split()) <= 6 and bool(re.search(r"\d+\]|\d+\s*bis\b", p))
+
+
+def nettoyer_passage(texte: str, livre_id: str = "") -> str:
+    """Le texte d'un passage sans ses titres ni sa numérotation, pour l'afficher en citation.
+    Le corpus et ses vecteurs ne changent pas : seul l'extrait montré est nettoyé."""
+    garde = []
+    apres_titre = False
+    for paragraphe in texte.split("\n\n"):
+        if est_titre(paragraphe):
+            # Montaigne : « De l’yvrongnerie » puis « Chap. II » — le nom du chapitre précède son numéro
+            if garde and len(garde) == 1 and len(garde[0].split()) <= 12 and not garde[0].endswith(("!", "?", "»")):
+                garde.clear()
+            apres_titre = True
+            continue
+        p = " ".join(paragraphe.replace(BOM, " ").split())
+        if apres_titre and LETTRINE.match(p):
+            # la première phrase est abîmée par la lettrine : on commence à la suivante
+            suite = re.split(r"(?<=[.!?])\s+", p, maxsplit=1)
+            p = suite[1] if len(suite) > 1 else ""
+        apres_titre = False
+        p = re.sub(r"\b((?:[LlDdJjMmNnSsTtCc]|[Qq]u)’)\s+(?=[A-Za-zÀ-ÿ])", r"\1", p)  # « L’ amour »
+        p = re.sub(r"^([A-Z]) ’", r"\1’", p)  # « C ’est »
+        p = re.sub(r"^(?:Chapitre|CHAPITRE|Livre|LIVRE)\s+[IVXL]+\.\s*", "", p)  # « Chapitre I. (1) La plupart »
+        p = re.sub(r"\(\d+\)\s*", "", p)  # numéros de paragraphe : « (2) Plusieurs convoitent »
+        p = re.sub(r"\[\d+[a-e]?\]\s*", "", p)  # pagination de Platon : « [372a] »
+        p = re.sub(r"^[.…]{3,}\s*", "", p)  # « ..... Ainsi chacun se fuit »
+        p = NUMERO_EN_TETE.sub("", p)
+        p = NUMERO_APRES_PHRASE.sub(" ", p)
+        # « LE monde », « CEUX qui », « MADAME, » : premier mot en capitales d'imprimerie
+        p = re.sub(r"^([A-ZÀ-Ý])([A-ZÀ-Ý]+)(?=[\s,’'])", lambda m: m[1] + m[2].lower(), p)
+        if livre_id.startswith("lucrece"):
+            p = NUMERO_DE_VERS.sub(" ", p)
+        if p:
+            garde.append(p)
+    return "\n\n".join(garde)
+
+
+def extrait(passage: str, max_mots: int = 60, livre_id: str = "") -> str:
+    """Les premières phrases entières d'un passage nettoyé, sans dépasser max_mots."""
+    propre = nettoyer_passage(passage, livre_id) or passage
+    phrases = re.split(r"(?<=[.!?…])\s+", " ".join(propre.split()))
     garde = []
     for phrase in phrases:
         if garde and len(" ".join(garde + [phrase]).split()) > max_mots:
+            if len(" ".join(garde).split()) < 15:
+                garde.append(phrase)  # un titre ou une réplique seule ne fait pas une citation : on coupe plus loin
             break
         garde.append(phrase)
     texte = " ".join(garde)
@@ -149,9 +219,21 @@ def extrait(passage: str, max_mots: int = 60) -> str:
     return texte if len(mots) <= max_mots else " ".join(mots[:max_mots]) + "…"
 
 
+def citation_presentable(passage: dict) -> bool:
+    """Un extrait qu'on peut afficher tel quel : une vraie phrase de l'auteur, pas un bout de phrase,
+    une note de l'éditeur (« pour Kant… ») ni un texte abîmé par la numérisation (« incli1 », « raison4 »)."""
+    texte = extrait(passage["texte"], livre_id=passage.get("livre_id", ""))
+    if len(texte.split()) < 12 or not (texte[0].isupper() or texte[0] in "«—"):
+        return False
+    nom = passage.get("auteur", "").split()[-1:] or [""]
+    if nom[0] and re.search(rf"\b{re.escape(nom[0])}\b", texte):
+        return False
+    return not re.search(r"\b[A-Za-zÀ-ÿ]+\d+[A-Za-zÀ-ÿ]*\b|\b\d+[A-Za-zÀ-ÿ]{2,}\b", texte)
+
+
 def citation_depuis(passage: dict, texte: str | None = None) -> Citation:
     return Citation(
-        texte=texte or extrait(passage["texte"]),
+        texte=texte or extrait(passage["texte"], livre_id=passage.get("livre_id", "")),
         auteur=passage["auteur"],
         livre=passage["livre"],
         passage_id=passage["id"],
@@ -189,13 +271,18 @@ def sortie_calculee(grille: Grille, entree: Entree, analyse: AnalyseProfil, pass
     if entree.job_voulu:
         ecart = (f"Tu vises « {entree.job_voulu} ». Le calcul te rapproche plutôt du métier de "
                  f"{principal.metier.titre.lower()} : compare ce que ces deux métiers demandent au quotidien.")
+    def fiche(choix: Choix, pourquoi: str) -> Metier:
+        return Metier(titre=choix.metier.titre, pourquoi=pourquoi, acces=_acces(choix), liens=choix.metier.liens)
+
+    etranger = None
+    if orientation.etranger:
+        etranger = fiche(orientation.etranger,
+                         f"Tu es prêt à partir : voici une piste à l'étranger. {orientation.etranger.metier.description}")
     return Sortie(
-        metier_principal=Metier(
-            titre=principal.metier.titre, acces=_acces(principal),
-            pourquoi=f"Ton trait dominant : {dominant.trait_dominant.lower()}. {principal.metier.description}",
-        ),
-        metiers_alternatifs=[Metier(titre=c.metier.titre, pourquoi=pourquoi_alt(c), acces=_acces(c))
-                             for c in (alt_dominant, alt_secondaire)],
+        metier_principal=fiche(principal,
+                               f"Ton trait dominant : {dominant.trait_dominant.lower()}. {principal.metier.description}"),
+        metiers_alternatifs=[fiche(c, pourquoi_alt(c)) for c in (alt_dominant, alt_secondaire)],
+        metier_etranger=etranger,
         citation=citation,
         livre_a_lire=LivreConseille(titre=livre.titre, auteur=livre.auteur,
                                     pourquoi="C'est un texte de référence de ton profil."),
@@ -323,6 +410,7 @@ CHOIX DE L'ALGORITHME (à expliquer, pas à modifier)
 {note_assouplie}{_ligne_metier("Métier principal", orientation.principal)}
 {_ligne_metier("Alternative 1", orientation.alternatifs[0])}
 {_ligne_metier("Alternative 2", orientation.alternatifs[1])}
+{_ligne_metier("Piste à l'étranger (affichée à part, sans texte de ta part)", orientation.etranger) if orientation.etranger else ""}
 Citation affichée : « {c.texte} » ({c.auteur}, {c.livre})
 Livre à lire : {sortie.livre_a_lire.titre} ({sortie.livre_a_lire.auteur})
 

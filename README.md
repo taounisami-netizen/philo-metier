@@ -28,7 +28,7 @@ flowchart LR
     U[Navigateur] --> N[Site Next.js]
     N -->|/api| F[API FastAPI]
     F --> S[Calcul du profil<br/>déterministe]
-    S --> O[Orientation<br/>59 métiers × moyens]
+    S --> O[Orientation<br/>89 métiers × moyens]
     F --> R[Recherche sémantique<br/>embeddings + NumPy]
     R --> C[(Corpus<br/>~4 000 passages)]
     O --> X[Résultat calculé<br/>immédiat]
@@ -40,7 +40,7 @@ flowchart LR
 |---|---|---|
 | Site | Next.js 16, React 19, TypeScript | Formulaire, questionnaire, page de résultat |
 | API | Python, FastAPI, Pydantic v2 | Questions, calcul du profil, orchestration |
-| Orientation | Tableau de 59 métiers (JSON) + règles en Python | Choisir le métier et la voie d'accès réaliste avec les moyens |
+| Orientation | Tableau de 89 métiers (JSON) + règles en Python | Choisir le métier et la voie d'accès réaliste avec les moyens |
 | Recherche (RAG) | `multilingual-e5-small` en ONNX int8 (onnxruntime), NumPy | Trouver les passages qui ressemblent aux réponses, rapprocher le texte libre des métiers |
 | Rédaction | API Claude (Anthropic) | Expliquer les choix et répondre à la problématique, sans rien choisir |
 | Corpus | Wikisource, Projet Gutenberg | Textes de philosophie du domaine public |
@@ -50,7 +50,7 @@ flowchart LR
 
 **Le profil est calculé sans IA.** Il dépend uniquement des réponses, avec une formule testée : les mêmes réponses donnent toujours le même profil, et c'est gratuit. J'ai prouvé que **aucun profil n'est avantagé** : quelqu'un qui répond au hasard a exactement 20 % de score moyen pour chacun des 7 profils, qu'il coche une ou deux réponses. La démonstration et les tests sont dans [docs/SCORING.md](docs/SCORING.md).
 
-**Le calcul décide, l'IA rédige.** Le métier est choisi par un algorithme, dans un tableau de 59 métiers relié aux 7 profils, avec pour chacun ses voies d'accès (diplôme requis, durée, coût, rythme). Un métier n'est retenu que si une de ses voies tient dans les moyens de l'utilisateur. Le poste actuel et le métier voulu, écrits librement, départagent les métiers proches grâce au modèle d'embeddings. Claude reçoit ensuite ces choix et les explique, sans pouvoir les changer : impossible qu'il propose un métier hors de portée. Les formules et les règles sont dans [docs/SCORING.md](docs/SCORING.md#orientation--du-profil-au-métier).
+**Le calcul décide, l'IA rédige.** Le métier est choisi par un algorithme, dans un tableau de 89 métiers relié aux 7 profils (dont des métiers rares et des métiers à l'étranger pour qui est prêt à partir), avec pour chacun ses voies d'accès (diplôme requis, durée, coût, rythme) et un lien vers sa fiche ONISEP. Un métier n'est retenu que si une de ses voies tient dans les moyens de l'utilisateur. Le poste actuel et le métier voulu, écrits librement, départagent les métiers proches grâce au modèle d'embeddings. Claude reçoit ensuite ces choix et les explique, sans pouvoir les changer : impossible qu'il propose un métier hors de portée. Les formules et les règles sont dans [docs/SCORING.md](docs/SCORING.md#orientation--du-profil-au-métier).
 
 **Résultat immédiat, explications ensuite.** Le résultat calculé arrive en ~50 ms. Les explications de Claude (~30 s) arrivent par un second appel et remplacent les phrases types en fondu. Comme le calcul est reproductible, ce second appel recalcule exactement le même résultat : l'API ne stocke rien.
 
@@ -110,7 +110,7 @@ Le site est en ligne sur Vercel (site Next.js) et Render (API en Docker, plan gr
 ```
 backend/
 ├── app/
-│   ├── grille/            # profils.json (7 profils), questions.json (13 questions), metiers.json (59 métiers)
+│   ├── grille/            # profils.json (7 profils), questions.json (13 questions), metiers.json (89 métiers)
 │   ├── scoring.py         # calcul du profil + vérification de la grille
 │   ├── orientation.py     # choix du métier et de la voie d'accès selon les moyens
 │   ├── rag.py             # recherche sémantique dans le corpus

@@ -42,7 +42,9 @@ export type Reponse = { question_id: string; option_ids: string[]; texte_libre: 
 
 // La voie d'accès la plus réaliste avec les moyens de l'utilisateur (calculée par l'API).
 export type Acces = { voie: string; duree: string; cout: string };
-export type Metier = { titre: string; pourquoi: string; acces: Acces | null };
+// Fiches ONISEP et France Travail, ou site officiel, pour s'informer sur le métier.
+export type Lien = { titre: string; url: string };
+export type Metier = { titre: string; pourquoi: string; acces: Acces | null; liens: Lien[] };
 export type OptionParcours = {
   titre: string;
   duree: string;
@@ -78,6 +80,7 @@ export type Resultat = {
     citation: { texte: string; auteur: string; livre: string; passage_id: string; url: string | null };
     livre_a_lire: { titre: string; auteur: string; pourquoi: string };
     ecart_job_voulu: string | null;
+    metier_etranger: Metier | null; // seulement si la personne est prête à partir à l'étranger
   };
 };
 

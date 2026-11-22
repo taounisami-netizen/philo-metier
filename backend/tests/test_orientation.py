@@ -165,3 +165,53 @@ def test_le_texte_ne_fait_pas_passer_un_autre_profil_devant():
     resultat = o.orienter(analyse("moraliste", "contemplatif"), entree(job_voulu="Pilote de ligne"))
     assert resultat.principal.metier.profil_principal == "moraliste"  # écart de profil > bonus maximal
     assert 2 * BONUS_VOULU < 0.44 - 0.25
+
+
+# --- Métiers à l'étranger et liens ---------------------------------------------------------
+
+def test_chaque_profil_a_un_metier_a_l_etranger():
+    for p in PROFILS:
+        assert any(m.lieu == "etranger" and m.profil_principal == p for m in METIERS), p
+
+
+def test_presque_tous_les_metiers_ont_un_lien_officiel():
+    sans_lien = [m.id for m in METIERS if not m.liens]
+    assert len(sans_lien) <= 3, sans_lien  # ingénieur, chef de projet, tatoueur : pas de fiche ONISEP
+
+
+def test_lien_vers_un_site_inconnu_refuse():
+    from app.schemas import Lien
+    with pytest.raises(ValueError):
+        Lien(titre="Piège", url="javascript:alert(1)")
+    with pytest.raises(ValueError):
+        Lien(titre="Autre site", url="https://exemple.com/metier")
+
+
+def _tous_les_choix(resultat):
+    return [c.metier for c in resultat.choix_affiches]
+
+
+@pytest.mark.parametrize("dominant, secondaire", [(p, PROFILS[(i + 3) % 7]) for i, p in enumerate(PROFILS)])
+def test_pas_d_etranger_sans_l_avoir_demande(dominant, secondaire):
+    o = Orientation(METIERS)
+    for e in (entree(), entree(mobilite="france"), entree(mobilite="ville", diplome="sans", budget="aucun")):
+        r = o.orienter(analyse(dominant, secondaire), e)
+        assert r.etranger is None
+        assert all(m.lieu == "france" for m in _tous_les_choix(r))
+
+
+@pytest.mark.parametrize("dominant, secondaire", [(p, PROFILS[(i + 3) % 7]) for i, p in enumerate(PROFILS)])
+def test_pret_a_partir_recoit_une_piste_a_l_etranger(dominant, secondaire):
+    r = Orientation(METIERS).orienter(analyse(dominant, secondaire), entree(mobilite="etranger"))
+    choix = _tous_les_choix(r)
+    assert any(m.lieu == "etranger" for m in choix)
+    assert len({m.id for m in choix}) == len(choix)  # jamais deux fois le même métier
+    if r.etranger:
+        assert r.etranger.metier.lieu == "etranger"
+
+
+def test_piste_etranger_respecte_les_moyens_quand_c_est_possible():
+    r = Orientation(METIERS).orienter(analyse("epicurien", "createur"),
+                                      entree(mobilite="etranger", diplome="sans", budget="aucun"))
+    piste = r.etranger or next(c for c in r.choix_affiches if c.metier.lieu == "etranger")
+    assert piste.voie.niveau_requis == "sans" and piste.voie.cout in ("finance", "moins_1000") or r.assouplissements

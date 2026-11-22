@@ -9,6 +9,7 @@ import {
   type Acces,
   type ChampSituation,
   type Entree,
+  type Lien,
   type Questionnaire,
   type Redaction,
   type Reponse,
@@ -539,6 +540,25 @@ function VoieAcces({ acces }: { acces: Acces | null }) {
   );
 }
 
+// Les fiches officielles pour s'informer (l'API n'envoie que des liens vers des sites connus).
+function Liens({ liens }: { liens: Lien[] | undefined }) {
+  const surs = (liens ?? []).filter((l) => l.url.startsWith("https://"));
+  if (surs.length === 0) return null;
+  return (
+    <p className="liens">
+      S'informer :{" "}
+      {surs.map((l, i) => (
+        <span key={l.url}>
+          {i > 0 && " · "}
+          <a href={l.url} target="_blank" rel="noopener noreferrer">
+            {l.titre}
+          </a>
+        </span>
+      ))}
+    </p>
+  );
+}
+
 // Un texte du résultat : la phrase type du calcul, puis celle de Claude quand elle arrive (en fondu).
 function Texte({ calcule, redige }: { calcule: string; redige: string | null | undefined }) {
   return <span key={redige ? "redige" : "calcule"} className={redige ? "apparition" : undefined}>{redige ?? calcule}</span>;
@@ -608,6 +628,7 @@ function PageResultat({
           <Texte calcule={sortie.metier_principal.pourquoi} redige={redaction?.pourquoi_metier_principal} />
         </p>
         <VoieAcces acces={sortie.metier_principal.acces} />
+        <Liens liens={sortie.metier_principal.liens} />
         {resultat.assouplissements.length > 0 && (
           <p className="douce petite">
             Aucun métier ne tenait dans tous tes moyens : on a assoupli {resultat.assouplissements.join(", puis ")}.
@@ -622,10 +643,21 @@ function PageResultat({
             <li key={m.titre}>
               <strong>{m.titre}.</strong> <Texte calcule={m.pourquoi} redige={redaction?.pourquoi_metiers_alternatifs[i]} />
               <VoieAcces acces={m.acces} />
+              <Liens liens={m.liens} />
             </li>
           ))}
         </ul>
       </section>
+
+      {sortie.metier_etranger && (
+        <section className="bloc">
+          <h2>Si tu pars à l'étranger</h2>
+          <p className="metier">{sortie.metier_etranger.titre}</p>
+          <p>{sortie.metier_etranger.pourquoi}</p>
+          <VoieAcces acces={sortie.metier_etranger.acces} />
+          <Liens liens={sortie.metier_etranger.liens} />
+        </section>
+      )}
 
       {ecart && resultat.entree.job_voulu && (
         <section className="bloc">

@@ -1,10 +1,12 @@
 {
- "version": 1,
+ "version": 2,
  "avertissement": "Ordres de grandeur pour la France (2026), à vérifier sur onisep.fr et moncompteformation.gouv.fr. Durées en mois ; coût de la formation avant aides.",
  "legende": {
   "niveau_requis": "diplôme minimal pour entrer dans la formation : sans, cap_bep, bac, bac_2, bac_3, bac_5",
   "cout": "finance (gratuit pour l'apprenant : alternance, formation publique ou rémunérée), moins_1000, 1000_5000, plus_5000",
-  "rythme": "alternance (contrat de travail + école), temps_plein, temps_partiel (soirs, week-ends, à distance)"
+  "rythme": "alternance (contrat de travail + école), temps_plein, temps_partiel (soirs, week-ends, à distance)",
+  "lieu": "france (par défaut) ou etranger : un métier « etranger » n'est proposé qu'aux personnes prêtes à partir",
+  "liens": "fiche ONISEP du métier (études, accès, salaires), ou site officiel quand l'ONISEP n'en a pas"
  },
  "metiers": [
   {
@@ -22,6 +24,12 @@
      "duree_mois": 132,
      "cout": "1000_5000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : médecin urgentiste",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7820"
     }
    ]
   },
@@ -48,6 +56,12 @@
      "cout": "plus_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : pilote de ligne",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.400"
+    }
    ]
   },
   {
@@ -65,6 +79,12 @@
      "duree_mois": 36,
      "cout": "finance",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : contrôleur aérien",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.1"
     }
    ]
   },
@@ -91,6 +111,12 @@
      "cout": "finance",
      "rythme": "temps_partiel"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : sapeur-pompier",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.572"
+    }
    ]
   },
   {
@@ -108,6 +134,12 @@
      "duree_mois": 5,
      "cout": "1000_5000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : ambulancier",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.417"
     }
    ]
   },
@@ -127,6 +159,12 @@
      "cout": "finance",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : technicien de la circulation ferroviaire SNCF",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.896"
+    }
    ]
   },
   {
@@ -144,6 +182,12 @@
      "duree_mois": 24,
      "cout": "finance",
      "rythme": "alternance"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : manager de risques (risk manager)",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.555"
     }
    ]
   },
@@ -170,6 +214,109 @@
      "cout": "finance",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : agent immobilier",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.270"
+    }
+   ]
+  },
+  {
+   "id": "guide-haute-montagne",
+   "titre": "Guide de haute montagne",
+   "profils": {
+    "stoique": 1,
+    "epicurien": 0.4
+   },
+   "description": "Emmène des clients en alpinisme et en ski de randonnée, évalue le risque en permanence et sait renoncer quand il le faut.",
+   "voies": [
+    {
+     "nom": "Diplôme d'État de guide de haute montagne (ENSA), après un test d'entrée qui exige déjà une solide expérience de l'alpinisme",
+     "niveau_requis": "sans",
+     "duree_mois": 48,
+     "cout": "plus_5000",
+     "rythme": "temps_partiel"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : guide de haute montagne",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.918"
+    }
+   ]
+  },
+  {
+   "id": "cordiste",
+   "titre": "Cordiste",
+   "profils": {
+    "stoique": 1,
+    "batisseur": 0.4
+   },
+   "description": "Travaille suspendu à des cordes sur des façades, des barrages ou des éoliennes : sang-froid et respect absolu des règles de sécurité.",
+   "voies": [
+    {
+     "nom": "Certificat de qualification professionnelle (CQP) « travailler sur cordes », niveau initial",
+     "niveau_requis": "sans",
+     "duree_mois": 2,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : cordiste",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.437"
+    }
+   ]
+  },
+  {
+   "id": "officier-marine-marchande",
+   "titre": "Officier de la marine marchande",
+   "profils": {
+    "stoique": 1,
+    "batisseur": 0.5
+   },
+   "description": "Dirige la navigation ou les machines d'un navire de commerce, par tous les temps, loin de la terre pendant des semaines.",
+   "voies": [
+    {
+     "nom": "École nationale supérieure maritime (ENSM), admission sur dossier via Parcoursup",
+     "niveau_requis": "bac",
+     "duree_mois": 60,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : officier de la marine marchande",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.653"
+    }
+   ]
+  },
+  {
+   "id": "logisticien-humanitaire",
+   "titre": "Logisticien humanitaire",
+   "profils": {
+    "stoique": 1,
+    "moraliste": 0.8
+   },
+   "description": "Organise sur le terrain l'approvisionnement, le transport et la sécurité d'une mission humanitaire, souvent en zone de crise.",
+   "voies": [
+    {
+     "nom": "Formation de logisticien de la solidarité internationale (par exemple à l'institut Bioforce)",
+     "niveau_requis": "bac_2",
+     "duree_mois": 12,
+     "cout": "plus_5000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "lieu": "etranger",
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : logisticien de l'humanitaire",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.511"
+    }
    ]
   },
   {
@@ -195,6 +342,12 @@
      "cout": "1000_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : chef de cuisine",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.420"
+    }
    ]
   },
   {
@@ -218,6 +371,12 @@
      "duree_mois": 8,
      "cout": "1000_5000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : boulanger",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.17"
     }
    ]
   },
@@ -245,6 +404,12 @@
      "cout": "1000_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : ébéniste",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.289"
+    }
    ]
   },
   {
@@ -270,6 +435,12 @@
      "cout": "finance",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : ouvrier paysagiste",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.120"
+    }
    ]
   },
   {
@@ -294,6 +465,12 @@
      "cout": "finance",
      "rythme": "alternance"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : sommelier",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.4"
+    }
    ]
   },
   {
@@ -312,6 +489,12 @@
      "cout": "finance",
      "rythme": "alternance"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : chargé de projet événementiel",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.473"
+    }
    ]
   },
   {
@@ -329,6 +512,12 @@
      "duree_mois": 12,
      "cout": "moins_1000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : guide-conférencier",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.941"
     }
    ]
   },
@@ -354,6 +543,123 @@
      "duree_mois": 10,
      "cout": "1000_5000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : animateur socioculturel",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.65"
+    }
+   ]
+  },
+  {
+   "id": "oenologue",
+   "titre": "Œnologue",
+   "profils": {
+    "epicurien": 1,
+    "sceptique": 0.4
+   },
+   "description": "Suit l'élaboration du vin de la vigne à la bouteille, goûte, analyse et conseille les vignerons.",
+   "voies": [
+    {
+     "nom": "Diplôme national d'œnologue, à l'université après une licence scientifique",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : oenologue",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.159"
+    }
+   ]
+  },
+  {
+   "id": "chocolatier",
+   "titre": "Chocolatier-confiseur",
+   "profils": {
+    "epicurien": 1,
+    "createur": 0.5
+   },
+   "description": "Fabrique bonbons, tablettes et pièces en chocolat, entre précision technique et créativité.",
+   "voies": [
+    {
+     "nom": "CAP chocolaterie-confiserie en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "CAP chocolaterie-confiserie en un an pour les adultes déjà diplômés",
+     "niveau_requis": "cap_bep",
+     "duree_mois": 12,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : chocolatier-confiseur",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.88"
+    }
+   ]
+  },
+  {
+   "id": "fromager",
+   "titre": "Fromager affineur",
+   "profils": {
+    "epicurien": 1,
+    "contemplatif": 0.3
+   },
+   "description": "Choisit, soigne et affine les fromages en cave, puis les fait découvrir aux clients.",
+   "voies": [
+    {
+     "nom": "CAP crémier-fromager en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : fromager",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.510"
+    }
+   ]
+  },
+  {
+   "id": "moniteur-plongee",
+   "titre": "Moniteur de plongée",
+   "profils": {
+    "epicurien": 1,
+    "stoique": 0.5
+   },
+   "description": "Encadre des plongeurs en mer, souvent dans des destinations lointaines, et veille à leur sécurité sous l'eau.",
+   "voies": [
+    {
+     "nom": "Cursus de moniteur PADI, reconnu dans le monde entier",
+     "niveau_requis": "sans",
+     "duree_mois": 6,
+     "cout": "plus_5000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "BPJEPS plongée subaquatique (diplôme d'État français) en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ],
+   "lieu": "etranger",
+   "liens": [
+    {
+     "titre": "ONISEP : le DEJEPS activités de plongée subaquatique",
+     "url": "https://www.onisep.fr/ressources/univers-formation/formations/post-bac/dejeps-specialite-perfectionnement-sportif-mention-activites-de-plongee-subaquatique"
     }
    ]
   },
@@ -387,6 +693,12 @@
      "cout": "1000_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : analyste SOC",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.8262"
+    }
    ]
   },
   {
@@ -419,6 +731,12 @@
      "cout": "1000_5000",
      "rythme": "temps_partiel"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : data analyst (analyste de données)",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7930"
+    }
    ]
   },
   {
@@ -444,6 +762,12 @@
      "cout": "finance",
      "rythme": "alternance"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : testeur en informatique",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.84"
+    }
    ]
   },
   {
@@ -468,6 +792,12 @@
      "duree_mois": 9,
      "cout": "finance",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : technicien qualité",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.175"
     }
    ]
   },
@@ -495,6 +825,12 @@
      "cout": "finance",
      "rythme": "alternance"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : auditeur externe",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.591"
+    }
    ]
   },
   {
@@ -520,6 +856,12 @@
      "cout": "moins_1000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : journaliste",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.45"
+    }
    ]
   },
   {
@@ -539,6 +881,12 @@
      "cout": "finance",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : gendarme",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.313"
+    }
    ]
   },
   {
@@ -556,6 +904,12 @@
      "duree_mois": 2,
      "cout": "finance",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : commercial à bord des trains",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.186"
     }
    ]
   },
@@ -575,6 +929,141 @@
      "duree_mois": 60,
      "cout": "moins_1000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : enseignant-chercheur",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.880"
+    }
+   ]
+  },
+  {
+   "id": "technicien-police-scientifique",
+   "titre": "Technicien de police scientifique",
+   "profils": {
+    "sceptique": 1,
+    "batisseur": 0.5
+   },
+   "description": "Relève et analyse les traces laissées sur les lieux d'une infraction (empreintes, ADN, indices) pour établir les faits.",
+   "voies": [
+    {
+     "nom": "Concours de technicien de police technique et scientifique, puis formation rémunérée",
+     "niveau_requis": "bac",
+     "duree_mois": 6,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : technicien de police technique et scientifique",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.892"
+    }
+   ]
+  },
+  {
+   "id": "genealogiste",
+   "titre": "Généalogiste successoral",
+   "profils": {
+    "sceptique": 1,
+    "contemplatif": 0.5
+   },
+   "description": "Retrouve les héritiers inconnus d'une succession en fouillant archives et registres, et vérifie chaque lien de parenté.",
+   "voies": [
+    {
+     "nom": "Diplôme universitaire ou licence professionnelle de généalogie",
+     "niveau_requis": "bac_2",
+     "duree_mois": 12,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Recrutement en cabinet de généalogie, formation sur le terrain",
+     "niveau_requis": "bac",
+     "duree_mois": 3,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : généalogiste",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.742"
+    }
+   ]
+  },
+  {
+   "id": "diagnostiqueur-immobilier",
+   "titre": "Diagnostiqueur immobilier",
+   "profils": {
+    "sceptique": 1,
+    "batisseur": 0.5
+   },
+   "description": "Inspecte les logements avant une vente ou une location (amiante, plomb, énergie) et rend des constats vérifiables.",
+   "voies": [
+    {
+     "nom": "Formation de diagnostiqueur puis certifications obligatoires (payantes, à renouveler tous les 5 ans)",
+     "niveau_requis": "bac_2",
+     "duree_mois": 4,
+     "cout": "plus_5000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : diagnostiqueur immobilier",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.910"
+    }
+   ]
+  },
+  {
+   "id": "secretaire-chancellerie",
+   "titre": "Secrétaire de chancellerie (ambassade, consulat)",
+   "profils": {
+    "sceptique": 1,
+    "moraliste": 0.5
+   },
+   "description": "Traite visas, passeports et état civil des Français à l'étranger dans une ambassade ou un consulat, et vérifie chaque dossier.",
+   "voies": [
+    {
+     "nom": "Concours de secrétaire de chancellerie (catégorie B, niveau bac), puis formation rémunérée",
+     "niveau_requis": "bac",
+     "duree_mois": 6,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "lieu": "etranger",
+   "liens": [
+    {
+     "titre": "Ministère des Affaires étrangères : emplois et concours",
+     "url": "https://www.diplomatie.gouv.fr/fr/emplois-stages-concours/concours/categorie-b/"
+    }
+   ]
+  },
+  {
+   "id": "correspondant-etranger",
+   "titre": "Journaliste correspondant à l'étranger",
+   "profils": {
+    "sceptique": 1,
+    "createur": 0.5
+   },
+   "description": "Vit dans un pays et raconte son actualité pour des médias français, souvent comme pigiste.",
+   "voies": [
+    {
+     "nom": "École de journalisme reconnue (sur concours), puis piges depuis l'étranger",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "1000_5000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "lieu": "etranger",
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : journaliste",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.45"
     }
    ]
   },
@@ -608,6 +1097,12 @@
      "cout": "1000_5000",
      "rythme": "temps_partiel"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : développeur informatique",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.12"
+    }
    ]
   },
   {
@@ -626,7 +1121,8 @@
      "cout": "finance",
      "rythme": "alternance"
     }
-   ]
+   ],
+   "liens": []
   },
   {
    "id": "dessinateur-projeteur-bim",
@@ -650,6 +1146,12 @@
      "duree_mois": 6,
      "cout": "1000_5000",
      "rythme": "temps_partiel"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : technicien BIM modeleur (modélisation des données du bâtiment)",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7931"
     }
    ]
   },
@@ -676,6 +1178,12 @@
      "cout": "finance",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : électricien installateur",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.56"
+    }
    ]
   },
   {
@@ -700,6 +1208,12 @@
      "duree_mois": 9,
      "cout": "finance",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : technicien de maintenance industrielle",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.866"
     }
    ]
   },
@@ -726,7 +1240,8 @@
      "cout": "finance",
      "rythme": "alternance"
     }
-   ]
+   ],
+   "liens": []
   },
   {
    "id": "data-scientist",
@@ -743,6 +1258,12 @@
      "duree_mois": 24,
      "cout": "finance",
      "rythme": "alternance"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : data scientist (expert en mégadonnées)",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.512"
     }
    ]
   },
@@ -762,6 +1283,12 @@
      "cout": "moins_1000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : actuaire",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.861"
+    }
    ]
   },
   {
@@ -779,6 +1306,130 @@
      "duree_mois": 60,
      "cout": "1000_5000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : architecte",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.161"
+    }
+   ]
+  },
+  {
+   "id": "horloger",
+   "titre": "Horloger",
+   "profils": {
+    "batisseur": 1,
+    "contemplatif": 0.4
+   },
+   "description": "Répare, entretient et parfois fabrique des montres et des pendules, au centième de millimètre.",
+   "voies": [
+    {
+     "nom": "CAP horlogerie en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Brevet national des métiers d'art (BNMA) horlogerie, après un CAP",
+     "niveau_requis": "cap_bep",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : horloger",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.605"
+    }
+   ]
+  },
+  {
+   "id": "technicien-eolien",
+   "titre": "Technicien de maintenance éolienne",
+   "profils": {
+    "batisseur": 1,
+    "stoique": 0.5
+   },
+   "description": "Entretient et dépanne les éoliennes, en hauteur, avec méthode et respect strict des procédures.",
+   "voies": [
+    {
+     "nom": "BTS maintenance des systèmes, option éolien, en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "Licence professionnelle maintenance éolienne en alternance, après un bac +2 technique",
+     "niveau_requis": "bac_2",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : technicien de maintenance éolienne",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.383"
+    }
+   ]
+  },
+  {
+   "id": "prothesiste-dentaire",
+   "titre": "Prothésiste dentaire",
+   "profils": {
+    "batisseur": 1,
+    "createur": 0.4
+   },
+   "description": "Fabrique en laboratoire les couronnes, bridges et appareils dentaires sur mesure, à partir des empreintes du dentiste.",
+   "voies": [
+    {
+     "nom": "Bac pro prothèse dentaire en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 36,
+     "cout": "finance",
+     "rythme": "alternance"
+    },
+    {
+     "nom": "BTS prothésiste dentaire en alternance",
+     "niveau_requis": "bac",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : prothésiste dentaire",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.411"
+    }
+   ]
+  },
+  {
+   "id": "volontaire-vie",
+   "titre": "Volontaire international en entreprise (VIE)",
+   "profils": {
+    "batisseur": 1,
+    "epicurien": 0.4
+   },
+   "description": "Part de 6 à 24 mois travailler à l'étranger pour une entreprise française, avec une indemnité ; ouvert de 18 à 28 ans.",
+   "voies": [
+    {
+     "nom": "Candidature à une mission VIE (Business France), le plus souvent après un bac +3",
+     "niveau_requis": "bac_3",
+     "duree_mois": 3,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "lieu": "etranger",
+   "liens": [
+    {
+     "titre": "Mon Volontariat International (site officiel du VIE)",
+     "url": "https://mon-vie-via.businessfrance.fr/"
     }
    ]
   },
@@ -805,6 +1456,12 @@
      "cout": "moins_1000",
      "rythme": "temps_partiel"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Bpifrance Création : les étapes pour créer son entreprise",
+     "url": "https://bpifrance-creation.fr/moment-de-vie/comment-creer-entreprise-etapes-a-suivre"
+    }
    ]
   },
   {
@@ -822,6 +1479,12 @@
      "duree_mois": 6,
      "cout": "moins_1000",
      "rythme": "temps_partiel"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : influenceur",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7836"
     }
    ]
   },
@@ -848,6 +1511,12 @@
      "cout": "1000_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : designer graphique",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.5"
+    }
    ]
   },
   {
@@ -872,6 +1541,12 @@
      "duree_mois": 6,
      "cout": "1000_5000",
      "rythme": "temps_partiel"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : photographe",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.883"
     }
    ]
   },
@@ -899,6 +1574,12 @@
      "cout": "1000_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : éducateur sportif",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.783"
+    }
    ]
   },
   {
@@ -924,6 +1605,12 @@
      "cout": "plus_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : réalisateur de films",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.476"
+    }
    ]
   },
   {
@@ -942,6 +1629,12 @@
      "cout": "1000_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "ONISEP : les métiers et l'emploi dans l'art et le design",
+     "url": "https://www.onisep.fr/metier/decouvrir-le-monde-professionnel/art-et-design/les-metiers-et-l-emploi-dans-l-art-et-le-design"
+    }
    ]
   },
   {
@@ -959,6 +1652,125 @@
      "duree_mois": 24,
      "cout": "finance",
      "rythme": "alternance"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : directeur artistique",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.537"
+    }
+   ]
+  },
+  {
+   "id": "luthier",
+   "titre": "Luthier",
+   "profils": {
+    "createur": 1,
+    "contemplatif": 0.5
+   },
+   "description": "Fabrique et répare à la main violons, guitares ou autres instruments à cordes.",
+   "voies": [
+    {
+     "nom": "CAP assistant luthier du quatuor",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Brevet des métiers d'art (BMA) technicien en facture instrumentale",
+     "niveau_requis": "cap_bep",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : luthier",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.966"
+    }
+   ]
+  },
+  {
+   "id": "tatoueur",
+   "titre": "Tatoueur",
+   "profils": {
+    "createur": 1,
+    "epicurien": 0.3
+   },
+   "description": "Dessine et réalise des tatouages sur mesure, entre création graphique et hygiène irréprochable.",
+   "voies": [
+    {
+     "nom": "Formation obligatoire hygiène et salubrité (3 jours), puis apprentissage auprès d'un tatoueur",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": []
+  },
+  {
+   "id": "game-designer",
+   "titre": "Game designer",
+   "profils": {
+    "createur": 1,
+    "batisseur": 0.5
+   },
+   "description": "Imagine les règles, les niveaux et les mécaniques d'un jeu vidéo, puis les ajuste à force de tests.",
+   "voies": [
+    {
+     "nom": "DN MADE (diplôme national des métiers d'art et du design), mention numérique",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Bachelor jeu vidéo en école spécialisée",
+     "niveau_requis": "bac",
+     "duree_mois": 36,
+     "cout": "plus_5000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : concepteur de jeux vidéo",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.885"
+    }
+   ]
+  },
+  {
+   "id": "animateur-club-vacances",
+   "titre": "Animateur en club de vacances à l'étranger",
+   "profils": {
+    "createur": 1,
+    "epicurien": 0.7
+   },
+   "description": "Monte des spectacles, anime des activités et crée l'ambiance pour les vacanciers, d'une saison et d'un pays à l'autre.",
+   "voies": [
+    {
+     "nom": "BAFA puis recrutement direct par un club de vacances",
+     "niveau_requis": "sans",
+     "duree_mois": 3,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "BPJEPS animation en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ],
+   "lieu": "etranger",
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : animateur de tourisme",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.803"
     }
    ]
   },
@@ -985,6 +1797,12 @@
      "cout": "finance",
      "rythme": "alternance"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : aide-soignant",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.561"
+    }
    ]
   },
   {
@@ -1009,6 +1827,12 @@
      "duree_mois": 12,
      "cout": "finance",
      "rythme": "alternance"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : conseiller en insertion sociale et professionnelle",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.342"
     }
    ]
   },
@@ -1035,6 +1859,12 @@
      "cout": "moins_1000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : éducateur spécialisé",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.311"
+    }
    ]
   },
   {
@@ -1060,6 +1890,12 @@
      "cout": "finance",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : professeur des écoles",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.557"
+    }
    ]
   },
   {
@@ -1078,6 +1914,12 @@
      "cout": "finance",
      "rythme": "alternance"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : agent de développement local",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.922"
+    }
    ]
   },
   {
@@ -1095,6 +1937,12 @@
      "duree_mois": 108,
      "cout": "1000_5000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : médecin généraliste",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.869"
     }
    ]
   },
@@ -1115,6 +1963,12 @@
      "cout": "1000_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : avocat",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.33"
+    }
    ]
   },
   {
@@ -1132,6 +1986,113 @@
      "duree_mois": 31,
      "cout": "finance",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : magistrat",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.769"
+    }
+   ]
+  },
+  {
+   "id": "interprete-lsf",
+   "titre": "Interprète en langue des signes",
+   "profils": {
+    "moraliste": 1,
+    "contemplatif": 0.4
+   },
+   "description": "Traduit en direct entre la langue des signes française et le français oral, pour rendre accessibles soins, cours ou démarches.",
+   "voies": [
+    {
+     "nom": "Master d'interprète LSF-français, après une licence et un bon niveau de langue des signes",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : interprète français / LSF (langue des signes française)",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7744"
+    }
+   ]
+  },
+  {
+   "id": "mediateur-familial",
+   "titre": "Médiateur familial",
+   "profils": {
+    "moraliste": 1,
+    "stoique": 0.4
+   },
+   "description": "Aide des familles en conflit (séparation, héritage) à renouer le dialogue et à trouver elles-mêmes un accord.",
+   "voies": [
+    {
+     "nom": "Diplôme d'État de médiateur familial (560 heures), après une licence ou un diplôme du travail social",
+     "niveau_requis": "bac_3",
+     "duree_mois": 12,
+     "cout": "plus_5000",
+     "rythme": "temps_partiel"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : médiateur familial",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.89"
+    }
+   ]
+  },
+  {
+   "id": "educateur-chiens-guides",
+   "titre": "Éducateur de chiens guides d'aveugles",
+   "profils": {
+    "moraliste": 1,
+    "epicurien": 0.5
+   },
+   "description": "Éduque des chiens pendant des mois pour qu'ils guident une personne aveugle, puis apprend au futur maître à travailler avec eux.",
+   "voies": [
+    {
+     "nom": "Formation rémunérée d'éducateur de chiens guides (2 ans de moniteur puis 2 ans d'éducateur), permis B exigé",
+     "niveau_requis": "bac",
+     "duree_mois": 48,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : éducateur de chiens guides d'aveugles",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7817"
+    }
+   ]
+  },
+  {
+   "id": "volontaire-solidarite",
+   "titre": "Volontaire de solidarité internationale",
+   "profils": {
+    "moraliste": 1,
+    "contemplatif": 0.4
+   },
+   "description": "S'engage 1 à 2 ans dans un projet d'association à l'étranger (éducation, santé, agriculture), logé et indemnisé.",
+   "voies": [
+    {
+     "nom": "Candidature auprès d'une association agréée (par exemple via France Volontaires)",
+     "niveau_requis": "bac",
+     "duree_mois": 3,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "lieu": "etranger",
+   "liens": [
+    {
+     "titre": "ONISEP : le volontariat de solidarité internationale",
+     "url": "https://www.onisep.fr/formation/partir-a-l-etranger/le-volontariat-a-l-etranger/le-volontariat-de-solidarite-internationale"
+    },
+    {
+     "titre": "France Volontaires : les missions",
+     "url": "https://www.france-volontaires.org/"
     }
    ]
   },
@@ -1158,6 +2119,12 @@
      "cout": "1000_5000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : libraire",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.269"
+    }
    ]
   },
   {
@@ -1176,6 +2143,12 @@
      "cout": "finance",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : agent de bibliothèque-médiathèque",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.8176"
+    }
    ]
   },
   {
@@ -1193,6 +2166,12 @@
      "duree_mois": 6,
      "cout": "1000_5000",
      "rythme": "temps_partiel"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : correcteur",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.331"
     }
    ]
   },
@@ -1219,6 +2198,12 @@
      "cout": "moins_1000",
      "rythme": "temps_partiel"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : responsable d'équipe ou de projet en bibliothèque-médiathèque",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.44"
+    }
    ]
   },
   {
@@ -1236,6 +2221,12 @@
      "duree_mois": 12,
      "cout": "moins_1000",
      "rythme": "temps_partiel"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : écrivain",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.463"
     }
    ]
   },
@@ -1255,6 +2246,12 @@
      "cout": "moins_1000",
      "rythme": "temps_partiel"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : musicien",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.6"
+    }
    ]
   },
   {
@@ -1272,6 +2269,12 @@
      "duree_mois": 60,
      "cout": "1000_5000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : psychologue",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.871"
     }
    ]
   },
@@ -1291,6 +2294,12 @@
      "cout": "moins_1000",
      "rythme": "temps_plein"
     }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : professeur de collège et de lycée",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.51"
+    }
    ]
   },
   {
@@ -1308,6 +2317,140 @@
      "duree_mois": 60,
      "cout": "moins_1000",
      "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : enseignant-chercheur",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.880"
+    }
+   ]
+  },
+  {
+   "id": "restaurateur-oeuvres",
+   "titre": "Restaurateur d'œuvres d'art",
+   "profils": {
+    "contemplatif": 1,
+    "createur": 0.5
+   },
+   "description": "Étudie et restaure peintures, sculptures ou objets anciens en respectant ce que l'œuvre a été.",
+   "voies": [
+    {
+     "nom": "Master de conservation-restauration (Institut national du patrimoine, université ou école d'art), sur concours",
+     "niveau_requis": "bac",
+     "duree_mois": 60,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : restaurateur d'oeuvres d'art",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.52"
+    }
+   ]
+  },
+  {
+   "id": "apiculteur",
+   "titre": "Apiculteur",
+   "profils": {
+    "contemplatif": 1,
+    "epicurien": 0.6
+   },
+   "description": "Élève des abeilles, suit le rythme des saisons et récolte miel, pollen ou essaims.",
+   "voies": [
+    {
+     "nom": "Brevet professionnel responsable d'entreprise agricole (BPREA), option apiculture, souvent financé",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : apiculteur",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.70"
+    }
+   ]
+  },
+  {
+   "id": "archeologue",
+   "titre": "Archéologue",
+   "profils": {
+    "contemplatif": 1,
+    "sceptique": 0.6
+   },
+   "description": "Fouille des sites, date et interprète les traces laissées par les sociétés du passé.",
+   "voies": [
+    {
+     "nom": "Licence puis master d'archéologie à l'université",
+     "niveau_requis": "bac",
+     "duree_mois": 60,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : archéologue",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.166"
+    }
+   ]
+  },
+  {
+   "id": "relieur",
+   "titre": "Relieur-doreur",
+   "profils": {
+    "contemplatif": 1,
+    "createur": 0.5
+   },
+   "description": "Restaure et habille les livres à la main : couture des cahiers, cuir, dorure à la feuille.",
+   "voies": [
+    {
+     "nom": "CAP arts de la reliure en alternance",
+     "niveau_requis": "sans",
+     "duree_mois": 24,
+     "cout": "finance",
+     "rythme": "alternance"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : relieur-doreur",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.581"
+    }
+   ]
+  },
+  {
+   "id": "professeur-fle",
+   "titre": "Professeur de français à l'étranger",
+   "profils": {
+    "contemplatif": 1,
+    "moraliste": 0.5
+   },
+   "description": "Enseigne le français à des adultes ou des enfants dans un autre pays : Alliance française, instituts, écoles de langues.",
+   "voies": [
+    {
+     "nom": "DAEFLE à distance (Alliance française et CNED), après un test d'entrée",
+     "niveau_requis": "bac",
+     "duree_mois": 12,
+     "cout": "1000_5000",
+     "rythme": "temps_partiel"
+    },
+    {
+     "nom": "Master de français langue étrangère (FLE)",
+     "niveau_requis": "bac_3",
+     "duree_mois": 24,
+     "cout": "moins_1000",
+     "rythme": "temps_plein"
+    }
+   ],
+   "lieu": "etranger",
+   "liens": [
+    {
+     "titre": "CNED : le DAEFLE pour enseigner le français langue étrangère",
+     "url": "https://www.cned.fr/qualifications-professionnelles/diplome-d-aptitude-a-l-enseignement-du-francais-langue-etrangere-daefle"
     }
    ]
   }

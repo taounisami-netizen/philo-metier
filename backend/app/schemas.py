@@ -260,10 +260,29 @@ class AccesMetier(BaseModel):
     cout: str    # ex. « gratuit pour toi (financé) »
 
 
+# Les liens « s'informer » ne peuvent pointer que vers ces sites officiels.
+SITES_LIENS = ("https://www.onisep.fr/", "https://mon-vie-via.businessfrance.fr/",
+               "https://www.france-volontaires.org/", "https://www.diplomatie.gouv.fr/", "https://www.cned.fr/",
+               "https://bpifrance-creation.fr/")
+
+
+class Lien(BaseModel):
+    titre: str
+    url: str
+
+    @field_validator("url")
+    @classmethod
+    def site_connu(cls, url: str) -> str:
+        if not url.startswith(SITES_LIENS):
+            raise ValueError(f"lien vers un site non prévu : {url}")
+        return url
+
+
 class Metier(BaseModel):
     titre: str
     pourquoi: str
     acces: AccesMetier | None = None
+    liens: list[Lien] = []
 
 
 SOURCES_AUTORISEES = ("https://fr.wikisource.org/", "https://www.gutenberg.org/")
@@ -320,6 +339,7 @@ class Sortie(BaseModel):
     citation: Citation
     livre_a_lire: LivreConseille
     ecart_job_voulu: str | None = None
+    metier_etranger: Metier | None = None  # seulement pour qui est prêt à partir (question Mobilité)
 
 
 class Redaction(BaseModel):

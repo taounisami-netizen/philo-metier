@@ -26,3 +26,6 @@ backend/modele/
 frontend/node_modules/
 frontend/.next/
 *.tsbuildinfo
+
+# Jeu de données ONISEP (Idéo-Fiches métiers), utilisé une fois pour les liens : trop gros pour le dépôt
+Ideo-Fiches*.xml

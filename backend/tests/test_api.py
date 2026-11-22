@@ -82,6 +82,16 @@ def test_resultat_calcule_sans_ia(client):
     assert data["redaction_possible"] is False                            # pas de clé d'API
 
 
+def test_liens_et_piste_a_l_etranger(client):
+    sans = client.post("/api/resultat", json=demande()).json()["sortie"]
+    assert sans["metier_etranger"] is None
+    assert all(l["url"].startswith("https://") for l in sans["metier_principal"]["liens"])
+    avec = client.post("/api/resultat", json=demande(situation={"mobilite": "etranger"})).json()["sortie"]
+    affiches = [avec["metier_principal"], *avec["metiers_alternatifs"], *([avec["metier_etranger"]] if avec["metier_etranger"] else [])]
+    lieux = {m.titre: m.lieu for m in charger_metiers()}
+    assert any(lieux[m["titre"]] == "etranger" for m in affiches)
+
+
 def test_memes_reponses_meme_resultat(client):
     premier = client.post("/api/resultat", json=demande()).json()
     second = client.post("/api/resultat", json=demande()).json()

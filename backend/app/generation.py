@@ -276,8 +276,8 @@ def sortie_calculee(grille: Grille, entree: Entree, analyse: AnalyseProfil, pass
 
     etranger = None
     if orientation.etranger:
-        etranger = fiche(orientation.etranger,
-                         f"Tu es prêt à partir : voici une piste à l'étranger. {orientation.etranger.metier.description}")
+        # Le titre de la partie (« Si tu pars à l'étranger ») dit déjà pourquoi : on décrit le métier.
+        etranger = fiche(orientation.etranger, orientation.etranger.metier.description)
     return Sortie(
         metier_principal=fiche(principal,
                                f"Ton trait dominant : {dominant.trait_dominant.lower()}. {principal.metier.description}"),

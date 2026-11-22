@@ -174,7 +174,7 @@ button {
 .alternatifs li:last-child { border-bottom: 1px solid var(--trait); }
 .alternatifs strong { font-weight: 600; }
 .acces { font-size: 0.95rem; color: var(--encre-douce); margin: 0.4rem 0 0; }
-.liens { font-size: 0.9rem; color: var(--encre-douce); margin: 0.3rem 0 0; }
+.liens { font-size: 0.9rem; color: var(--encre-douce); margin: 0.3rem 0 1rem; }
 
 .scores { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
 .scores li { display: grid; grid-template-columns: 11rem 1fr 2.5rem; gap: 0.75rem; align-items: center; padding: 0.2rem 0; }

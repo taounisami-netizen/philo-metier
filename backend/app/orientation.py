@@ -44,7 +44,9 @@ FICHIER_METIERS = Path(__file__).parent / "grille" / "metiers.json"
 
 Niveau = Literal["sans", "cap_bep", "bac", "bac_2", "bac_3", "bac_5"]
 Cout = Literal["finance", "moins_1000", "1000_5000", "plus_5000"]
-Rythme = Literal["alternance", "temps_plein", "temps_partiel"]
+# en_poste : on est embauché d'abord, et formé pendant son temps de travail, payé. Ce n'est pas du temps
+# à prendre en plus : la voie convient même à qui n'a que quelques heures par semaine (on change d'emploi).
+Rythme = Literal["alternance", "temps_plein", "temps_partiel", "en_poste"]
 Lieu = Literal["france", "etranger"]
 
 ORDRE_DIPLOME = ["sans", "cap_bep", "bac", "bac_2", "bac_3", "bac_5"]
@@ -54,7 +56,7 @@ DELAI_MAX_MOIS = {"moins_6_mois": 6, "6_12_mois": 12, "1_2_ans": 24, "plus_2_ans
 TEMPS_RANG = {"moins_5h": 0, "5_10h": 1, "10_20h": 2, "temps_plein": 3}
 # Temps disponible minimal pour suivre chaque rythme de formation.
 RYTHME_TEMPS_MIN = {"temps_partiel": TEMPS_RANG["5_10h"], "temps_plein": TEMPS_RANG["temps_plein"],
-                    "alternance": TEMPS_RANG["temps_plein"]}
+                    "alternance": TEMPS_RANG["temps_plein"], "en_poste": TEMPS_RANG["moins_5h"]}
 
 CONTRAINTES = ("delai", "temps_hebdo", "budget", "diplome")  # aussi l'ordre d'assouplissement
 LIBELLES_CONTRAINTES = {"delai": "le délai", "temps_hebdo": "le temps disponible",
@@ -64,6 +66,12 @@ BONUS_VOULU = 0.03
 BONUS_POSTE = 0.015
 Z_MAX = 2.0
 NB_MIN_POSSIBLES = 3
+
+LIBELLES_NIVEAU = {"sans": "sans diplôme", "cap_bep": "CAP", "bac": "bac", "bac_2": "bac +2", "bac_3": "bac +3",
+                   "bac_5": "bac +5"}
+# Une unité d'écart (un an de trop, un cran de temps ou de budget en trop) retire autant à la note.
+# Ordre de grandeur : l'affinité d'un métier du profil dominant dépasse celle du secondaire d'environ 0,2.
+PENALITE_ECART = 0.05
 
 LIBELLES_COUT = {"finance": "gratuit pour toi (financé)", "moins_1000": "moins de 1 000 €",
                  "1000_5000": "entre 1 000 et 5 000 €", "plus_5000": "plus de 5 000 €"}
@@ -85,6 +93,7 @@ class FicheMetier(BaseModel):
     voies: list[Voie] = Field(min_length=1)
     lieu: Lieu = "france"
     liens: list[Lien] = []
+    romes: list[str] = []  # codes ROME : recherche d'offres et de formations en alternance (étage 2)
 
     @property
     def profil_principal(self) -> str:
@@ -124,8 +133,9 @@ def voie_possible(voie: Voie, contraintes: dict[str, str]) -> bool:
         return False
     if "budget" in contraintes and COUT_RANG[voie.cout] > BUDGET_RANG[contraintes["budget"]]:
         return False
+    # En poste, on a changé de métier dès l'embauche : la durée de la formation ne retarde rien.
     delai_max = DELAI_MAX_MOIS.get(contraintes.get("delai", "plus_2_ans"))
-    if delai_max is not None and voie.duree_mois > delai_max:
+    if delai_max is not None and voie.duree_mois > delai_max and voie.rythme != "en_poste":
         return False
     if "temps_hebdo" in contraintes and TEMPS_RANG[contraintes["temps_hebdo"]] < RYTHME_TEMPS_MIN[voie.rythme]:
         return False
@@ -143,12 +153,46 @@ def facilite(voie: Voie, diplome_connu: bool = True) -> float:
     return COUT_RANG[voie.cout] + voie.duree_mois / 24 + niveau
 
 
-def meilleure_voie(metier: FicheMetier, contraintes: dict[str, str]) -> Voie | None:
+def ecart(voie: Voie, moyens: dict[str, str]) -> float:
+    """De combien une voie dépasse les moyens de départ (0 si elle tient). Unités : un an de trop,
+    un cran de temps disponible, de budget ou de diplôme en trop comptent chacun 1."""
+    total = 0.0
+    if "diplome" in moyens:
+        total += max(0, ORDRE_DIPLOME.index(voie.niveau_requis) - ORDRE_DIPLOME.index(moyens["diplome"]))
+    if "budget" in moyens:
+        total += max(0, COUT_RANG[voie.cout] - BUDGET_RANG[moyens["budget"]])
+    delai_max = DELAI_MAX_MOIS.get(moyens.get("delai", "plus_2_ans"))
+    if delai_max is not None and voie.rythme != "en_poste":
+        total += max(0, voie.duree_mois - delai_max) / 12
+    if "temps_hebdo" in moyens:
+        total += max(0, RYTHME_TEMPS_MIN[voie.rythme] - TEMPS_RANG[moyens["temps_hebdo"]])
+    return total
+
+
+def ecarts_lisibles(voie: Voie, moyens: dict[str, str]) -> list[str]:
+    """Ce qui dépasse, en clair, pour l'afficher sous la voie d'accès."""
+    phrases = []
+    if "diplome" in moyens and ORDRE_DIPLOME.index(voie.niveau_requis) > ORDRE_DIPLOME.index(moyens["diplome"]):
+        phrases.append(f"demande un niveau {LIBELLES_NIVEAU[voie.niveau_requis]}")
+    if "budget" in moyens and COUT_RANG[voie.cout] > BUDGET_RANG[moyens["budget"]]:
+        phrases.append(f"coûte {LIBELLES_COUT[voie.cout]}, plus que ton budget")
+    delai_max = DELAI_MAX_MOIS.get(moyens.get("delai", "plus_2_ans"))
+    if delai_max is not None and voie.rythme != "en_poste" and voie.duree_mois > delai_max:
+        phrases.append(f"dure {libelle_duree(voie.duree_mois)}, plus que ton délai")
+    if "temps_hebdo" in moyens and RYTHME_TEMPS_MIN[voie.rythme] > TEMPS_RANG[moyens["temps_hebdo"]]:
+        phrases.append("demande plus de temps que tu n'en as" if voie.rythme == "temps_partiel"
+                       else "demande d'être disponible à temps plein")
+    return phrases
+
+
+def meilleure_voie(metier: FicheMetier, contraintes: dict[str, str], moyens: dict[str, str] | None = None) -> Voie | None:
     """La plus accessible des voies compatibles. Avec un diplôme connu, les voies réservées à un
-    niveau plus élevé sont déjà écartées : on prend alors la plus courte et la moins chère."""
+    niveau plus élevé sont déjà écartées : on prend alors la plus courte et la moins chère.
+    moyens : les moyens de départ, quand certains ont été assouplis : on prend d'abord la voie
+    qui les dépasse le moins (13 mois plutôt que 36 pour un délai de 12)."""
     possibles = [v for v in metier.voies if voie_possible(v, contraintes)]
-    diplome_connu = "diplome" in contraintes
-    return min(possibles, key=lambda v: facilite(v, diplome_connu)) if possibles else None
+    diplome_connu = "diplome" in (moyens or contraintes)
+    return min(possibles, key=lambda v: (ecart(v, moyens or {}), facilite(v, diplome_connu))) if possibles else None
 
 
 def libelle_duree(mois: int) -> str:
@@ -190,6 +234,7 @@ class Choix:
     metier: FicheMetier
     voie: Voie
     note: float
+    ecarts: list[str] = field(default_factory=list)  # ce qui dépasse les moyens de départ, en clair
 
 
 @dataclass
@@ -240,10 +285,10 @@ class Orientation:
                      and (partir or m.lieu == "france")]
         profils_cles = {analyse.dominant, analyse.secondaire}
 
-        contraintes = contraintes_de(entree)
+        moyens = contraintes = contraintes_de(entree)
         assouplies: list[str] = []
         while True:
-            possibles = [(m, v) for m in candidats if (v := meilleure_voie(m, contraintes))]
+            possibles = [(m, v) for m in candidats if (v := meilleure_voie(m, contraintes, moyens))]
             assez = len(possibles) >= NB_MIN_POSSIBLES and any(m.profil_principal in profils_cles for m, _ in possibles)
             if assez or not contraintes:
                 break
@@ -251,9 +296,13 @@ class Orientation:
             contraintes = {c: v for c, v in contraintes.items() if c != a_relacher}
             assouplies.append(a_relacher)
 
+        # Après un assouplissement, une voie qui dépasse peu les moyens passe devant une voie qui les
+        # dépasse beaucoup : la note perd PENALITE_ECART par unité d'écart (0 si rien n'a été assoupli).
+        def note(m, v):
+            return round(notes[m.id] - PENALITE_ECART * ecart(v, moyens), 4)
         # Tri stable : à note égale, l'ordre du tableau décide (résultat reproductible).
-        classes = sorted(possibles, key=lambda mv: -notes[mv[0].id])
-        choix = [Choix(m, v, round(notes[m.id], 4)) for m, v in classes]
+        classes = sorted(possibles, key=lambda mv: -note(*mv))
+        choix = [Choix(m, v, note(m, v), ecarts_lisibles(v, moyens)) for m, v in classes]
 
         principal, reste = choix[0], choix[1:]
         alternatifs: list[Choix] = []
@@ -264,8 +313,9 @@ class Orientation:
         etranger = None
         if partir and all(c.metier.lieu == "france" for c in [principal, *alternatifs]):
             # D'abord les métiers accessibles avec les moyens retenus pour les autres, puis la meilleure note.
-            ailleurs = [(m, meilleure_voie(m, contraintes)) for m in candidats if m.lieu == "etranger"]
+            ailleurs = [(m, meilleure_voie(m, contraintes, moyens)) for m in candidats if m.lieu == "etranger"]
             if ailleurs:
                 m, voie = min(ailleurs, key=lambda mv: (mv[1] is None, -notes[mv[0].id]))
-                etranger = Choix(m, voie or meilleure_voie(m, {}), round(notes[m.id], 4))
+                voie = voie or meilleure_voie(m, {}, moyens)
+                etranger = Choix(m, voie, round(notes[m.id], 4), ecarts_lisibles(voie, moyens))
         return ResultatOrientation(principal, alternatifs, assouplies, etranger)

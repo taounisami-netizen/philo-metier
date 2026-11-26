@@ -241,9 +241,14 @@ def citation_depuis(passage: dict, texte: str | None = None) -> Citation:
     )
 
 
+LIBELLES_RYTHME = {"alternance": "en alternance (salarié, payé)", "temps_plein": "à temps plein",
+                   "temps_partiel": "à temps partiel", "en_poste": "en poste : embauché, formé pendant ton temps de travail"}
+
+
 def _acces(choix: Choix) -> AccesMetier:
     v = choix.voie
-    return AccesMetier(voie=v.nom, duree=libelle_duree(v.duree_mois), cout=LIBELLES_COUT[v.cout])
+    return AccesMetier(voie=v.nom, duree=libelle_duree(v.duree_mois), cout=LIBELLES_COUT[v.cout],
+                       rythme=LIBELLES_RYTHME[v.rythme], ecarts=choix.ecarts)
 
 
 def _meme_titre(a: str, b: str) -> bool:
@@ -272,7 +277,8 @@ def sortie_calculee(grille: Grille, entree: Entree, analyse: AnalyseProfil, pass
         ecart = (f"Tu vises « {entree.job_voulu} ». Le calcul te rapproche plutôt du métier de "
                  f"{principal.metier.titre.lower()} : compare ce que ces deux métiers demandent au quotidien.")
     def fiche(choix: Choix, pourquoi: str) -> Metier:
-        return Metier(titre=choix.metier.titre, pourquoi=pourquoi, acces=_acces(choix), liens=choix.metier.liens)
+        return Metier(id=choix.metier.id, titre=choix.metier.titre, pourquoi=pourquoi, acces=_acces(choix),
+                      liens=choix.metier.liens)
 
     etranger = None
     if orientation.etranger:
@@ -375,7 +381,9 @@ def _bloc_situation(entree: Entree) -> str:
 def _ligne_metier(etiquette: str, choix: Choix) -> str:
     acces = _acces(choix)
     return (f"{etiquette} : {choix.metier.titre}\n  Ce que c'est : {choix.metier.description}\n"
-            f"  Voie d'accès retenue : {acces.voie} ({acces.duree}, coût : {acces.cout})")
+            f"  Voie d'accès retenue : {acces.voie} ({acces.duree}, {acces.rythme}, coût : {acces.cout})"
+            + (f"\n  Dépasse ses moyens : {' ; '.join(acces.ecarts)} (dis-le franchement, ne le minimise pas)"
+               if acces.ecarts else ""))
 
 
 def message_utilisateur(grille: Grille, entree: Entree, analyse: AnalyseProfil, reponses: list[Reponse],

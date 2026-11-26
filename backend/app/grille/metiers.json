@@ -4,9 +4,10 @@
  "legende": {
   "niveau_requis": "diplôme minimal pour entrer dans la formation : sans, cap_bep, bac, bac_2, bac_3, bac_5",
   "cout": "finance (gratuit pour l'apprenant : alternance, formation publique ou rémunérée), moins_1000, 1000_5000, plus_5000",
-  "rythme": "alternance (contrat de travail + école), temps_plein, temps_partiel (soirs, week-ends, à distance)",
+  "rythme": "alternance, temps_plein, temps_partiel, ou en_poste : embauché d'abord, formé pendant le temps de travail et payé (convient même avec peu de temps libre, et ne retarde pas le changement de métier)",
   "lieu": "france (par défaut) ou etranger : un métier « etranger » n'est proposé qu'aux personnes prêtes à partir",
-  "liens": "fiche ONISEP du métier (études, accès, salaires), ou site officiel quand l'ONISEP n'en a pas"
+  "liens": "fiche ONISEP du métier (études, accès, salaires), ou site officiel quand l'ONISEP n'en a pas",
+  "romes": "codes ROME (fiche ONISEP du métier) pour chercher offres et formations en alternance ; vide pour les métiers à l'étranger ou accessibles seulement par concours"
  },
  "metiers": [
   {
@@ -31,6 +32,9 @@
      "titre": "Fiche ONISEP : médecin urgentiste",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7820"
     }
+   ],
+   "romes": [
+    "J1102"
    ]
   },
   {
@@ -62,6 +66,9 @@
      "titre": "Fiche ONISEP : pilote de ligne",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.400"
     }
+   ],
+   "romes": [
+    "N2102"
    ]
   },
   {
@@ -78,7 +85,7 @@
      "niveau_requis": "bac_2",
      "duree_mois": 36,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -86,6 +93,9 @@
      "titre": "Fiche ONISEP : contrôleur aérien",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.1"
     }
+   ],
+   "romes": [
+    "N2202"
    ]
   },
   {
@@ -102,7 +112,7 @@
      "niveau_requis": "sans",
      "duree_mois": 9,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     },
     {
      "nom": "Sapeur-pompier volontaire (formation initiale de quelques semaines, en parallèle d'un emploi)",
@@ -117,6 +127,9 @@
      "titre": "Fiche ONISEP : sapeur-pompier",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.572"
     }
+   ],
+   "romes": [
+    "K1705"
    ]
   },
   {
@@ -141,6 +154,9 @@
      "titre": "Fiche ONISEP : ambulancier",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.417"
     }
+   ],
+   "romes": [
+    "J1305"
    ]
   },
   {
@@ -157,7 +173,7 @@
      "niveau_requis": "bac",
      "duree_mois": 6,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -165,6 +181,9 @@
      "titre": "Fiche ONISEP : aiguilleur du rail",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.896"
     }
+   ],
+   "romes": [
+    "N4401"
    ]
   },
   {
@@ -189,6 +208,9 @@
      "titre": "Fiche ONISEP : manager de risques (risk manager)",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.555"
     }
+   ],
+   "romes": [
+    "M1201"
    ]
   },
   {
@@ -212,7 +234,7 @@
      "niveau_requis": "bac",
      "duree_mois": 3,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -220,6 +242,9 @@
      "titre": "Fiche ONISEP : négociateur immobilier",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.270"
     }
+   ],
+   "romes": [
+    "C1504"
    ]
   },
   {
@@ -244,6 +269,9 @@
      "titre": "Fiche ONISEP : guide de haute montagne",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.918"
     }
+   ],
+   "romes": [
+    "G1201"
    ]
   },
   {
@@ -268,6 +296,9 @@
      "titre": "Fiche ONISEP : cordiste",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.437"
     }
+   ],
+   "romes": [
+    "I1501"
    ]
   },
   {
@@ -292,6 +323,9 @@
      "titre": "Fiche ONISEP : officier de la marine marchande",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.653"
     }
+   ],
+   "romes": [
+    "N3101"
    ]
   },
   {
@@ -317,6 +351,115 @@
      "titre": "Fiche ONISEP : logisticien de l'humanitaire",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.511"
     }
+   ],
+   "romes": []
+  },
+  {
+   "id": "conducteur-bus",
+   "titre": "Conducteur de bus ou de tram",
+   "profils": {
+    "stoique": 1,
+    "moraliste": 0.4
+   },
+   "description": "Conduit un bus ou un tram en ville, tient ses horaires et garde son calme avec les passagers et dans la circulation.",
+   "voies": [
+    {
+     "nom": "Recrutement par un réseau de transport, qui paie la formation au permis D et la FIMO (âge minimum : 21 à 24 ans selon le cas)",
+     "niveau_requis": "sans",
+     "duree_mois": 4,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : conducteur de bus ou d'autocar",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.907"
+    }
+   ],
+   "romes": [
+    "N4103"
+   ]
+  },
+  {
+   "id": "preparateur-commandes",
+   "titre": "Préparateur de commandes",
+   "profils": {
+    "stoique": 1,
+    "batisseur": 0.4
+   },
+   "description": "Prépare les colis dans un entrepôt : prélève les articles, vérifie les quantités et tient les cadences.",
+   "voies": [
+    {
+     "nom": "Embauche directe en entrepôt, formation au poste",
+     "niveau_requis": "sans",
+     "duree_mois": 1,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : préparateur de commandes",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.8003"
+    }
+   ],
+   "romes": [
+    "N1103"
+   ]
+  },
+  {
+   "id": "conducteur-routier",
+   "titre": "Conducteur routier (poids lourd)",
+   "profils": {
+    "stoique": 1,
+    "epicurien": 0.3
+   },
+   "description": "Transporte des marchandises sur la route, gère seul ses trajets, ses temps de pause et la sécurité de son chargement.",
+   "voies": [
+    {
+     "nom": "Permis C et FIMO financés avant l'embauche (préparation opérationnelle à l'emploi avec France Travail), à partir de 21 ans",
+     "niveau_requis": "sans",
+     "duree_mois": 3,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : conducteur routier",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.679"
+    }
+   ],
+   "romes": [
+    "N4101"
+   ]
+  },
+  {
+   "id": "agent-securite",
+   "titre": "Agent de sécurité",
+   "profils": {
+    "stoique": 1,
+    "moraliste": 0.5
+   },
+   "description": "Surveille un site, contrôle les accès et intervient en cas d'incident, avec sang-froid et vigilance.",
+   "voies": [
+    {
+     "nom": "Certificat de qualification professionnelle d'agent de sécurité (quelques semaines), souvent financé ; carte professionnelle obligatoire",
+     "niveau_requis": "sans",
+     "duree_mois": 2,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : agent de sécurité",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.347"
+    }
+   ],
+   "romes": [
+    "K2503"
    ]
   },
   {
@@ -348,6 +491,9 @@
      "titre": "Fiche ONISEP : chef de cuisine",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.420"
     }
+   ],
+   "romes": [
+    "G1601"
    ]
   },
   {
@@ -378,6 +524,9 @@
      "titre": "Fiche ONISEP : boulanger",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.17"
     }
+   ],
+   "romes": [
+    "D1102"
    ]
   },
   {
@@ -410,6 +559,9 @@
      "titre": "Fiche ONISEP : ébéniste",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.289"
     }
+   ],
+   "romes": [
+    "H2207"
    ]
   },
   {
@@ -441,6 +593,9 @@
      "titre": "Fiche ONISEP : ouvrier paysagiste",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.120"
     }
+   ],
+   "romes": [
+    "A1203"
    ]
   },
   {
@@ -471,6 +626,9 @@
      "titre": "Fiche ONISEP : sommelier",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.4"
     }
+   ],
+   "romes": [
+    "G1804"
    ]
   },
   {
@@ -495,6 +653,9 @@
      "titre": "Fiche ONISEP : chargé de projet événementiel",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.473"
     }
+   ],
+   "romes": [
+    "E1107"
    ]
   },
   {
@@ -519,6 +680,9 @@
      "titre": "Fiche ONISEP : guide-conférencier",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.941"
     }
+   ],
+   "romes": [
+    "G1201"
    ]
   },
   {
@@ -550,6 +714,9 @@
      "titre": "Fiche ONISEP : animateur socioculturel",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.65"
     }
+   ],
+   "romes": [
+    "K1206"
    ]
   },
   {
@@ -574,6 +741,9 @@
      "titre": "Fiche ONISEP : oenologue",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.159"
     }
+   ],
+   "romes": [
+    "A1413"
    ]
   },
   {
@@ -605,6 +775,9 @@
      "titre": "Fiche ONISEP : chocolatier-confiseur",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.88"
     }
+   ],
+   "romes": [
+    "D1104"
    ]
   },
   {
@@ -629,6 +802,10 @@
      "titre": "Fiche ONISEP : fromager",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.510"
     }
+   ],
+   "romes": [
+    "D1106",
+    "A1412"
    ]
   },
   {
@@ -661,6 +838,90 @@
      "titre": "ONISEP : le DEJEPS activités de plongée subaquatique",
      "url": "https://www.onisep.fr/ressources/univers-formation/formations/post-bac/dejeps-specialite-perfectionnement-sportif-mention-activites-de-plongee-subaquatique"
     }
+   ],
+   "romes": []
+  },
+  {
+   "id": "facteur",
+   "titre": "Facteur",
+   "profils": {
+    "epicurien": 1,
+    "moraliste": 0.4
+   },
+   "description": "Distribue le courrier et les colis dans un quartier, connaît ses habitants et travaille dehors, de bonne heure.",
+   "voies": [
+    {
+     "nom": "Recrutement par La Poste (brevet ou CAP et permis B demandés), formation au poste rémunérée",
+     "niveau_requis": "sans",
+     "duree_mois": 1,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : facteur",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.763"
+    }
+   ],
+   "romes": [
+    "M1603"
+   ]
+  },
+  {
+   "id": "vendeur",
+   "titre": "Vendeur en magasin",
+   "profils": {
+    "epicurien": 1,
+    "createur": 0.3
+   },
+   "description": "Accueille et conseille les clients, met en valeur les produits et tient le magasin.",
+   "voies": [
+    {
+     "nom": "Embauche directe en magasin, formation au poste",
+     "niveau_requis": "sans",
+     "duree_mois": 1,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : vendeur en magasin",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.860"
+    }
+   ],
+   "romes": [
+    "D1106",
+    "D1212",
+    "D1214"
+   ]
+  },
+  {
+   "id": "employe-restauration",
+   "titre": "Employé polyvalent de restauration",
+   "profils": {
+    "epicurien": 1,
+    "stoique": 0.3
+   },
+   "description": "Prépare, sert et encaisse dans un restaurant ou une cafétéria, au rythme des coups de feu, en équipe.",
+   "voies": [
+    {
+     "nom": "Embauche directe, formation au poste (aucun diplôme exigé)",
+     "niveau_requis": "sans",
+     "duree_mois": 1,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : employé polyvalent en restauration rapide",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7999"
+    }
+   ],
+   "romes": [
+    "G1603"
    ]
   },
   {
@@ -699,6 +960,9 @@
      "titre": "Fiche ONISEP : analyste SOC",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.8262"
     }
+   ],
+   "romes": [
+    "M1802"
    ]
   },
   {
@@ -737,6 +1001,9 @@
      "titre": "Fiche ONISEP : data analyst (analyste de données)",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7930"
     }
+   ],
+   "romes": [
+    "M1403"
    ]
   },
   {
@@ -768,6 +1035,9 @@
      "titre": "Fiche ONISEP : testeur en informatique",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.84"
     }
+   ],
+   "romes": [
+    "M1805"
    ]
   },
   {
@@ -799,6 +1069,11 @@
      "titre": "Fiche ONISEP : technicien qualité",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.175"
     }
+   ],
+   "romes": [
+    "H1503",
+    "H1504",
+    "H1506"
    ]
   },
   {
@@ -831,6 +1106,9 @@
      "titre": "Fiche ONISEP : auditeur externe",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.591"
     }
+   ],
+   "romes": [
+    "M1202"
    ]
   },
   {
@@ -862,6 +1140,9 @@
      "titre": "Fiche ONISEP : journaliste",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.45"
     }
+   ],
+   "romes": [
+    "E1106"
    ]
   },
   {
@@ -879,7 +1160,7 @@
      "niveau_requis": "bac",
      "duree_mois": 12,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -887,6 +1168,9 @@
      "titre": "Fiche ONISEP : gendarme",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.313"
     }
+   ],
+   "romes": [
+    "K1706"
    ]
   },
   {
@@ -903,7 +1187,7 @@
      "niveau_requis": "sans",
      "duree_mois": 2,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -911,6 +1195,9 @@
      "titre": "Fiche ONISEP : commercial à bord des trains",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.186"
     }
+   ],
+   "romes": [
+    "N4302"
    ]
   },
   {
@@ -936,6 +1223,9 @@
      "titre": "Fiche ONISEP : enseignant-chercheur",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.880"
     }
+   ],
+   "romes": [
+    "K2402"
    ]
   },
   {
@@ -952,7 +1242,7 @@
      "niveau_requis": "bac",
      "duree_mois": 6,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -960,7 +1250,8 @@
      "titre": "Fiche ONISEP : technicien de police technique et scientifique",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.892"
     }
-   ]
+   ],
+   "romes": []
   },
   {
    "id": "genealogiste",
@@ -983,7 +1274,7 @@
      "niveau_requis": "bac",
      "duree_mois": 3,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -991,7 +1282,8 @@
      "titre": "Fiche ONISEP : généalogiste",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.742"
     }
-   ]
+   ],
+   "romes": []
   },
   {
    "id": "diagnostiqueur-immobilier",
@@ -1015,6 +1307,9 @@
      "titre": "Fiche ONISEP : diagnostiqueur immobilier",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.910"
     }
+   ],
+   "romes": [
+    "F1103"
    ]
   },
   {
@@ -1031,7 +1326,7 @@
      "niveau_requis": "bac",
      "duree_mois": 6,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "lieu": "etranger",
@@ -1040,7 +1335,8 @@
      "titre": "Ministère des Affaires étrangères : emplois et concours",
      "url": "https://www.diplomatie.gouv.fr/fr/emplois-stages-concours/concours/categorie-b/"
     }
-   ]
+   ],
+   "romes": []
   },
   {
    "id": "correspondant-etranger",
@@ -1065,6 +1361,29 @@
      "titre": "Fiche ONISEP : journaliste",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.45"
     }
+   ],
+   "romes": []
+  },
+  {
+   "id": "controleur-qualite-production",
+   "titre": "Contrôleur qualité en production",
+   "profils": {
+    "sceptique": 1,
+    "batisseur": 0.5
+   },
+   "description": "Vérifie les pièces et les produits à la sortie des machines, mesure, compare aux normes et signale les défauts.",
+   "voies": [
+    {
+     "nom": "Évolution depuis un poste de production, formation en entreprise (souvent un CQP)",
+     "niveau_requis": "sans",
+     "duree_mois": 6,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [],
+   "romes": [
+    "H1506"
    ]
   },
   {
@@ -1103,6 +1422,9 @@
      "titre": "Fiche ONISEP : développeur logiciel",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.12"
     }
+   ],
+   "romes": [
+    "M1805"
    ]
   },
   {
@@ -1122,7 +1444,10 @@
      "rythme": "alternance"
     }
    ],
-   "liens": []
+   "liens": [],
+   "romes": [
+    "H1206"
+   ]
   },
   {
    "id": "dessinateur-projeteur-bim",
@@ -1153,6 +1478,9 @@
      "titre": "Fiche ONISEP : technicien BIM modeleur (modélisation des données du bâtiment)",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7931"
     }
+   ],
+   "romes": [
+    "F1106"
    ]
   },
   {
@@ -1184,6 +1512,9 @@
      "titre": "Fiche ONISEP : électricien installateur",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.56"
     }
+   ],
+   "romes": [
+    "F1602"
    ]
   },
   {
@@ -1215,6 +1546,9 @@
      "titre": "Fiche ONISEP : technicien de maintenance industrielle",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.866"
     }
+   ],
+   "romes": [
+    "I1304"
    ]
   },
   {
@@ -1241,7 +1575,8 @@
      "rythme": "alternance"
     }
    ],
-   "liens": []
+   "liens": [],
+   "romes": []
   },
   {
    "id": "data-scientist",
@@ -1265,6 +1600,9 @@
      "titre": "Fiche ONISEP : data scientist (expert en mégadonnées)",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.512"
     }
+   ],
+   "romes": [
+    "M1403"
    ]
   },
   {
@@ -1289,6 +1627,9 @@
      "titre": "Fiche ONISEP : actuaire",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.861"
     }
+   ],
+   "romes": [
+    "C1105"
    ]
   },
   {
@@ -1313,6 +1654,9 @@
      "titre": "Fiche ONISEP : architecte",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.161"
     }
+   ],
+   "romes": [
+    "F1101"
    ]
   },
   {
@@ -1344,6 +1688,9 @@
      "titre": "Fiche ONISEP : horloger",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.605"
     }
+   ],
+   "romes": [
+    "B1604"
    ]
   },
   {
@@ -1375,6 +1722,9 @@
      "titre": "Fiche ONISEP : technicien de maintenance éolienne",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.383"
     }
+   ],
+   "romes": [
+    "I1304"
    ]
   },
   {
@@ -1406,6 +1756,9 @@
      "titre": "Fiche ONISEP : prothésiste dentaire",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.411"
     }
+   ],
+   "romes": [
+    "J1410"
    ]
   },
   {
@@ -1431,6 +1784,124 @@
      "titre": "Mon Volontariat International (site officiel du VIE)",
      "url": "https://mon-vie-via.businessfrance.fr/"
     }
+   ],
+   "romes": []
+  },
+  {
+   "id": "cariste",
+   "titre": "Cariste",
+   "profils": {
+    "batisseur": 1,
+    "stoique": 0.4
+   },
+   "description": "Conduit un chariot élévateur pour charger, ranger et déplacer les marchandises d'un entrepôt, avec précision et sécurité.",
+   "voies": [
+    {
+     "nom": "Embauche en entrepôt avec le CACES (permis cariste, quelques jours de formation), souvent payé par l'employeur",
+     "niveau_requis": "sans",
+     "duree_mois": 1,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : magasinier cariste",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.181"
+    }
+   ],
+   "romes": [
+    "N1103"
+   ]
+  },
+  {
+   "id": "conducteur-ligne",
+   "titre": "Conducteur de ligne de production",
+   "profils": {
+    "batisseur": 1,
+    "stoique": 0.5
+   },
+   "description": "Règle et surveille une ligne de production automatisée, réagit aux pannes et garantit la qualité de ce qui sort.",
+   "voies": [
+    {
+     "nom": "Évolution depuis un poste d'opérateur, avec un CQP (certificat de qualification professionnelle) préparé dans l'entreprise",
+     "niveau_requis": "sans",
+     "duree_mois": 6,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : pilote de ligne automatisée",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.796"
+    }
+   ],
+   "romes": [
+    "H2301"
+   ]
+  },
+  {
+   "id": "technicien-fibre",
+   "titre": "Technicien fibre optique",
+   "profils": {
+    "batisseur": 1,
+    "epicurien": 0.3
+   },
+   "description": "Installe et raccorde la fibre chez les particuliers et dans les rues : soudures, tests et mises en service.",
+   "voies": [
+    {
+     "nom": "Titre professionnel d'installateur de réseaux en fibre optique, souvent financé par France Travail ou la région",
+     "niveau_requis": "sans",
+     "duree_mois": 3,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    },
+    {
+     "nom": "Embauche par une entreprise de télécoms qui forme ses techniciens en interne",
+     "niveau_requis": "sans",
+     "duree_mois": 2,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : monteur en réseaux de communication (fibre)",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7969"
+    }
+   ],
+   "romes": [
+    "I1307"
+   ]
+  },
+  {
+   "id": "agent-maintenance-batiment",
+   "titre": "Agent de maintenance des bâtiments",
+   "profils": {
+    "batisseur": 1,
+    "stoique": 0.3
+   },
+   "description": "Répare et entretient un bâtiment au quotidien : plomberie, électricité, peinture, serrurerie.",
+   "voies": [
+    {
+     "nom": "Embauche directe par une collectivité, un bailleur ou une entreprise, formation en poste",
+     "niveau_requis": "sans",
+     "duree_mois": 1,
+     "cout": "finance",
+     "rythme": "en_poste"
+    },
+    {
+     "nom": "Titre professionnel d'agent de maintenance des bâtiments, souvent financé",
+     "niveau_requis": "sans",
+     "duree_mois": 7,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [],
+   "romes": [
+    "I1203"
    ]
   },
   {
@@ -1462,7 +1933,8 @@
      "titre": "Bpifrance Création : les étapes pour créer son entreprise",
      "url": "https://bpifrance-creation.fr/moment-de-vie/comment-creer-entreprise-etapes-a-suivre"
     }
-   ]
+   ],
+   "romes": []
   },
   {
    "id": "createur-de-contenu",
@@ -1486,7 +1958,8 @@
      "titre": "Fiche ONISEP : influenceur",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7836"
     }
-   ]
+   ],
+   "romes": []
   },
   {
    "id": "designer-graphique",
@@ -1517,6 +1990,9 @@
      "titre": "Fiche ONISEP : designer graphique",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.5"
     }
+   ],
+   "romes": [
+    "E1205"
    ]
   },
   {
@@ -1548,6 +2024,9 @@
      "titre": "Fiche ONISEP : photographe",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.883"
     }
+   ],
+   "romes": [
+    "E1201"
    ]
   },
   {
@@ -1580,6 +2059,9 @@
      "titre": "Fiche ONISEP : coach sportif",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.783"
     }
+   ],
+   "romes": [
+    "G1204"
    ]
   },
   {
@@ -1611,6 +2093,9 @@
      "titre": "Fiche ONISEP : réalisateur de films",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.476"
     }
+   ],
+   "romes": [
+    "L1304"
    ]
   },
   {
@@ -1635,6 +2120,9 @@
      "titre": "ONISEP : les métiers et l'emploi dans l'art et le design",
      "url": "https://www.onisep.fr/metier/decouvrir-le-monde-professionnel/art-et-design/les-metiers-et-l-emploi-dans-l-art-et-le-design"
     }
+   ],
+   "romes": [
+    "B1101"
    ]
   },
   {
@@ -1659,6 +2147,9 @@
      "titre": "Fiche ONISEP : directeur artistique",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.537"
     }
+   ],
+   "romes": [
+    "E1104"
    ]
   },
   {
@@ -1690,6 +2181,9 @@
      "titre": "Fiche ONISEP : luthier",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.966"
     }
+   ],
+   "romes": [
+    "B1501"
    ]
   },
   {
@@ -1709,7 +2203,8 @@
      "rythme": "temps_plein"
     }
    ],
-   "liens": []
+   "liens": [],
+   "romes": []
   },
   {
    "id": "game-designer",
@@ -1740,6 +2235,9 @@
      "titre": "Fiche ONISEP : game designer",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.885"
     }
+   ],
+   "romes": [
+    "E1104"
    ]
   },
   {
@@ -1772,7 +2270,8 @@
      "titre": "Fiche ONISEP : animateur de tourisme",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.803"
     }
-   ]
+   ],
+   "romes": []
   },
   {
    "id": "aide-soignant",
@@ -1803,6 +2302,9 @@
      "titre": "Fiche ONISEP : aide-soignant",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.561"
     }
+   ],
+   "romes": [
+    "J1501"
    ]
   },
   {
@@ -1834,6 +2336,9 @@
      "titre": "Fiche ONISEP : conseiller en insertion sociale et professionnelle",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.342"
     }
+   ],
+   "romes": [
+    "K1801"
    ]
   },
   {
@@ -1865,6 +2370,9 @@
      "titre": "Fiche ONISEP : éducateur spécialisé",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.311"
     }
+   ],
+   "romes": [
+    "K1207"
    ]
   },
   {
@@ -1888,7 +2396,7 @@
      "niveau_requis": "bac_3",
      "duree_mois": 2,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -1896,6 +2404,9 @@
      "titre": "Fiche ONISEP : professeur des écoles",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.557"
     }
+   ],
+   "romes": [
+    "K2106"
    ]
   },
   {
@@ -1920,6 +2431,9 @@
      "titre": "Fiche ONISEP : agent de développement local",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.922"
     }
+   ],
+   "romes": [
+    "K1802"
    ]
   },
   {
@@ -1944,6 +2458,9 @@
      "titre": "Fiche ONISEP : médecin généraliste",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.869"
     }
+   ],
+   "romes": [
+    "J1102"
    ]
   },
   {
@@ -1969,6 +2486,9 @@
      "titre": "Fiche ONISEP : avocat",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.33"
     }
+   ],
+   "romes": [
+    "K1903"
    ]
   },
   {
@@ -1985,7 +2505,7 @@
      "niveau_requis": "bac_5",
      "duree_mois": 31,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -1993,6 +2513,9 @@
      "titre": "Fiche ONISEP : magistrat",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.769"
     }
+   ],
+   "romes": [
+    "K1904"
    ]
   },
   {
@@ -2017,6 +2540,9 @@
      "titre": "Fiche ONISEP : interprète français / LSF (langue des signes française)",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7744"
     }
+   ],
+   "romes": [
+    "E1108"
    ]
   },
   {
@@ -2041,6 +2567,9 @@
      "titre": "Fiche ONISEP : médiateur familial",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.89"
     }
+   ],
+   "romes": [
+    "K1101"
    ]
   },
   {
@@ -2057,7 +2586,7 @@
      "niveau_requis": "bac",
      "duree_mois": 48,
      "cout": "finance",
-     "rythme": "alternance"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -2065,7 +2594,8 @@
      "titre": "Fiche ONISEP : éducateur de chiens guides d'aveugles",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.7817"
     }
-   ]
+   ],
+   "romes": []
   },
   {
    "id": "volontaire-solidarite",
@@ -2094,6 +2624,69 @@
      "titre": "France Volontaires : les missions",
      "url": "https://www.france-volontaires.org/"
     }
+   ],
+   "romes": []
+  },
+  {
+   "id": "aide-domicile",
+   "titre": "Aide à domicile",
+   "profils": {
+    "moraliste": 1,
+    "epicurien": 0.3
+   },
+   "description": "Aide des personnes âgées ou fragiles chez elles dans les gestes du quotidien : repas, ménage, courses, compagnie.",
+   "voies": [
+    {
+     "nom": "Embauche directe par une association ou une entreprise d'aide à domicile, formation possible en poste",
+     "niveau_requis": "sans",
+     "duree_mois": 1,
+     "cout": "finance",
+     "rythme": "en_poste"
+    },
+    {
+     "nom": "Diplôme d'État d'accompagnant éducatif et social, souvent financé (10 à 24 mois)",
+     "niveau_requis": "sans",
+     "duree_mois": 12,
+     "cout": "finance",
+     "rythme": "temps_plein"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : accompagnant éducatif et social",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.782"
+    }
+   ],
+   "romes": [
+    "K1301",
+    "K1302"
+   ]
+  },
+  {
+   "id": "agent-service-hospitalier",
+   "titre": "Agent de service hospitalier",
+   "profils": {
+    "moraliste": 1,
+    "stoique": 0.4
+   },
+   "description": "Entretient les chambres et les locaux d'un hôpital ou d'un Ehpad, aide aux repas et côtoie les patients ; un tremplin vers aide-soignant.",
+   "voies": [
+    {
+     "nom": "Embauche directe à l'hôpital ou en Ehpad, formation au poste",
+     "niveau_requis": "sans",
+     "duree_mois": 1,
+     "cout": "finance",
+     "rythme": "en_poste"
+    }
+   ],
+   "liens": [
+    {
+     "titre": "Fiche ONISEP : agent de propreté et d'hygiène",
+     "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.562"
+    }
+   ],
+   "romes": [
+    "K2204"
    ]
   },
   {
@@ -2125,6 +2718,9 @@
      "titre": "Fiche ONISEP : libraire",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.269"
     }
+   ],
+   "romes": [
+    "D1211"
    ]
   },
   {
@@ -2141,7 +2737,7 @@
      "niveau_requis": "sans",
      "duree_mois": 3,
      "cout": "finance",
-     "rythme": "temps_plein"
+     "rythme": "en_poste"
     }
    ],
    "liens": [
@@ -2149,6 +2745,9 @@
      "titre": "Fiche ONISEP : adjoint du patrimoine",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.8176"
     }
+   ],
+   "romes": [
+    "K1601"
    ]
   },
   {
@@ -2173,6 +2772,9 @@
      "titre": "Fiche ONISEP : correcteur",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.331"
     }
+   ],
+   "romes": [
+    "E1305"
    ]
   },
   {
@@ -2204,6 +2806,9 @@
      "titre": "Fiche ONISEP : bibliothécaire",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.44"
     }
+   ],
+   "romes": [
+    "K1601"
    ]
   },
   {
@@ -2228,6 +2833,9 @@
      "titre": "Fiche ONISEP : écrivain",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.463"
     }
+   ],
+   "romes": [
+    "E1102"
    ]
   },
   {
@@ -2252,6 +2860,9 @@
      "titre": "Fiche ONISEP : musicien",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.6"
     }
+   ],
+   "romes": [
+    "L1202"
    ]
   },
   {
@@ -2276,6 +2887,9 @@
      "titre": "Fiche ONISEP : psychologue",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.871"
     }
+   ],
+   "romes": [
+    "K1104"
    ]
   },
   {
@@ -2300,6 +2914,9 @@
      "titre": "Fiche ONISEP : professeur de collège et de lycée",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.51"
     }
+   ],
+   "romes": [
+    "K2107"
    ]
   },
   {
@@ -2324,6 +2941,9 @@
      "titre": "Fiche ONISEP : enseignant-chercheur",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.880"
     }
+   ],
+   "romes": [
+    "K2401"
    ]
   },
   {
@@ -2348,6 +2968,9 @@
      "titre": "Fiche ONISEP : restaurateur d'oeuvres d'art",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.52"
     }
+   ],
+   "romes": [
+    "B1302"
    ]
   },
   {
@@ -2372,6 +2995,9 @@
      "titre": "Fiche ONISEP : apiculteur",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.70"
     }
+   ],
+   "romes": [
+    "A1408"
    ]
   },
   {
@@ -2396,6 +3022,9 @@
      "titre": "Fiche ONISEP : archéologue",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.166"
     }
+   ],
+   "romes": [
+    "K2401"
    ]
   },
   {
@@ -2420,6 +3049,9 @@
      "titre": "Fiche ONISEP : relieur-doreur",
      "url": "https://www.onisep.fr/http/redirection/metier/slug/MET.581"
     }
+   ],
+   "romes": [
+    "B1402"
    ]
   },
   {
@@ -2452,7 +3084,8 @@
      "titre": "CNED : le DAEFLE pour enseigner le français langue étrangère",
      "url": "https://www.cned.fr/qualifications-professionnelles/diplome-d-aptitude-a-l-enseignement-du-francais-langue-etrangere-daefle"
     }
-   ]
+   ],
+   "romes": []
   }
  ]
 }

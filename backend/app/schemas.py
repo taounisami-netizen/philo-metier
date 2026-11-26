@@ -258,6 +258,8 @@ class AccesMetier(BaseModel):
     voie: str    # ex. « Titre professionnel de technicien qualité pour adultes »
     duree: str   # ex. « environ 9 mois »
     cout: str    # ex. « gratuit pour toi (financé) »
+    rythme: str | None = None  # ex. « en poste : formé pendant ton temps de travail, payé »
+    ecarts: list[str] = []     # ce qui dépasse tes moyens, ex. « dure environ 3 ans, plus que ton délai »
 
 
 # Les liens « s'informer » ne peuvent pointer que vers ces sites officiels.
@@ -279,6 +281,7 @@ class Lien(BaseModel):
 
 
 class Metier(BaseModel):
+    id: str | None = None  # identifiant du tableau des métiers : sert à chercher offres et formations
     titre: str
     pourquoi: str
     acces: AccesMetier | None = None
@@ -368,6 +371,7 @@ class Resultat(BaseModel):
     assouplissements: list[str] = []
     # True si le site peut demander à Claude de rédiger les explications (POST /api/redaction).
     redaction_possible: bool = False
+    opportunites_possibles: bool = False  # étage 2 : l'API sait chercher offres et formations (clé LBA)
 
     @model_validator(mode="after")
     def ecart_seulement_si_job_voulu(self) -> "Resultat":

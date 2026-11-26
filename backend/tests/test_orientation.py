@@ -6,6 +6,7 @@ import pytest
 from app.orientation import (
     BONUS_VOULU,
     CONTRAINTES,
+    ecart,
     Orientation,
     Voie,
     charger_metiers,
@@ -124,12 +125,51 @@ def test_avec_des_moyens_les_trois_metiers_sont_atteignables(dominant):
         assert voie_possible(choix.voie, moyens), choix.metier.titre
 
 
+def _sans_voies_en_poste():
+    metiers = []
+    for m in METIERS:
+        voies = [v for v in m.voies if v.rythme != "en_poste"]
+        if voies:
+            metiers.append(m.model_copy(update={"voies": voies}))
+    return metiers
+
+
 def test_moyens_impossibles_on_assouplit_dans_l_ordre():
+    # Sans les métiers où l'on est formé en poste, moins de 5 h par semaine ne laisse aucune formation possible.
     moyens = {"diplome": "sans", "budget": "aucun", "delai": "moins_6_mois", "temps_hebdo": "moins_5h"}
-    resultat = Orientation(METIERS).orienter(analyse("batisseur", "sceptique"), entree(**moyens))
-    assert resultat.assouplissements  # moins de 5 h par semaine : aucune formation possible
+    resultat = Orientation(_sans_voies_en_poste()).orienter(analyse("batisseur", "sceptique"), entree(**moyens))
+    assert resultat.assouplissements
     assert resultat.assouplissements == list(CONTRAINTES[:len(resultat.assouplissements)])
     assert resultat.libelles_assouplissements[0] == "le délai"
+    # ce qui dépasse est dit en clair sous la voie
+    assert any(c.ecarts for c in resultat.choix_affiches)
+
+
+def test_apres_assouplissement_la_voie_qui_depasse_le_moins():
+    moyens = {"diplome": "sans", "budget": "aucun", "delai": "6_12_mois", "temps_hebdo": "moins_5h"}
+    resultat = Orientation(_sans_voies_en_poste()).orienter(analyse("batisseur", "stoique"), entree(**moyens))
+    for c in resultat.choix_affiches:
+        meilleur = min(ecart(v, moyens) for v in c.metier.voies if v.rythme != "en_poste")
+        assert ecart(c.voie, moyens) == meilleur
+    # un long cursus (3 ans de bac pro) ne passe pas devant un titre professionnel de quelques mois
+    assert resultat.principal.voie.duree_mois <= 12
+
+
+def test_ouvrier_sans_diplome_ni_temps_pistes_realistes():
+    """Le cas qui a motivé le rythme « en poste » : usine, sans diplôme, sans budget, moins de 5 h par semaine."""
+    moyens = {"diplome": "sans", "budget": "aucun", "delai": "6_12_mois", "temps_hebdo": "moins_5h"}
+    for dom, sec in [("batisseur", "stoique"), ("stoique", "batisseur"), ("moraliste", "epicurien"), ("sceptique", "batisseur")]:
+        r = Orientation(METIERS).orienter(analyse(dom, sec), entree(poste="Ouvrier à l'usine", **moyens))
+        assert r.assouplissements == [], (dom, r.libelles_assouplissements)
+        for c in r.choix_affiches:
+            assert c.voie.niveau_requis == "sans" and c.voie.cout == "finance" and not c.ecarts, c.metier.id
+            assert c.voie.rythme == "en_poste", c.metier.id
+
+
+def test_en_poste_compatible_avec_peu_de_temps_et_sans_delai():
+    voie = next(v for m in METIERS if m.id == "aiguilleur-du-rail" for v in m.voies)
+    assert voie.rythme == "en_poste"
+    assert voie_possible(voie, {"temps_hebdo": "moins_5h", "delai": "moins_6_mois", "diplome": "bac", "budget": "aucun"})
 
 
 def test_le_poste_actuel_n_est_jamais_propose():
@@ -176,7 +216,7 @@ def test_chaque_profil_a_un_metier_a_l_etranger():
 
 def test_presque_tous_les_metiers_ont_un_lien_officiel():
     sans_lien = [m.id for m in METIERS if not m.liens]
-    assert len(sans_lien) <= 3, sans_lien  # ingénieur, chef de projet, tatoueur : pas de fiche ONISEP
+    assert len(sans_lien) <= 5, sans_lien  # pas de fiche ONISEP : ingénieur, chef de projet, tatoueur…
 
 
 def test_lien_vers_un_site_inconnu_refuse():

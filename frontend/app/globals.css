@@ -174,6 +174,7 @@ button {
 .alternatifs li:last-child { border-bottom: 1px solid var(--trait); }
 .alternatifs strong { font-weight: 600; }
 .acces { font-size: 0.95rem; color: var(--encre-douce); margin: 0.4rem 0 0; }
+.acces.ecart { color: var(--erreur); }
 .liens { font-size: 0.9rem; color: var(--encre-douce); margin: 0.3rem 0 1rem; }
 
 .scores { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; }
@@ -228,3 +229,32 @@ button {
 @media (max-width: 640px) {
   .grille-moyens { grid-template-columns: 1fr; }
 }
+
+/* --- Étage 2 : offres et formations près de chez soi ------------------------------ */
+.opportunites .lieu-choisi { font-size: 1.05rem; margin-bottom: 0.5rem; }
+.opportunites .lieu-choisi select { width: auto; padding-right: 1.4rem; font-size: 1.05rem; }
+.choix-lieu { position: relative; margin-bottom: 1.5rem; }
+.choix-lieu label { font-size: 0.95rem; color: var(--encre-douce); }
+.ligne-lieu { display: flex; gap: 1.25rem; align-items: baseline; }
+.ligne-lieu input { flex: 1; }
+.ligne-lieu .lien { white-space: nowrap; font-size: 0.95rem; }
+.suggestions {
+  position: absolute; z-index: 2; left: 0; right: 0; margin: 0.25rem 0 0; padding: 0.25rem 0; list-style: none;
+  background: var(--carte); border: 1px solid var(--trait); border-radius: 4px; box-shadow: 0 6px 18px rgba(31, 43, 46, 0.08);
+}
+.suggestions li { padding: 0.45rem 0.9rem; cursor: pointer; font-size: 1rem; }
+.suggestions li[aria-selected="true"] { background: var(--choisi); }
+.suggestions .douce { font-size: 0.85rem; }
+
+.opportunites-metier { border-top: 1px solid var(--trait); padding: 0.75rem 0; }
+.opportunites-metier:last-of-type { border-bottom: 1px solid var(--trait); }
+.opportunites-metier summary { cursor: pointer; font-size: 1.05rem; }
+.opportunites-metier summary .titre-metier { font-weight: 600; }
+.opportunites-metier h3 { font-size: 0.95rem; color: var(--encre-douce); margin: 1.1rem 0 0.4rem; }
+.cartes { list-style: none; margin: 0 0 0.5rem; padding: 0; }
+.carte-opportunite { padding: 0.65rem 0 0.65rem 0.9rem; border-left: 2px solid var(--trait); margin-bottom: 0.6rem; }
+.carte-opportunite p { margin: 0; }
+.carte-opportunite .intitule { font-size: 1.05rem; line-height: 1.4; }
+.carte-opportunite .details { font-size: 0.92rem; color: var(--encre); margin-top: 0.15rem; }
+.carte-opportunite .provenance { font-size: 0.85rem; color: var(--encre-douce); margin-top: 0.2rem; }
+.opportunites .sources { margin-top: 1rem; }

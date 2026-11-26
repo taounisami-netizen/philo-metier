@@ -9,6 +9,8 @@ Routes :
     GET  /api/questionnaire questions (sans les points), statuts, nombre max de choix
     POST /api/resultat      réponses → profil, métiers, citation, livre : calculés, sans IA (immédiat)
     POST /api/redaction     mêmes données → explications rédigées par Claude (~30 s)
+    GET  /api/communes      ?q=nant → communes et coordonnées (pour le champ « Où cherches-tu ? »)
+    POST /api/opportunites  métiers + lieu → offres et formations en alternance (La bonne alternance)
 """
 
 import random
@@ -23,6 +25,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .generation import (echos_choisis, graine, journaliser_erreur, llm_disponible, message_utilisateur,
                          passages_pour, rediger, sortie_calculee)
+from .opportunites import Commune, DemandeOpportunites, Opportunites, ServiceIndisponible, ServiceOpportunites
 from .orientation import Orientation
 from .protection import Limiteur, cle_interne_valide, ip_du_client
 from .rag import CorpusIntrouvable, Recherche
@@ -61,6 +64,10 @@ async def demarrage(app: FastAPI):
     etat["grille"] = charger_grille()
     etat["limiteur"] = Limiteur()            # résultats calculés
     etat["limiteur_redaction"] = Limiteur()  # rédactions par Claude (et budget Claude du jour)
+    # Offres et formations : plus de demandes permises (changer de ville ou de rayon), toujours bornées.
+    etat["limiteur_opportunites"] = Limiteur(par_minute=20, par_jour=400)
+    etat["limiteur_communes"] = Limiteur(par_minute=60, par_jour=2000)
+    etat["opportunites"] = ServiceOpportunites()
     try:
         etat["recherche"] = Recherche()
         print(f"[api] corpus chargé : {len(etat['recherche'].passages)} passages")
@@ -71,6 +78,7 @@ async def demarrage(app: FastAPI):
     etat["orientation"] = Orientation(encodeur=encodeur)
     print(f"[api] orientation : {len(etat['orientation'].metiers)} métiers")
     print(f"[api] LLM : {'Claude configuré' if llm_disponible() else 'pas de clé → mode démo'}")
+    print(f"[api] La bonne alternance : {'clé configurée' if etat['opportunites'].disponible else 'pas de clé (LBA_API_KEY) → étage 2 désactivé'}")
     yield
 
 
@@ -104,6 +112,10 @@ def get_grille():
 
 def get_orientation():
     return etat["orientation"]
+
+
+def get_opportunites():
+    return etat["opportunites"]
 
 
 def get_recherche():
@@ -181,6 +193,7 @@ def resultat(demande: DemandeResultat, request: Request, grille=Depends(get_gril
         sortie=sortie,
         assouplissements=choix.libelles_assouplissements,
         redaction_possible=llm_disponible(),
+        opportunites_possibles=etat["opportunites"].disponible,
     )
 
 
@@ -200,3 +213,21 @@ def redaction(demande: DemandeResultat, request: Request, grille=Depends(get_gri
     except Exception as e:  # réseau, quota, réponse invalide… : le résultat calculé reste affiché
         journaliser_erreur(e)
         raise HTTPException(503, "La rédaction par l'IA n'est pas disponible pour le moment.")
+
+
+@app.get("/api/communes", response_model=list[Commune])
+async def communes(q: str, request: Request, service=Depends(get_opportunites)):
+    if not etat["limiteur_communes"].autoriser(ip_du_client(request)):
+        raise HTTPException(429, "Trop de demandes depuis ton adresse. Réessaie dans une minute.")
+    try:
+        return await service.communes(q)
+    except ServiceIndisponible:
+        raise HTTPException(503, "La recherche de communes ne répond pas pour le moment.")
+
+
+@app.post("/api/opportunites", response_model=Opportunites)
+async def opportunites(demande: DemandeOpportunites, request: Request, service=Depends(get_opportunites),
+                       orientation=Depends(get_orientation)):
+    if not etat["limiteur_opportunites"].autoriser(ip_du_client(request)):
+        raise HTTPException(429, "Trop de demandes depuis ton adresse. Réessaie dans une minute.")
+    return await service.rechercher(demande, {m.id: m for m in orientation.metiers})

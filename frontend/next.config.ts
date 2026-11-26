@@ -8,7 +8,8 @@ const ENTETES_SECURITE = [
   { key: "X-Content-Type-Options", value: "nosniff" }, // le navigateur ne devine pas le type d'un fichier
   { key: "X-Frame-Options", value: "DENY" }, // le site ne peut pas être affiché dans un cadre d'un autre site
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" }, // on ne transmet pas l'adresse complète aux liens externes
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" }, // aucun accès à la caméra, au micro ni à la position
+  // Position : seulement pour ce site (bouton « Autour de moi »), et le navigateur demande toujours la permission.
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self)" },
 ];
 
 const config: NextConfig = {

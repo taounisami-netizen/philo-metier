@@ -11,7 +11,7 @@
 import type { NextRequest } from "next/server";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
-const ROUTES_AUTORISEES = new Set(["questionnaire", "resultat", "redaction", "sante"]);
+const ROUTES_AUTORISEES = new Set(["questionnaire", "resultat", "redaction", "sante", "opportunites", "communes"]);
 const TAILLE_MAX = 64 * 1024; // 64 Ko : une réponse complète au questionnaire en fait ~10
 
 // Durée maximale d'une requête sur Vercel (secondes). Le premier appel après une période sans
@@ -51,7 +51,9 @@ async function relayer(requete: NextRequest, contexte: Contexte): Promise<Respon
   if (process.env.CLE_INTERNE) entetes["X-Cle-Interne"] = process.env.CLE_INTERNE;
 
   try {
-    const reponse = await fetch(`${API_URL}/api/${route}`, {
+    // Paramètres d'URL transmis tels quels (ex. /api/communes?q=nant), bornés en taille.
+    const parametres = requete.nextUrl.search.length <= 300 ? requete.nextUrl.search : "";
+    const reponse = await fetch(`${API_URL}/api/${route}${parametres}`, {
       method: requete.method,
       headers: entetes,
       body: corps,

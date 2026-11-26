@@ -20,5 +20,7 @@ services:
         sync: false
       - key: CLE_INTERNE
         sync: false
+      - key: LBA_API_KEY   # clé de l'API Apprentissage (La bonne alternance), étage 2
+        sync: false
       - key: CLAUDE_MODEL
         value: claude-haiku-5-5

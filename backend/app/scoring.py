@@ -10,6 +10,7 @@ Principe (détaillé dans le README) :
 Aucun LLM ici : le calcul est déterministe, rapide et testable.
 """
 
+import hashlib
 from collections import Counter
 from fractions import Fraction
 from dataclasses import dataclass
@@ -153,6 +154,22 @@ def score_moyen_aleatoire(grille: Grille) -> dict[str, float]:
     }
 
 
+def departage(reponses: list[Reponse], profils: list[str]) -> dict[str, bytes]:
+    """Clé de départage des égalités : une empreinte SHA-256 des réponses et du profil.
+
+    - Déterministe : les mêmes réponses donnent toujours le même ordre.
+    - Neutre : sur l'ensemble des répondants, chaque profil gagne une égalité aussi
+      souvent qu'un autre (l'empreinte se comporte comme un tirage au sort équitable).
+    Seules les options cochées comptent, pas le texte libre ni l'ordre d'envoi.
+    """
+    cle = "|".join(
+        f"{r.question_id}:{','.join(sorted(r.option_ids))}"
+        for r in sorted(reponses, key=lambda r: r.question_id)
+    )
+    graine = hashlib.sha256(cle.encode()).digest()
+    return {p: hashlib.sha256(graine + p.encode()).digest() for p in profils}
+
+
 def calculer_profil(grille: Grille, reponses: list[Reponse]) -> AnalyseProfil:
     questions = {q.id: q for q in grille.questions}
 
@@ -195,9 +212,11 @@ def calculer_profil(grille: Grille, reponses: list[Reponse]) -> AnalyseProfil:
         )
         for p in grille.ids_profils
     ]
-    # Tri décroissant. sorted() est stable : en cas d'égalité, l'ordre de profils.json
-    # départage, donc le résultat reste déterministe.
-    scores.sort(key=lambda s: s.score, reverse=True)
+    # Tri décroissant. En cas d'égalité parfaite, on départage par une empreinte des
+    # réponses (voir departage) : mêmes réponses -> même résultat, mais aucun profil
+    # n'est avantagé d'avance (avant, l'ordre de profils.json faisait gagner le stoïque).
+    ordre = departage(reponses, grille.ids_profils)
+    scores.sort(key=lambda s: (-s.score, ordre[s.profil_id]))
 
     premier, second = scores[0], scores[1]
     ecart = round(premier.score - second.score, 4)

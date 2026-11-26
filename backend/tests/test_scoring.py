@@ -1,4 +1,5 @@
 import json
+from collections import Counter
 from pathlib import Path
 
 import pytest
@@ -194,3 +195,72 @@ def test_texte_libre_ne_change_pas_le_score(grille):
 
 def test_texte_libre_vide_devient_none():
     assert Reponse(question_id="q04", option_ids=["a"], texte_libre="   ").texte_libre is None
+
+
+# ---------------------------------------------------------------------------
+# Équité du profil dominant
+# ---------------------------------------------------------------------------
+
+def _reponses_au_hasard(grille: Grille, rng, max_choix: int) -> list[Reponse]:
+    return [
+        Reponse(
+            question_id=q.id,
+            option_ids=rng.sample([o.id for o in q.options], rng.randint(1, max_choix)),
+            texte_libre=None,
+        )
+        for q in grille.questions
+    ]
+
+
+def _egalite_parfaite(grille: Grille, profils: tuple[str, str]) -> list[Reponse]:
+    """Des réponses où deux profils finissent exactement à égalité en tête."""
+    import random
+
+    rng = random.Random(0)
+    while True:
+        rep = _reponses_au_hasard(grille, rng, 1)
+        a = calculer_profil(grille, rep)
+        tete = {s.profil_id for s in a.scores if s.score == a.scores[0].score}
+        if tete == set(profils):
+            return rep
+
+
+@pytest.mark.parametrize("max_choix", [1, 2])
+def test_aucun_profil_ne_sort_en_tete_trop_souvent(grille, max_choix):
+    """Au hasard, chaque profil doit sortir dominant entre 12 % et 17 % du temps (1/7 = 14,3 %).
+
+    Avant le départage neutre, le stoïque gagnait toutes ses égalités (ordre de profils.json)
+    et le sceptique montait à 17,4 %, le créateur descendait à 11,2 %.
+    """
+    import random
+
+    rng, n = random.Random(2026), 8000
+    compte = Counter(calculer_profil(grille, _reponses_au_hasard(grille, rng, max_choix)).dominant for _ in range(n))
+    for profil in grille.ids_profils:
+        assert 0.12 <= compte[profil] / n <= 0.17, (profil, compte[profil] / n)
+
+
+def test_une_egalite_ne_favorise_pas_l_ordre_du_fichier(grille):
+    """Quand deux profils sont à égalité en tête, celui écrit en premier dans profils.json
+    ne doit gagner qu'environ une fois sur deux (avant : à chaque fois)."""
+    import random
+
+    rang = {p: i for i, p in enumerate(grille.ids_profils)}
+    rng = random.Random(1)
+    gagne, total = 0, 0
+    for _ in range(4000):
+        a = calculer_profil(grille, _reponses_au_hasard(grille, rng, 1))
+        tete = [s.profil_id for s in a.scores if s.score == a.scores[0].score]
+        if len(tete) == 2:
+            total += 1
+            gagne += a.dominant == min(tete, key=rang.get)
+    assert total >= 200
+    assert 0.4 <= gagne / total <= 0.6, (gagne, total)
+
+
+def test_departage_deterministe_et_independant_de_l_ordre(grille):
+    rep = _egalite_parfaite(grille, ("stoique", "epicurien"))
+    a = calculer_profil(grille, rep)
+    b = calculer_profil(grille, list(reversed(rep)))
+    assert a.dominant == b.dominant and a.secondaire == b.secondaire
+    assert a.ecart == 0 and a.mixte

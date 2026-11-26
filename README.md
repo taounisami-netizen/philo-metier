@@ -17,7 +17,8 @@ Un questionnaire de 13 expériences de pensée (le dilemme du tramway, l'anneau 
    - ton **profil** parmi 7 (stoïque, épicurien, sceptique, bâtisseur, créateur, moraliste, contemplatif) et ton trait dominant ;
    - le **philosophe** qui te ressemble, et une **citation exacte** tirée de ses livres, avec le lien vers le passage ;
    - le **métier** que tu aurais pu faire et deux alternatives, chacun avec **la voie d'accès la plus réaliste avec tes moyens** (formation, durée, coût) ;
-   - un **livre** à lire.
+   - un **livre** à lire ;
+   - une fois ta ville choisie (un seul geste, retenu pour la prochaine fois) : les **offres d'alternance et les formations en apprentissage près de chez toi** pour chaque métier, avec le contact des écoles et la source de chaque information.
 5. Une trentaine de secondes plus tard, Claude ajoute des **explications rédigées pour toi**, l'écart avec le métier que tu vises et :
    - si tu as posé une problématique : un **diagnostic**, 2 ou 3 **pistes réalistes avec tes moyens** (durée, coût, financements, premières étapes), **une recommandation tranchée** et les risques à vérifier.
 
@@ -28,29 +29,31 @@ flowchart LR
     U[Navigateur] --> N[Site Next.js]
     N -->|/api| F[API FastAPI]
     F --> S[Calcul du profil<br/>déterministe]
-    S --> O[Orientation<br/>89 métiers × moyens]
+    S --> O[Orientation<br/>103 métiers × moyens]
     F --> R[Recherche sémantique<br/>embeddings + NumPy]
     R --> C[(Corpus<br/>~4 000 passages)]
     O --> X[Résultat calculé<br/>immédiat]
     R --> X
     X -->|2e appel| L[Claude<br/>rédige les explications]
+    X -->|ville choisie| A[La bonne alternance<br/>offres et formations]
 ```
 
 | Partie | Technologies | Rôle |
 |---|---|---|
 | Site | Next.js 16, React 19, TypeScript | Formulaire, questionnaire, page de résultat |
 | API | Python, FastAPI, Pydantic v2 | Questions, calcul du profil, orchestration |
-| Orientation | Tableau de 89 métiers (JSON) + règles en Python | Choisir le métier et la voie d'accès réaliste avec les moyens |
+| Orientation | Tableau de 103 métiers (JSON) + règles en Python | Choisir le métier et la voie d'accès réaliste avec les moyens |
 | Recherche (RAG) | `multilingual-e5-small` en ONNX int8 (onnxruntime), NumPy | Trouver les passages qui ressemblent aux réponses, rapprocher le texte libre des métiers |
 | Rédaction | API Claude (Anthropic) | Expliquer les choix et répondre à la problématique, sans rien choisir |
+| Offres et formations | API Apprentissage (La bonne alternance), Géoplateforme IGN, httpx | Offres d'alternance et formations près de chez l'utilisateur, sources citées ([docs/SOURCES.md](docs/SOURCES.md)) |
 | Corpus | Wikisource, Projet Gutenberg | Textes de philosophie du domaine public |
-| Tests | pytest | 166 tests (calcul, orientation, ingestion, encodeur, API, sécurité, situation) |
+| Tests | pytest | 215 tests (calcul, orientation, offres et formations, citations, ingestion, encodeur, API, sécurité, situation) |
 
 ## Les choix techniques
 
 **Le profil est calculé sans IA.** Il dépend uniquement des réponses, avec une formule testée : les mêmes réponses donnent toujours le même profil, et c'est gratuit. J'ai prouvé que **aucun profil n'est avantagé** : quelqu'un qui répond au hasard a exactement 20 % de score moyen pour chacun des 7 profils, qu'il coche une ou deux réponses. La démonstration et les tests sont dans [docs/SCORING.md](docs/SCORING.md).
 
-**Le calcul décide, l'IA rédige.** Le métier est choisi par un algorithme, dans un tableau de 89 métiers relié aux 7 profils (dont des métiers rares et des métiers à l'étranger pour qui est prêt à partir), avec pour chacun ses voies d'accès (diplôme requis, durée, coût, rythme) et un lien vers sa fiche ONISEP. Un métier n'est retenu que si une de ses voies tient dans les moyens de l'utilisateur. Le poste actuel et le métier voulu, écrits librement, départagent les métiers proches grâce au modèle d'embeddings. Claude reçoit ensuite ces choix et les explique, sans pouvoir les changer : impossible qu'il propose un métier hors de portée. Les formules et les règles sont dans [docs/SCORING.md](docs/SCORING.md#orientation--du-profil-au-métier).
+**Le calcul décide, l'IA rédige.** Le métier est choisi par un algorithme, dans un tableau de 103 métiers relié aux 7 profils (dont des métiers accessibles sans études, des métiers rares et des métiers à l'étranger pour qui est prêt à partir), avec pour chacun ses voies d'accès (diplôme requis, durée, coût, rythme) et un lien vers sa fiche ONISEP. Un métier n'est retenu que si une de ses voies tient dans les moyens de l'utilisateur. Le poste actuel et le métier voulu, écrits librement, départagent les métiers proches grâce au modèle d'embeddings. Claude reçoit ensuite ces choix et les explique, sans pouvoir les changer : impossible qu'il propose un métier hors de portée. Les formules et les règles sont dans [docs/SCORING.md](docs/SCORING.md#orientation--du-profil-au-métier).
 
 **Résultat immédiat, explications ensuite.** Le résultat calculé arrive en ~50 ms. Les explications de Claude (~30 s) arrivent par un second appel et remplacent les phrases types en fondu. Comme le calcul est reproductible, ce second appel recalcule exactement le même résultat : l'API ne stocke rien.
 
@@ -110,12 +113,13 @@ Le site est en ligne sur Vercel (site Next.js) et Render (API en Docker, plan gr
 ```
 backend/
 ├── app/
-│   ├── grille/            # profils.json (7 profils), questions.json (13 questions), metiers.json (89 métiers)
+│   ├── grille/            # profils.json (7 profils), questions.json (13 questions), metiers.json (103 métiers)
 │   ├── scoring.py         # calcul du profil + vérification de la grille
 │   ├── orientation.py     # choix du métier et de la voie d'accès selon les moyens
 │   ├── rag.py             # recherche sémantique dans le corpus
 │   ├── encodeur.py        # modèle d'embeddings en ONNX (sans PyTorch)
 │   ├── generation.py      # résultat calculé (citation, livre) et rédaction par Claude
+│   ├── opportunites.py    # étage 2 : offres et formations (La bonne alternance), communes (IGN)
 │   ├── protection.py      # limites de requêtes, budget Claude, clé interne
 │   ├── schemas.py         # modèles Pydantic
 │   └── main.py            # routes FastAPI
@@ -125,10 +129,10 @@ backend/
 └── tests/
 frontend/
 ├── app/                   # pages Next.js + relais sécurisé vers l'API (app/api)
-├── components/            # illustrations SVG
+├── components/            # illustrations SVG, offres et formations près de chez soi
 └── lib/api.ts             # appels à l'API
 render.yaml                # mise en ligne de l'API sur Render
-docs/                      # le calcul du profil, le RAG, la sécurité, la mise en ligne, les captures
+docs/                      # le calcul du profil, le RAG, les sources, la sécurité, la mise en ligne, les captures
 ```
 
 ## Les textes

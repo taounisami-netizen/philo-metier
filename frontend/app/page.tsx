@@ -18,6 +18,7 @@ import {
   type Situation,
 } from "@/lib/api";
 import IllustrationTramway from "@/components/IllustrationTramway";
+import OffresEtFormations from "@/components/OffresEtFormations";
 
 type Etape = "accueil" | "situation" | "questions" | "attente" | "resultat";
 // Les explications de Claude arrivent après le résultat calculé.
@@ -69,7 +70,7 @@ export default function Page() {
       .catch(() =>
         setErreurServeur(
           process.env.NODE_ENV === "development"
-            ? "Le serveur ne répond pas. Vérifie que l'API tourne dans un autre terminal : uvicorn app.main:app --reload --port 8001"
+            ? "Le serveur ne répond pas. Vérifie que l'API tourne dans un autre terminal : uvicorn app.main:app --reload --port 8000"
             : "Le serveur ne répond pas. Recharge la page dans une minute.",
         ),
       )
@@ -534,9 +535,15 @@ function Problematique({
 function VoieAcces({ acces }: { acces: Acces | null }) {
   if (!acces) return null;
   return (
-    <p className="acces">
-      Pour y accéder : {acces.voie}, {acces.duree}, {acces.cout}.
-    </p>
+    <>
+      <p className="acces">
+        Pour y accéder : {acces.voie}, {acces.duree}
+        {acces.rythme ? `, ${acces.rythme}` : ""}, {acces.cout}.
+      </p>
+      {acces.ecarts.length > 0 && (
+        <p className="acces ecart">À savoir : cette voie {acces.ecarts.join(", et ")}.</p>
+      )}
+    </>
   );
 }
 
@@ -587,7 +594,11 @@ function PageResultat({
       <h1 className="profil">{resultat.nom_profil}</h1>
       <p className="trait">
         {resultat.trait_dominant}
-        {profil.mixte && secondaire ? `, avec une forte part ${secondaire}` : ""}
+        {profil.mixte && secondaire
+          ? profil.ecart === 0
+            ? `, et une part ${secondaire} tout aussi forte : tes réponses donnent exactement le même score aux deux`
+            : `, avec une forte part ${secondaire}`
+          : ""}
       </p>
       {etatRedaction === "attente" && (
         <p className="en-cours douce" role="status">
@@ -648,6 +659,14 @@ function PageResultat({
           ))}
         </ul>
       </section>
+
+      {resultat.opportunites_possibles && (
+        <OffresEtFormations
+          metiers={[sortie.metier_principal, ...sortie.metiers_alternatifs]
+            .map((m) => m.id)
+            .filter((id): id is string => !!id)}
+        />
+      )}
 
       {sortie.metier_etranger && (
         <section className="bloc">

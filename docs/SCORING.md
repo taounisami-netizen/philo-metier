@@ -59,14 +59,33 @@ en fractions exactes, pour $k = 1$ et $k = 2$).
 On trie les scores. Écart $= S(\text{1er}) - S(\text{2e})$. Si l'écart est inférieur à
 `SEUIL_MIXTE = 0,10`, le profil est dit mixte. Avec $M \approx 18$, un point vaut environ
 $\tfrac{1}{18} \approx 0{,}06$ : le profil est mixte quand le 1er et le 2e sont séparés
-par moins de 2 points environ. En cas d'égalité parfaite, l'ordre de `profils.json`
-départage, ce qui garde le calcul déterministe.
+par moins de 2 points environ.
+
+**Égalité parfaite.** Si le 1er et le 2e ont exactement le même score, la page le dit
+(« une part … tout aussi forte »). Pour choisir lequel des deux sert de profil dominant,
+on calcule une empreinte SHA-256 des options cochées, combinée avec le nom de chaque
+profil : le plus petit résultat gagne (`departage` dans `scoring.py`). C'est déterministe
+(mêmes réponses → même résultat, quel que soit l'ordre d'envoi) et neutre (chaque profil
+gagne une égalité aussi souvent qu'un autre).
+
+Avant, l'ordre de `profils.json` départageait. Ça avantageait les premiers profils du
+fichier. Sur 20 000 répondants simulés au hasard (1 choix par question), le sceptique
+sortait en tête 17,4 % du temps et le créateur 11,2 %, pour 14,3 % attendus (1 sur 7).
+Avec le départage neutre, tous les profils sont entre 13 % et 15,5 %.
+
+**Écart restant.** Il vient du nombre de questions qui mesurent chaque profil (8 pour le
+stoïque, 9 pour le sceptique, le moraliste et le contemplatif, 10 pour les autres). Un
+profil mesuré par moins de questions a un score plus « variable » : il atteint plus
+souvent les extrêmes, en haut comme en bas, même si sa moyenne reste 0,20. Avec
+13 questions de 5 options (65 cases pour 7 profils), une répartition parfaitement égale
+est impossible. Le test `test_aucun_profil_ne_sort_en_tete_trop_souvent` vérifie que
+chaque profil reste entre 12 % et 17 %.
 
 ## Orientation : du profil au métier
 
 Le métier n'est pas choisi par l'IA : il sort d'un calcul, dans `backend/app/orientation.py`,
-à partir du tableau `backend/app/grille/metiers.json` (89 métiers, au moins 8 par profil,
-dont 22 métiers rares ou artisanaux et 8 métiers qui s'exercent à l'étranger).
+à partir du tableau `backend/app/grille/metiers.json` (103 métiers, au moins 8 par profil,
+dont 14 métiers accessibles sans études, 22 métiers rares ou artisanaux et 8 métiers qui s'exercent à l'étranger).
 
 **1. Le tableau.** Chaque métier est relié à 1 à 3 profils avec un poids $w_p$ (1 pour son
 profil principal, 0,3 à 0,6 pour les autres), et a une ou plusieurs **voies d'accès** :
@@ -98,9 +117,21 @@ partiel : au moins 5 à 10 h par semaine). Un métier est retenu s'il a au moins
 possible ; on affiche la plus accessible (coût, puis durée ; sans diplôme connu, les voies
 qui exigent un niveau plus élevé passent après).
 
+Un rythme à part, **« en poste »**, désigne les voies où l'on est embauché d'abord et formé
+pendant son temps de travail, payé (conducteur de bus, cariste, agent de service hospitalier,
+aiguilleur du rail…). Ce n'est pas du temps à prendre en plus : ces voies conviennent même
+avec moins de 5 h par semaine, et leur durée ne retarde pas le changement de métier (le délai
+ne s'y applique pas). C'est souvent la seule voie réaliste pour quelqu'un qui travaille,
+sans diplôme ni budget.
+
 Si moins de 3 métiers passent, ou si aucun n'appartient au profil dominant ou secondaire,
-on **assouplit** les moyens dans cet ordre : délai, temps disponible, budget, diplôme. Le
-site le dit (« on a assoupli le délai »), et Claude le mentionne avec tact.
+on **assouplit** les moyens dans cet ordre : délai, temps disponible, budget, diplôme. On ne
+fait pas comme si la contrainte n'existait plus : chaque voie reçoit un **écart** aux moyens
+de départ (un an de trop, un cran de temps, de budget ou de diplôme en trop valent chacun 1).
+On retient pour chaque métier la voie au plus petit écart, et la note du métier perd
+$0{,}05$ par unité d'écart : une formation de 13 mois passe devant un cursus de 3 ans quand
+l'utilisateur visait 12 mois. Le site affiche ce qui dépasse (« cette voie dure environ
+3 ans, plus que ton délai »), et Claude doit le dire franchement.
 
 **5. Le choix.** Métier principal = meilleure note. Puis le meilleur autre métier du profil
 dominant, et le meilleur du profil secondaire. À note égale, l'ordre du tableau départage :
